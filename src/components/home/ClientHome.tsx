@@ -4,8 +4,9 @@ import { useEffect, useRef } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import FilePreview from "@/components/ui/FilePreview";
 import { useFiles } from "@/hooks/useFiles";
-import type { ImageWorkerMessage, ImageWorkerResponse } from "@/workers/image.worker";
-import type { PdfWorkerMessage, PdfWorkerResponse } from "@/workers/pdf.worker";
+import imageCompression from 'browser-image-compression';
+import ExifReader from 'exifreader';
+import { PDFDocument } from 'pdf-lib';
 
 interface ClientHomeProps {
     defaultAction?: "compress" | "scrub";
@@ -13,83 +14,91 @@ interface ClientHomeProps {
 
 export default function ClientHome({ defaultAction }: ClientHomeProps) {
     const { files, addFiles, removeFile, updateStatus } = useFiles();
-    const imageWorkerRef = useRef<Worker | null>(null);
-    const pdfWorkerRef = useRef<Worker | null>(null);
-
-    useEffect(() => {
-        // Initialize workers on client side only (using relative paths for bundler compatibility)
-        imageWorkerRef.current = new Worker(new URL("../../workers/image.worker.ts", import.meta.url));
-        pdfWorkerRef.current = new Worker(new URL("../../workers/pdf.worker.ts", import.meta.url));
-
-        const handleImageWorkerMessage = (e: MessageEvent<ImageWorkerResponse>) => {
-            const data = e.data;
-            if (data.type === 'progress') {
-                updateStatus(data.id, { progress: data.progress });
-            } else if (data.type === 'success') {
-                updateStatus(data.id, {
-                    status: 'success',
-                    progress: 100,
-                    processedBlob: data.result,
-                    metadata: data.metadata
-                });
-            } else if (data.type === 'error') {
-                updateStatus(data.id, { status: 'error' });
-                console.error("Image worker error:", data.error);
-            }
-        };
-
-        const handlePdfWorkerMessage = (e: MessageEvent<PdfWorkerResponse>) => {
-            const data = e.data;
-            if (data.type === 'progress') {
-                updateStatus(data.id, { progress: data.progress });
-            } else if (data.type === 'success') {
-                updateStatus(data.id, {
-                    status: 'success',
-                    progress: 100,
-                    processedBlob: data.result,
-                    metadata: data.metadata
-                });
-            } else if (data.type === 'error') {
-                updateStatus(data.id, { status: 'error' });
-                console.error("PDF worker error:", data.error);
-            }
-        };
-
-        imageWorkerRef.current.addEventListener('message', handleImageWorkerMessage);
-        pdfWorkerRef.current.addEventListener('message', handlePdfWorkerMessage);
-
-        return () => {
-            imageWorkerRef.current?.terminate();
-            pdfWorkerRef.current?.terminate();
-        };
-    }, [updateStatus]);
 
     const handleFiles = async (newFiles: File[]) => {
         await addFiles(newFiles);
     };
 
     const handleAction = async (id: string, actionType: "compress" | "scrub" | "pdf-merge") => {
-        const file = files.find(f => f.id === id);
-        if (!file) return;
+        const fileRecord = files.find(f => f.id === id);
+        if (!fileRecord) return;
+        const file = fileRecord.originalBlob as File;
 
-        await updateStatus(id, { status: 'processing', progress: 0 });
+        await updateStatus(id, { status: 'processing', progress: 5 });
 
-        if (file.type.startsWith('image/') && imageWorkerRef.current) {
-            if (actionType === 'compress' || actionType === 'scrub') {
-                imageWorkerRef.current.postMessage({
-                    type: actionType,
-                    id,
-                    file: file.originalBlob
-                } as ImageWorkerMessage);
+        try {
+            if (file.type.startsWith('image/')) {
+                if (actionType === 'compress') {
+                    const options = {
+                        maxSizeMB: 1,
+                        maxWidthOrHeight: 1920,
+                        useWebWorker: true, // Use built-in web worker
+                        onProgress: (p: number) => updateStatus(id, { progress: p })
+                    };
+                    const compressedFile = await imageCompression(file, options);
+                    await updateStatus(id, {
+                        status: 'success',
+                        progress: 100,
+                        processedBlob: compressedFile,
+                        metadata: { originalSize: file.size, newSize: compressedFile.size }
+                    });
+                } else if (actionType === 'scrub') {
+                    await updateStatus(id, { progress: 30 });
+                    const tags = await ExifReader.load(file);
+                    await updateStatus(id, { progress: 50 });
+
+                    // OffscreenCanvas is supported in modern browsers
+                    const bitmap = await self.createImageBitmap(file);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = bitmap.width;
+                    canvas.height = bitmap.height;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) ctx.drawImage(bitmap, 0, 0);
+
+                    await updateStatus(id, { progress: 80 });
+
+                    canvas.toBlob(async (blob) => {
+                        if (blob) {
+                            await updateStatus(id, {
+                                status: 'success',
+                                progress: 100,
+                                processedBlob: blob,
+                                metadata: { scrubbed: true, tagsRemoved: Object.keys(tags).length }
+                            });
+                        } else {
+                            throw new Error("Blob conversion failed");
+                        }
+                    }, 'image/jpeg', 0.95);
+                }
+            } else if (file.type === 'application/pdf') {
+                if (actionType === 'compress') {
+                    await updateStatus(id, { progress: 30 });
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
+
+                    await updateStatus(id, { progress: 60 });
+                    pdfDoc.setTitle('');
+                    pdfDoc.setAuthor('');
+                    pdfDoc.setSubject('');
+                    pdfDoc.setKeywords([]);
+                    pdfDoc.setProducer('');
+                    pdfDoc.setCreator('');
+
+                    await updateStatus(id, { progress: 80 });
+                    const pdfBytes = await pdfDoc.save({ useObjectStreams: true });
+                    const optimizedBlob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+
+                    await updateStatus(id, {
+                        status: 'success',
+                        progress: 100,
+                        processedBlob: optimizedBlob,
+                        metadata: { originalSize: file.size, newSize: optimizedBlob.size }
+                    });
+                }
             }
-        } else if (file.type === 'application/pdf' && pdfWorkerRef.current) {
-            if (actionType === 'compress') {
-                pdfWorkerRef.current.postMessage({
-                    type: 'compress',
-                    id,
-                    file: file.originalBlob
-                } as PdfWorkerMessage);
-            }
+        } catch (error) {
+            console.error("Processing error:", error);
+            await updateStatus(id, { status: 'error' });
         }
     };
 
