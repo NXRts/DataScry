@@ -6,7 +6,8 @@ import {
     Files as FilesIcon,
     Scissors,
     Minimize2,
-    ShieldCheck
+    ShieldCheck,
+    FileSearch
 } from "lucide-react";
 
 const TOOLS = [
@@ -51,6 +52,13 @@ const TOOLS = [
         icon: <ShieldCheck size={32} className="text-emerald-500" />,
         href: "/tools/scrub-exif",
         color: "emerald"
+    },
+    {
+        title: "Penampil Metadata",
+        description: "Intip informasi EXIF rahasia (kamera, GPS, tanggal asli) di balik foto atau dokumen PDF Anda.",
+        icon: <FileSearch size={32} className="text-blue-400" />,
+        href: "/tools/metadata-viewer",
+        color: "blue"
     }
 ];
 

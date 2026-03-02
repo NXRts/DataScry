@@ -52,6 +52,11 @@ export default function Footer() {
                                         Ekstrak Halaman (PDF to JPG)
                                     </Link>
                                 </li>
+                                <li>
+                                    <Link href="/tools/metadata-viewer" className="hover:text-primary transition-colors text-blue-400/80 font-medium">
+                                        Penampil EXIF / Metadata
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
 
