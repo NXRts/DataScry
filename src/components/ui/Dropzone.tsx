@@ -46,9 +46,9 @@ export default function Dropzone({ onFilesAccepted }: DropzoneProps) {
 
     return (
         <div
-            className={`relative group w-full p-8 md:p-16 rounded-3xl border-2 border-dashed transition-all duration-300 ${isDragActive
-                    ? "border-primary bg-primary/5 scale-[1.02]"
-                    : "border-border hover:border-primary/50 hover:bg-surface/50 glass-panel"
+            className={`relative group w-full p-6 md:p-16 rounded-3xl border-2 border-dashed transition-all duration-300 ${isDragActive
+                ? "border-primary bg-primary/5 scale-[1.02]"
+                : "border-border hover:border-primary/50 hover:bg-surface/50 glass-panel"
                 }`}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragEnter}
@@ -66,18 +66,18 @@ export default function Dropzone({ onFilesAccepted }: DropzoneProps) {
             <div className="flex flex-col items-center justify-center text-center space-y-6">
                 <div
                     className={`w-20 h-20 rounded-2xl flex items-center justify-center transition-colors duration-300 ${isDragActive
-                            ? "bg-primary text-white"
-                            : "bg-surface shadow-sm text-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                        ? "bg-primary text-white"
+                        : "bg-surface shadow-sm text-foreground group-hover:bg-primary/10 group-hover:text-primary"
                         }`}
                 >
                     <UploadCloud className="w-10 h-10" />
                 </div>
 
                 <div className="space-y-2">
-                    <h3 className="text-2xl font-bold tracking-tight">
+                    <h3 className="text-xl md:text-2xl font-bold tracking-tight px-2">
                         Drag & Drop Files Here
                     </h3>
-                    <p className="text-foreground/60 max-w-sm mx-auto">
+                    <p className="text-foreground/60 max-w-sm mx-auto text-sm md:text-base px-2">
                         Support for Images (JPG, PNG, WebP) and PDF documents. All processing is done 100% locally in your browser.
                     </p>
                 </div>
