@@ -5,8 +5,8 @@ import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
 import JSZip from "jszip";
 
-// Setup PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+// Setup PDF.js worker using unpkg/jsdelivr which replicates npm exactly
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 export default function ClientPdfToJpg() {
     const [pdfs, setPdfs] = useState<File[]>([]);
