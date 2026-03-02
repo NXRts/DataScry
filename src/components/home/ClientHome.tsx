@@ -6,7 +6,12 @@ import FilePreview from "@/components/ui/FilePreview";
 import { useFiles } from "@/hooks/useFiles";
 import type { ImageWorkerMessage, ImageWorkerResponse } from "@/workers/image.worker";
 import type { PdfWorkerMessage, PdfWorkerResponse } from "@/workers/pdf.worker";
-export default function ClientHome() {
+
+interface ClientHomeProps {
+    defaultAction?: "compress" | "scrub";
+}
+
+export default function ClientHome({ defaultAction }: ClientHomeProps) {
     const { files, addFiles, removeFile, updateStatus } = useFiles();
     const imageWorkerRef = useRef<Worker | null>(null);
     const pdfWorkerRef = useRef<Worker | null>(null);
@@ -127,6 +132,7 @@ export default function ClientHome() {
                                 onRemove={() => removeFile(file.id)}
                                 onAction={(type: "compress" | "scrub" | "pdf-merge") => handleAction(file.id, type)}
                                 onDownload={() => handleDownload(file.id)}
+                                defaultAction={defaultAction}
                             />
                         ))}
                     </div>

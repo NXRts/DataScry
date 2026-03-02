@@ -11,9 +11,10 @@ interface FilePreviewProps {
     onRemove?: () => void;
     onAction?: (actionType: "compress" | "scrub" | "pdf-merge") => void;
     onDownload?: () => void;
+    defaultAction?: "compress" | "scrub";
 }
 
-export default function FilePreview({ file, progress = 0, status = "idle", onRemove, onAction, onDownload }: FilePreviewProps) {
+export default function FilePreview({ file, progress = 0, status = "idle", onRemove, onAction, onDownload, defaultAction }: FilePreviewProps) {
     const isImage = file.type.startsWith("image/");
     const isPDF = file.type === "application/pdf";
 
@@ -92,21 +93,25 @@ export default function FilePreview({ file, progress = 0, status = "idle", onRem
                     <>
                         {isImage && (
                             <>
-                                <button
-                                    onClick={() => onAction && onAction("scrub")}
-                                    className="flex-1 py-2 text-xs font-semibold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center justify-center gap-1.5"
-                                >
-                                    <ShieldCheck size={14} /> Scrub EXIF
-                                </button>
-                                <button
-                                    onClick={() => onAction && onAction("compress")}
-                                    className="flex-1 py-2 text-xs font-semibold rounded-lg bg-surface border border-border hover:bg-border/50 transition-colors flex items-center justify-center gap-1.5"
-                                >
-                                    <Minimize2 size={14} /> Compress
-                                </button>
+                                {(!defaultAction || defaultAction === "scrub") && (
+                                    <button
+                                        onClick={() => onAction && onAction("scrub")}
+                                        className="flex-1 py-2 text-xs font-semibold rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors flex items-center justify-center gap-1.5"
+                                    >
+                                        <ShieldCheck size={14} /> Scrub EXIF
+                                    </button>
+                                )}
+                                {(!defaultAction || defaultAction === "compress") && (
+                                    <button
+                                        onClick={() => onAction && onAction("compress")}
+                                        className="flex-1 py-2 text-xs font-semibold rounded-lg bg-surface border border-border hover:bg-border/50 transition-colors flex items-center justify-center gap-1.5"
+                                    >
+                                        <Minimize2 size={14} /> Compress
+                                    </button>
+                                )}
                             </>
                         )}
-                        {isPDF && (
+                        {isPDF && (!defaultAction || defaultAction === "compress") && (
                             <button
                                 onClick={() => onAction && onAction("compress")}
                                 className="flex-1 py-2 text-xs font-semibold rounded-lg bg-surface border border-border hover:bg-border/50 transition-colors flex items-center justify-center gap-1.5"

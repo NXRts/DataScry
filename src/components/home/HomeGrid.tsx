@@ -1,0 +1,83 @@
+import Link from "next/link";
+import {
+    FileUp,
+    FileImage,
+    Image as ImageIcon,
+    Files as FilesIcon,
+    Scissors,
+    Minimize2,
+    ShieldCheck
+} from "lucide-react";
+
+const TOOLS = [
+    {
+        title: "JPG ke PDF",
+        description: "Ubah foto JPG, PNG, atau WebP menjadi dokumen PDF dengan cepat.",
+        icon: <ImageIcon size={32} className="text-amber-500" />,
+        href: "/tools/jpg-to-pdf",
+        color: "amber"
+    },
+    {
+        title: "PDF ke JPG",
+        description: "Ekstrak setiap halaman dari PDF menjadi gambar berkualitas tinggi.",
+        icon: <FileImage size={32} className="text-amber-500" />,
+        href: "/tools/pdf-to-jpg",
+        color: "amber"
+    },
+    {
+        title: "Gabungkan PDF",
+        description: "Kombinasikan beberapa dokumen PDF menjadi satu file dalam satu klik.",
+        icon: <FilesIcon size={32} className="text-purple-500" />,
+        href: "/tools/merge-pdf",
+        color: "purple"
+    },
+    {
+        title: "Pisahkan PDF",
+        description: "Ekstrak satu atau beberapa halaman spesifik dari dokumen PDF besar.",
+        icon: <Scissors size={32} className="text-rose-500" />,
+        href: "/tools/split-pdf",
+        color: "rose"
+    },
+    {
+        title: "Kompres PDF & Gambar",
+        description: "Kurangi ukuran file dokumen atau foto Anda untuk menghemat ruang.",
+        icon: <Minimize2 size={32} className="text-blue-500" />,
+        href: "/tools/compress",
+        color: "blue"
+    },
+    {
+        title: "Scrub EXIF Jejak Digital",
+        description: "Hapus metadata dan lokasi tersembunyi pada foto sebelum diunggah ke internet.",
+        icon: <ShieldCheck size={32} className="text-emerald-500" />,
+        href: "/tools/scrub-exif",
+        color: "emerald"
+    }
+];
+
+export default function HomeGrid() {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {TOOLS.map((tool) => (
+                <Link
+                    key={tool.href}
+                    href={tool.href}
+                    className="group block"
+                >
+                    <div className="h-full glass-panel p-6 rounded-2xl flex flex-col gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent hover:border-primary/20">
+                        <div className="flex items-center gap-4">
+                            <div className={`p-3 rounded-xl bg-${tool.color}-500/10`}>
+                                {tool.icon}
+                            </div>
+                            <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors">
+                                {tool.title}
+                            </h3>
+                        </div>
+                        <p className="text-foreground/70 text-sm leading-relaxed">
+                            {tool.description}
+                        </p>
+                    </div>
+                </Link>
+            ))}
+        </div>
+    );
+}
