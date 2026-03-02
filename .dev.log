@@ -1,0 +1,11 @@
+
+> privakit-temp@0.1.0 dev
+> next dev
+
+⚠ Port 3000 is in use by an unknown process, using available port 3001 instead.
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://10.208.206.134:3001
+
+✓ Starting...
+✓ Ready in 847ms
