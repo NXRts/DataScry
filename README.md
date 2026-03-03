@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/NXRts/DataScry/main/public/favicon.ico" alt="DataScry Logo" width="120" />
   <h1>DataScry</h1>
   <p><strong>Your All-in-One Client-Side Toolkit for Files and Privacy</strong></p>
   
