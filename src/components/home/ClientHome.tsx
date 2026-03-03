@@ -114,7 +114,7 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
         const isPdf = file.type === 'application/pdf';
         const originalName = file.name.split('.');
         const ext = originalName.pop();
-        const newName = `${originalName.join('.')}-privakit.${ext}`;
+        const newName = `${originalName.join('.')}-datascry.${ext}`;
 
         a.download = newName;
         document.body.appendChild(a);

@@ -26,7 +26,7 @@ export default function FeaturesSection() {
         <section className="py-20 bg-background/50 border-y border-border/50">
             <div className="container mx-auto px-4 max-w-6xl">
                 <div className="text-center space-y-4 mb-16">
-                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Mengapa Memilih <span className="text-primary">PrivaKit?</span></h2>
+                    <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Mengapa Memilih <span className="text-primary">DataScry?</span></h2>
                     <p className="text-foreground/70 max-w-2xl mx-auto text-lg pt-2">Kami merombak cara Anda mengolah file sensitif tanpa perantara pihak ketiga.</p>
                 </div>
 

@@ -82,7 +82,7 @@ export default function ClientPdfToJpg() {
         const url = URL.createObjectURL(zipBlob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `privakit-extracted-images-${Date.now()}.zip`;
+        a.download = `datascry-extracted-images-${Date.now()}.zip`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

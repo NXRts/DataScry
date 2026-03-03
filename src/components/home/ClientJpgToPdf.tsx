@@ -63,7 +63,7 @@ export default function ClientJpgToPdf() {
         const url = URL.createObjectURL(completePdf);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `privakit-images-${Date.now()}.pdf`;
+        a.download = `datascry-images-${Date.now()}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

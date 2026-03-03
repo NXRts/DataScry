@@ -44,7 +44,7 @@ export default function ClientMergePdf() {
         const url = URL.createObjectURL(mergedPdf);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `privakit-merged-${Date.now()}.pdf`;
+        a.download = `datascry-merged-${Date.now()}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -63,8 +63,8 @@ export default function ClientMergePdf() {
                             onClick={mergePdfs}
                             disabled={isProcessing || pdfs.length < 2}
                             className={`px-6 py-2.5 rounded-full font-bold text-white transition-all ${isProcessing || pdfs.length < 2
-                                    ? 'bg-purple-500/50 cursor-not-allowed'
-                                    : 'bg-purple-500 hover:bg-purple-600 hover:scale-105'
+                                ? 'bg-purple-500/50 cursor-not-allowed'
+                                : 'bg-purple-500 hover:bg-purple-600 hover:scale-105'
                                 }`}
                         >
                             {isProcessing ? 'Menggabungkan...' : pdfs.length < 2 ? 'Minimal 2 PDF' : 'Gabungkan PDF'}

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "PrivaKit | 100% Offline PDF & Image Tools",
+  title: "DataScry | 100% Offline PDF & Image Tools",
   description: "Manajemen dokumen PDF dan alat optimasi privasi foto yang memproses segala jenis arsip secara instan, aman, 100% di browser Anda tanpa unggah API sedikit pun. Fitur unggulan iLovePDF kini di genggaman Anda secara luring.",
 };
 

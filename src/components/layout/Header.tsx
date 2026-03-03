@@ -14,7 +14,7 @@ export default function Header() {
               <Shield className="text-primary-content w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <span className="text-xl sm:text-2xl font-black tracking-tight leading-none bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
-              PrivaKit
+              DataScry
             </span>
           </Link>
         </div>

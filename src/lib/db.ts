@@ -13,7 +13,7 @@ export interface PrivaFile {
     createdAt: number;
 }
 
-interface PrivaKitDB extends DBSchema {
+interface DataScryDB extends DBSchema {
     files: {
         key: string;
         value: PrivaFile;
@@ -21,11 +21,11 @@ interface PrivaKitDB extends DBSchema {
     };
 }
 
-const DB_NAME = 'PrivaKitDB';
+const DB_NAME = 'DataScryDB';
 const DB_VERSION = 1;
 
-export async function initDB(): Promise<IDBPDatabase<PrivaKitDB>> {
-    return openDB<PrivaKitDB>(DB_NAME, DB_VERSION, {
+export async function initDB(): Promise<IDBPDatabase<DataScryDB>> {
+    return openDB<DataScryDB>(DB_NAME, DB_VERSION, {
         upgrade(db) {
             if (!db.objectStoreNames.contains('files')) {
                 const store = db.createObjectStore('files', { keyPath: 'id' });

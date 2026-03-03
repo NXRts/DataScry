@@ -81,7 +81,7 @@ export default function ClientSplitPdf() {
         const url = URL.createObjectURL(extractedBlob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `privakit-split-${Date.now()}.pdf`;
+        a.download = `datascry-split-${Date.now()}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -127,8 +127,8 @@ export default function ClientSplitPdf() {
                             onClick={splitPdf}
                             disabled={isProcessing || !pageRange.trim()}
                             className={`w-full py-4 mt-4 rounded-xl font-bold text-white transition-all shadow-lg ${isProcessing || !pageRange.trim()
-                                    ? 'bg-rose-500/40 cursor-not-allowed shadow-none'
-                                    : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/25'
+                                ? 'bg-rose-500/40 cursor-not-allowed shadow-none'
+                                : 'bg-rose-500 hover:bg-rose-600 shadow-rose-500/25'
                                 }`}
                         >
                             {isProcessing ? 'Memisahkan PDF...' : 'Ekstrak Halaman'}

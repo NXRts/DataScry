@@ -14,9 +14,7 @@ export default function Footer() {
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-focus flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
                                 <ShieldCheck className="text-primary-content" size={18} />
                             </div>
-                            <span className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80">
-                                PrivaKit
-                            </span>
+                            DataScry
                         </Link>
                         <p className="text-foreground/60 text-sm max-w-sm mt-4 leading-relaxed">
                             Platform lengkap manajemen dokumen dan foto yang memproses segalanya 100% secara lokal. Tanpa server, tanpa unggahan privasi, tanpa batas pakai.
@@ -67,7 +65,7 @@ export default function Footer() {
                                 Berkontribusi pada privasi pengguna.
                             </p>
                             <a
-                                href="https://github.com/NXRts/PrivaKit"
+                                href="https://github.com/NXRts/DataScry"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-2 px-3 py-2 mt-2 text-sm font-medium bg-surface/50 border border-border/50 hover:bg-surface/80 rounded-xl transition-all"
