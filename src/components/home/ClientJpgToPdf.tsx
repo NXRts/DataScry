@@ -66,6 +66,11 @@ export default function ClientJpgToPdf() {
                     }
                 }
 
+                if (!image) {
+                    console.error(`Skipping file ${file.name} because image processing failed.`);
+                    continue;
+                }
+
                 const page = pdfDoc.addPage([image.width, image.height]);
                 page.drawImage(image, {
                     x: 0,
