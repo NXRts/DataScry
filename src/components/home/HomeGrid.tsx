@@ -63,17 +63,25 @@ const TOOLS = [
 ];
 
 export default function HomeGrid() {
+    const colorClasses: Record<string, string> = {
+        amber: "bg-amber-500/10 text-amber-500",
+        purple: "bg-purple-500/10 text-purple-500",
+        rose: "bg-rose-500/10 text-rose-500",
+        blue: "bg-blue-500/10 text-blue-500",
+        emerald: "bg-emerald-500/10 text-emerald-500",
+    };
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {TOOLS.map((tool) => (
                 <Link
                     key={tool.href}
                     href={tool.href}
-                    className="group block"
+                    className="group block h-full"
                 >
-                    <div className="h-full glass-panel p-5 md:p-6 rounded-2xl flex flex-col gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent hover:border-primary/20">
+                    <div className="h-full glass-panel p-5 md:p-6 rounded-2xl flex flex-col gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent hover:border-primary/20 cursor-pointer">
                         <div className="flex items-center gap-3 md:gap-4">
-                            <div className={`p-2.5 md:p-3 rounded-xl bg-${tool.color}-500/10`}>
+                            <div className={`p-2.5 md:p-3 rounded-xl ${colorClasses[tool.color] || "bg-primary/10 text-primary"}`}>
                                 {tool.icon}
                             </div>
                             <h3 className="text-lg md:text-xl font-bold tracking-tight group-hover:text-primary transition-colors">

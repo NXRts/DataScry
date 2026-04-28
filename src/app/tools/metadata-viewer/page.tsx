@@ -137,7 +137,7 @@ export default function MetadataViewerPage() {
                             <div className="flex justify-between items-center bg-surface/50 p-4 rounded-xl border border-border/50 backdrop-blur-sm">
                                 <div className="flex flex-col">
                                     <span className="font-medium text-lg">{file.name}</span>
-                                    <span className="text-sm text-foreground/60 text-emerald-500 flex items-center gap-1">
+                                    <span className="text-sm text-emerald-500 flex items-center gap-1">
                                         Pemrosesan Lokal Selesai
                                     </span>
                                 </div>
@@ -162,9 +162,21 @@ export default function MetadataViewerPage() {
                                 <div className="glass-panel overflow-hidden rounded-2xl border border-border/50 shadow-xl">
                                     <div className="bg-surface/80 p-4 border-b border-border/50 flex justify-between items-center">
                                         <h3 className="font-bold tracking-tight">Properti Ditemukan</h3>
-                                        <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-medium">
-                                            {metadata.length} Entri
-                                        </span>
+                                        <div className="flex items-center gap-3">
+                                            <button
+                                                onClick={() => {
+                                                    const text = metadata.map(m => `${m.key}: ${m.value}`).join('\n');
+                                                    navigator.clipboard.writeText(text);
+                                                    alert("Metadata disalin ke clipboard!");
+                                                }}
+                                                className="text-xs font-bold text-primary hover:underline px-3 py-1"
+                                            >
+                                                Salin Semua
+                                            </button>
+                                            <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                                                {metadata.length} Entri
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-sm text-left">

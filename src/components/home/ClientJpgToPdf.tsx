@@ -25,18 +25,36 @@ export default function ClientJpgToPdf() {
             const pdfDoc = await PDFDocument.create();
 
             for (const file of images) {
-                const imageBytes = await file.arrayBuffer();
                 let image;
 
                 if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+                    const imageBytes = await file.arrayBuffer();
                     image = await pdfDoc.embedJpg(imageBytes);
                 } else if (file.type === 'image/png') {
+                    const imageBytes = await file.arrayBuffer();
                     image = await pdfDoc.embedPng(imageBytes);
                 } else {
-                    // Unsupported natively by simple pdf-lib out of the box (e.g WebP), 
-                    // a complete solution requires canvas rendering first, which we fallback to skipping here or throwing error
-                    console.warn(`Unsupported exact format for direct injection: ${file.type}. Skipping.`);
-                    continue;
+                    // Fallback for WebP or other formats: render to canvas and convert to JPG
+                    try {
+                        const bitmap = await createImageBitmap(file);
+                        const canvas = document.createElement('canvas');
+                        canvas.width = bitmap.width;
+                        canvas.height = bitmap.height;
+                        const ctx = canvas.getContext('2d');
+                        if (!ctx) continue;
+                        ctx.drawImage(bitmap, 0, 0);
+
+                        const blob = await new Promise<Blob | null>((resolve) => {
+                            canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.9);
+                        });
+
+                        if (!blob) continue;
+                        const arrayBuffer = await blob.arrayBuffer();
+                        image = await pdfDoc.embedJpg(arrayBuffer);
+                    } catch (err) {
+                        console.error(`Failed to process image ${file.name}:`, err);
+                        continue;
+                    }
                 }
 
                 const page = pdfDoc.addPage([image.width, image.height]);
@@ -107,7 +125,7 @@ export default function ClientJpgToPdf() {
                                         >
                                             ✕
                                         </button>
-                                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-linear-to-t from-black/80 to-transparent">
                                             <p className="text-white text-xs truncate drop-shadow-md">{img.name}</p>
                                         </div>
                                     </div>

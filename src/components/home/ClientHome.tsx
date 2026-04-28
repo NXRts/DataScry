@@ -57,18 +57,20 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
 
                     await updateStatus(id, { progress: 80 });
 
-                    canvas.toBlob(async (blob) => {
-                        if (blob) {
-                            await updateStatus(id, {
-                                status: 'success',
-                                progress: 100,
-                                processedBlob: blob,
-                                metadata: { scrubbed: true, tagsRemoved: Object.keys(tags).length }
-                            });
-                        } else {
-                            throw new Error("Blob conversion failed");
-                        }
-                    }, 'image/jpeg', 0.95);
+                    const blob = await new Promise<Blob | null>((resolve) => {
+                        canvas.toBlob((b) => resolve(b), 'image/jpeg', 0.95);
+                    });
+
+                    if (blob) {
+                        await updateStatus(id, {
+                            status: 'success',
+                            progress: 100,
+                            processedBlob: blob,
+                            metadata: { scrubbed: true, tagsRemoved: Object.keys(tags).length }
+                        });
+                    } else {
+                        throw new Error("Blob conversion failed");
+                    }
                 }
             } else if (file.type === 'application/pdf') {
                 if (actionType === 'compress') {
@@ -102,6 +104,14 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
         }
     };
 
+    const processAll = async () => {
+        if (!defaultAction) return;
+        const pendingFiles = files.filter(f => f.status === 'idle');
+        for (const file of pendingFiles) {
+            await handleAction(file.id, defaultAction);
+        }
+    };
+
     const handleDownload = (id: string) => {
         const file = files.find(f => f.id === id);
         if (!file || !file.processedBlob) return;
@@ -111,7 +121,6 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
         a.href = url;
 
         // Add extension suffix to indicate processing
-        const isPdf = file.type === 'application/pdf';
         const originalName = file.name.split('.');
         const ext = originalName.pop();
         const newName = `${originalName.join('.')}-datascry.${ext}`;
@@ -124,13 +133,25 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
         URL.revokeObjectURL(url);
     };
 
+    const hasIdleFiles = files.some(f => f.status === 'idle');
+
     return (
         <div className="space-y-12">
             <Dropzone onFilesAccepted={handleFiles} />
 
             {files.length > 0 && (
                 <div className="space-y-6">
-                    <h2 className="text-2xl font-bold tracking-tight">Your Files ({files.length})</h2>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <h2 className="text-2xl font-bold tracking-tight">Your Files ({files.length})</h2>
+                        {defaultAction && hasIdleFiles && (
+                            <button
+                                onClick={processAll}
+                                className="px-6 py-2 rounded-xl bg-primary text-white font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                            >
+                                Process All Files
+                            </button>
+                        )}
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {files.map((file) => (
                             <FilePreview
