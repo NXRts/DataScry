@@ -111,7 +111,17 @@ export default function ClientSplitPdf() {
     return (
         <div className="space-y-12">
             {!pdfFile ? (
-                <Dropzone onFilesAccepted={handleFiles} />
+                <Dropzone 
+                    onFilesAccepted={handleFiles} 
+                    accept="application/pdf"
+                    title="Upload PDF"
+                    description="Pilih dokumen PDF yang ingin Anda pisahkan halamannya."
+                    icons={
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-rose-500 font-bold">Dokumen PDF</span>
+                        </div>
+                    }
+                />
             ) : (
                 <div className="space-y-6">
                     <div className="flex items-center justify-between p-6 glass-panel rounded-2xl border border-rose-500/20">

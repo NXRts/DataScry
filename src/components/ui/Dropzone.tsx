@@ -5,9 +5,19 @@ import { UploadCloud, File, Image as ImageIcon } from "lucide-react";
 
 interface DropzoneProps {
     onFilesAccepted: (files: File[]) => void;
+    accept?: string;
+    title?: string;
+    description?: string;
+    icons?: React.ReactNode;
 }
 
-export default function Dropzone({ onFilesAccepted }: DropzoneProps) {
+export default function Dropzone({ 
+    onFilesAccepted, 
+    accept = "image/*,application/pdf",
+    title = "Drag & Drop Files Here",
+    description = "Support for Images (JPG, PNG, WebP) and PDF documents. All processing is done 100% locally in your browser.",
+    icons
+}: DropzoneProps) {
     const [isDragActive, setIsDragActive] = useState(false);
 
     const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -59,7 +69,7 @@ export default function Dropzone({ onFilesAccepted }: DropzoneProps) {
                 type="file"
                 multiple
                 onChange={handleChange}
-                accept="image/*,application/pdf"
+                accept={accept}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
 
@@ -75,22 +85,28 @@ export default function Dropzone({ onFilesAccepted }: DropzoneProps) {
 
                 <div className="space-y-2">
                     <h3 className="text-xl md:text-2xl font-bold tracking-tight px-2">
-                        Drag & Drop Files Here
+                        {title}
                     </h3>
                     <p className="text-foreground/60 max-w-sm mx-auto text-sm md:text-base px-2">
-                        Support for Images (JPG, PNG, WebP) and PDF documents. All processing is done 100% locally in your browser.
+                        {description}
                     </p>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm font-medium text-foreground/50">
-                    <div className="flex items-center gap-1.5">
-                        <ImageIcon size={16} /> Photos
+                {icons ? (
+                    <div className="flex items-center gap-4 text-sm font-medium text-foreground/50">
+                        {icons}
                     </div>
-                    <div className="w-1 h-1 rounded-full bg-border" />
-                    <div className="flex items-center gap-1.5">
-                        <File size={16} /> PDFs
+                ) : (
+                    <div className="flex items-center gap-4 text-sm font-medium text-foreground/50">
+                        <div className="flex items-center gap-1.5">
+                            <ImageIcon size={16} /> Photos
+                        </div>
+                        <div className="w-1 h-1 rounded-full bg-border" />
+                        <div className="flex items-center gap-1.5">
+                            <File size={16} /> PDFs
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );
