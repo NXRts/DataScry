@@ -99,7 +99,17 @@ export default function ClientPdfToJpg() {
         <div className="space-y-12">
             {!zipBlob ? (
                 <>
-                    <Dropzone onFilesAccepted={handleFiles} />
+                    <Dropzone 
+                        onFilesAccepted={handleFiles} 
+                        accept="application/pdf"
+                        title="Upload PDF"
+                        description="Pilih dokumen PDF yang ingin Anda ubah menjadi gambar JPG."
+                        icons={
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-amber-500 font-bold">Dokumen PDF</span>
+                            </div>
+                        }
+                    />
 
                     {pdfs.length > 0 && (
                         <div className="space-y-6">

@@ -53,7 +53,17 @@ export default function ClientMergePdf() {
 
     return (
         <div className="space-y-12">
-            <Dropzone onFilesAccepted={handleFiles} />
+            <Dropzone 
+                onFilesAccepted={handleFiles} 
+                accept="application/pdf"
+                title="Upload PDF"
+                description="Pilih beberapa dokumen PDF yang ingin Anda gabungkan menjadi satu."
+                icons={
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-purple-500 font-bold">Dokumen PDF</span>
+                    </div>
+                }
+            />
 
             {pdfs.length > 0 && (
                 <div className="space-y-6">

@@ -135,9 +135,22 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
 
     const hasIdleFiles = files.some(f => f.status === 'idle');
 
+    const dropzoneProps = defaultAction === 'scrub' 
+        ? {
+            accept: "image/*",
+            title: "Upload Gambar",
+            description: "Mendukung format JPG, PNG, dan WebP. EXIF dan metadata akan dihapus 100% secara lokal.",
+            icons: <span className="text-emerald-500 font-bold">Foto & Gambar</span>
+        }
+        : {
+            accept: "image/*,application/pdf",
+            title: "Upload Gambar atau PDF",
+            description: "Kompresi aman tanpa mengirim file ke server. Mendukung gambar dan dokumen PDF.",
+        };
+
     return (
         <div className="space-y-12">
-            <Dropzone onFilesAccepted={handleFiles} />
+            <Dropzone onFilesAccepted={handleFiles} {...dropzoneProps} />
 
             {files.length > 0 && (
                 <div className="space-y-6">

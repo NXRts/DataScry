@@ -26,15 +26,24 @@ export default function ClientJpgToPdf() {
 
             for (const file of images) {
                 let image;
+                let parsedSuccessfully = false;
 
-                if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
-                    const imageBytes = await file.arrayBuffer();
-                    image = await pdfDoc.embedJpg(imageBytes);
-                } else if (file.type === 'image/png') {
-                    const imageBytes = await file.arrayBuffer();
-                    image = await pdfDoc.embedPng(imageBytes);
-                } else {
-                    // Fallback for WebP or other formats: render to canvas and convert to JPG
+                try {
+                    if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+                        const imageBytes = await file.arrayBuffer();
+                        image = await pdfDoc.embedJpg(imageBytes);
+                        parsedSuccessfully = true;
+                    } else if (file.type === 'image/png') {
+                        const imageBytes = await file.arrayBuffer();
+                        image = await pdfDoc.embedPng(imageBytes);
+                        parsedSuccessfully = true;
+                    }
+                } catch (e) {
+                    console.warn(`Native parsing failed for ${file.name}, falling back to canvas renderer. Error:`, e);
+                }
+
+                if (!parsedSuccessfully) {
+                    // Fallback for WebP, invalid PNG/JPGs, or other formats: render to canvas and convert to JPG
                     try {
                         const bitmap = await createImageBitmap(file);
                         const canvas = document.createElement('canvas');
@@ -98,7 +107,17 @@ export default function ClientJpgToPdf() {
         <div className="space-y-12">
             {!completePdf ? (
                 <>
-                    <Dropzone onFilesAccepted={handleFiles} />
+                    <Dropzone 
+                        onFilesAccepted={handleFiles} 
+                        accept="image/*"
+                        title="Upload Gambar"
+                        description="Mendukung format JPG, PNG, dan WebP. Pemrosesan dilakukan 100% secara lokal."
+                        icons={
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-amber-500 font-bold">JPG / PNG / WebP</span>
+                            </div>
+                        }
+                    />
 
                     {images.length > 0 && (
                         <div className="space-y-6">
