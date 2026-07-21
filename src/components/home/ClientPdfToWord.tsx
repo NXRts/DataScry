@@ -1,25 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 
-// Setup PDF.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
-
 export default function ClientPdfToWord() {
-    const [pdfs, setPdfs] = useState([]);
+    const [pdfs, setPdfs] = useState<File[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [docxBlob, setDocxBlob] = useState(null);
+    const [docxBlob, setDocxBlob] = useState<Blob | null>(null);
     const [progress, setProgress] = useState(0);
 
-    const handleFiles = (newFiles) => {
+    useEffect(() => {
+        if (typeof window !== "undefined" && pdfjsLib?.GlobalWorkerOptions) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+        }
+    }, []);
+
+    const handleFiles = (newFiles: File[]) => {
         const pdfFiles = newFiles.filter(f => f.type === 'application/pdf');
         setPdfs(prev => [...prev, ...pdfFiles]);
     };
 
-    const extractTextFromPdf = async (arrayBuffer) => {
+    const extractTextFromPdf = async (arrayBuffer: ArrayBuffer): Promise<string> => {
         const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
         let fullText = "";
         
@@ -27,7 +30,7 @@ export default function ClientPdfToWord() {
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
             const pageText = textContent.items
-                .map((item) => item.str)
+                .map((item: any) => item.str)
                 .join(" ");
             fullText += pageText + "\n\n";
             
@@ -37,7 +40,7 @@ export default function ClientPdfToWord() {
         return fullText;
     };
 
-    const convertToDocx = async (text, fileName) => {
+    const convertToDocx = async (text: string, fileName: string): Promise<Blob> => {
         const paragraphs = text.split("\n\n").map(para => {
             const trimmed = para.trim();
             if (!trimmed) return new Paragraph({ text: "" });
@@ -71,8 +74,8 @@ export default function ClientPdfToWord() {
             }],
         });
 
-        const buffer = await Packer.toBuffer(doc);
-        return new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+        const blob = await Packer.toBlob(doc);
+        return blob;
     };
 
     const convertPdfToWord = async () => {
@@ -160,7 +163,7 @@ export default function ClientPdfToWord() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {pdfs.map((pdf, idx) => (
                                     <div key={idx} className="p-4 rounded-xl glass-panel border border-border flex items-center justify-between">
-                                        <span className="font-semibold text-sm truncate max-w-[200px]">{pdf.name}</span>
+                                        <span className="font-semibold text-sm truncate max-w-50">{pdf.name}</span>
                                         <button
                                             onClick={() => setPdfs(prev => prev.filter((_, i) => i !== idx))}
                                             className="text-foreground/50 hover:text-rose-500"

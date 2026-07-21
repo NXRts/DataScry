@@ -11,7 +11,7 @@ export default function Footer() {
                     {/* Brand Info */}
                     <div className="md:col-span-2 space-y-4">
                         <Link href="/" className="inline-flex items-center gap-2 group">
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary-focus flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
+                            <div className="w-8 h-8 rounded-lg bg-linear-to-br from-primary to-primary-focus flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
                                 <ShieldCheck className="text-primary-content" size={18} />
                             </div>
                             DataScry
@@ -48,6 +48,11 @@ export default function Footer() {
                                 <li>
                                     <Link href="/tools/pdf-to-jpg" className="hover:text-primary transition-colors">
                                         Ekstrak Halaman (PDF to JPG)
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/tools/merge-word" className="hover:text-primary transition-colors text-cyan-400/80 font-medium">
+                                        Gabungkan Word (.docx)
                                     </Link>
                                 </li>
                                 <li>

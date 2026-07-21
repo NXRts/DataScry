@@ -6,13 +6,13 @@ import mammoth from "mammoth";
 import html2pdf from "html2pdf.js";
 
 export default function ClientWordToPdf() {
-    const [docxFiles, setDocxFiles] = useState([]);
+    const [docxFiles, setDocxFiles] = useState<File[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [pdfBlob, setPdfBlob] = useState(null);
-    const [previewHtml, setPreviewHtml] = useState("");
-    const previewRef = useRef(null);
+    const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
+    const [previewHtml, setPreviewHtml] = useState<string>("");
+    const previewRef = useRef<HTMLDivElement>(null);
 
-    const handleFiles = (newFiles) => {
+    const handleFiles = (newFiles: File[]) => {
         const docx = newFiles.filter(f => 
             f.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
             f.name.endsWith('.docx')
@@ -20,7 +20,7 @@ export default function ClientWordToPdf() {
         setDocxFiles(prev => [...prev, ...docx]);
     };
 
-    const convertDocxToHtml = async (file) => {
+    const convertDocxToHtml = async (file: File): Promise<string> => {
         const arrayBuffer = await file.arrayBuffer();
         const result = await mammoth.convertToHtml({ arrayBuffer });
         return result.value;
@@ -36,7 +36,7 @@ export default function ClientWordToPdf() {
             const opt = {
                 margin: 10,
                 filename: `${docxFiles[0].name.replace('.docx', '')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'jpeg' as const, quality: 0.98 },
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true,
@@ -45,7 +45,7 @@ export default function ClientWordToPdf() {
                 jsPDF: { 
                     unit: 'mm', 
                     format: 'a4', 
-                    orientation: 'portrait' 
+                    orientation: 'portrait' as const 
                 },
                 pagebreak: { mode: 'avoid-all', before: '.page-break' }
             };

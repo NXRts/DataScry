@@ -63,6 +63,13 @@ const TOOLS = [
         color: "blue"
     },
     {
+        title: "Gabungkan Word",
+        description: "Kombinasikan beberapa dokumen Word (.docx) menjadi satu file utuh.",
+        icon: <FileText size={32} className="text-cyan-500" />,
+        href: "/tools/merge-word",
+        color: "cyan"
+    },
+    {
         title: "PDF ke Word",
         description: "Ubah dokumen PDF menjadi file Word (.docx) yang dapat diedit dengan mudah.",
         icon: <FileText size={32} className="text-blue-500" />,
@@ -86,6 +93,7 @@ export default function HomeGrid() {
         blue: "bg-blue-500/10 text-blue-500",
         emerald: "bg-emerald-500/10 text-emerald-500",
         indigo: "bg-indigo-500/10 text-indigo-500",
+        cyan: "bg-cyan-500/10 text-cyan-500",
     };
 
     return (
