@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "browser-image-compression": "^2.0.2",
+    "docx": "^9.7.1",
     "exifreader": "^4.36.2",
+    "html2pdf.js": "^0.14.0",
     "idb": "^8.0.3",
     "jszip": "^3.10.1",
     "lucide-react": "^0.575.0",
+    "mammoth": "^1.12.0",
     "next": "16.1.6",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^5.5.207",

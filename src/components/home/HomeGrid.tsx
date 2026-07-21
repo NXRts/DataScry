@@ -7,7 +7,9 @@ import {
     Scissors,
     Minimize2,
     ShieldCheck,
-    FileSearch
+    FileSearch,
+    FileText,
+    FileType
 } from "lucide-react";
 
 const TOOLS = [
@@ -59,6 +61,27 @@ const TOOLS = [
         icon: <FileSearch size={32} className="text-blue-400" />,
         href: "/tools/metadata-viewer",
         color: "blue"
+    },
+    {
+        title: "Gabungkan Word",
+        description: "Kombinasikan beberapa dokumen Word (.docx) menjadi satu file utuh.",
+        icon: <FileText size={32} className="text-cyan-500" />,
+        href: "/tools/merge-word",
+        color: "cyan"
+    },
+    {
+        title: "PDF ke Word",
+        description: "Ubah dokumen PDF menjadi file Word (.docx) yang dapat diedit dengan mudah.",
+        icon: <FileText size={32} className="text-blue-500" />,
+        href: "/tools/pdf-to-word",
+        color: "blue"
+    },
+    {
+        title: "Word ke PDF",
+        description: "Konversi dokumen Word (.docx) menjadi format PDF yang universal dan aman.",
+        icon: <FileType size={32} className="text-indigo-500" />,
+        href: "/tools/word-to-pdf",
+        color: "indigo"
     }
 ];
 
@@ -69,6 +92,8 @@ export default function HomeGrid() {
         rose: "bg-rose-500/10 text-rose-500",
         blue: "bg-blue-500/10 text-blue-500",
         emerald: "bg-emerald-500/10 text-emerald-500",
+        indigo: "bg-indigo-500/10 text-indigo-500",
+        cyan: "bg-cyan-500/10 text-cyan-500",
     };
 
     return (

@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 import Footer from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "DataScry | 100% Offline PDF & Image Tools",
-  description: "Manajemen dokumen PDF dan alat optimasi privasi foto yang memproses segala jenis arsip secara instan, aman, 100% di browser Anda tanpa unggah API sedikit pun. Fitur unggulan iLovePDF kini di genggaman Anda secara luring.",
+  title: "DataScry | 100% Offline PDF, Word & Image Tools",
+  description: "Manajemen dokumen PDF, Word, dan alat optimasi privasi foto yang memproses segala jenis arsip secara instan, aman, 100% di browser Anda tanpa unggah API sedikit pun. Fitur unggulan iLovePDF kini di genggaman Anda secara luring.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-[100dvh] flex flex-col overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh flex flex-col overflow-x-hidden`}
       >
         <div className="flex-1 flex flex-col w-full h-full">
           {children}
