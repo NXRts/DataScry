@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, ShieldCheck, Zap } from "lucide-react";
+import { Github, Globe, Instagram, ShieldCheck, Zap } from "lucide-react";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -65,20 +65,39 @@ export default function Footer() {
 
                         {/* Socials & Legal */}
                         <div className="space-y-4">
-                            <h4 className="text-sm font-bold tracking-wider text-foreground">OPEN SOURCE</h4>
+                            <h4 className="text-sm font-bold tracking-wider text-foreground">TERHUBUNG & KODE</h4>
                             <p className="text-sm text-foreground/60 leading-relaxed pr-4">
-                                Berkontribusi pada privasi pengguna.
+                                Berkontribusi pada privasi pengguna & ikuti kabar terbaru.
                             </p>
-                            <a
-                                href="https://github.com/NXRts/DataScry"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 px-3 py-2 mt-2 text-sm font-medium bg-surface/50 border border-border/50 hover:bg-surface/80 rounded-xl transition-all"
-                            >
-                                <Github size={16} />
-                                <span className="hidden sm:inline">GitHub Repo</span>
-                                <span className="sm:hidden">GitHub</span>
-                            </a>
+                            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                                <a
+                                    href="https://github.com/NXRts"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium bg-surface/50 border border-border/50 hover:bg-surface/80 hover:border-primary/40 rounded-xl transition-all"
+                                >
+                                    <Github size={16} />
+                                    <span>GitHub</span>
+                                </a>
+                                <a
+                                    href="https://www.instagram.com/my_arrofi/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium bg-surface/50 border border-border/50 hover:bg-surface/80 hover:border-pink-500/40 rounded-xl transition-all group"
+                                >
+                                    <Instagram size={16} className="text-pink-400 group-hover:scale-110 transition-transform" />
+                                    <span>Instagram</span>
+                                </a>
+                                <a
+                                    href="https://yusufarrofi.my.id/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium bg-surface/50 border border-border/50 hover:bg-surface/80 hover:border-emerald-500/40 rounded-xl transition-all group"
+                                >
+                                    <Globe size={16} className="text-emerald-400 group-hover:scale-110 transition-transform" />
+                                    <span>Website</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
