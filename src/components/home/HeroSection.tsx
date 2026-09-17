@@ -1,50 +1,171 @@
 import Link from "next/link";
-import { ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import {
+    ArrowRight,
+    ShieldCheck,
+    Zap,
+    Files,
+    FileType,
+    Minimize2,
+    ShieldAlert,
+    Cpu,
+    Sparkles
+} from "lucide-react";
 
 export default function HeroSection() {
+    const quickFeatures = [
+        {
+            title: "Gabungkan PDF & Word",
+            desc: "Kombinasikan beberapa dokumen tanpa batasan ukuran.",
+            icon: <Files className="w-5 h-5 text-purple-400" />,
+            href: "/tools/merge-pdf",
+            tag: "Populer"
+        },
+        {
+            title: "Konversi PDF ke Word",
+            desc: "Ekstrak teks dan ubah format dokumen secara instan.",
+            icon: <FileType className="w-5 h-5 text-blue-400" />,
+            href: "/tools/pdf-to-word",
+            tag: "Instan"
+        },
+        {
+            title: "Kompres PDF & Gambar",
+            desc: "Pangkas ukuran file besar tanpa kehilangan kualitas.",
+            icon: <Minimize2 className="w-5 h-5 text-cyan-400" />,
+            href: "/tools/compress",
+            tag: "Hemat Ruang"
+        },
+        {
+            title: "Hapus Metadata EXIF",
+            desc: "Bersihkan lokasi GPS & data privasi sebelum dibagikan.",
+            icon: <ShieldAlert className="w-5 h-5 text-emerald-400" />,
+            href: "/tools/scrub-exif",
+            tag: "Privasi"
+        }
+    ];
+
     return (
-        <section className="relative pt-20 pb-32 flex flex-col items-center justify-center min-h-[70vh]">
-            {/* Background Effects */}
-            <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-background to-background"></div>
-            <div className="absolute top-0 right-0 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] bg-primary/20 rounded-full blur-[80px] sm:blur-[100px] opacity-50 -z-10 -translate-y-1/4 translate-x-1/4 pointer-events-none"></div>
-            <div className="absolute bottom-0 left-0 w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] bg-emerald-500/15 rounded-full blur-[80px] sm:blur-[100px] opacity-50 -z-10 translate-y-1/4 -translate-x-1/4 pointer-events-none"></div>
+        <section className="relative pt-12 md:pt-16 pb-20 md:pb-28 overflow-hidden">
+            <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                    {/* Left Column: Headline, Description, and Primary Actions */}
+                    <div className="lg:col-span-7 space-y-6 text-left">
+                        {/* Top Badge */}
+                        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface border border-border text-xs sm:text-sm font-medium text-foreground/80 shadow-md">
+                            <ShieldCheck className="text-emerald-500 shrink-0 w-4 h-4" />
+                            <span>100% Client-Side • Tanpa Batas Ukuran File</span>
+                        </div>
 
-            <div className="container mx-auto px-4 max-w-5xl text-center z-10 space-y-8">
-                {/* Top Badge */}
-                <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-surface border border-border/50 text-xs sm:text-sm font-medium text-foreground/80 mb-4 animate-fade-in shadow-xl mx-auto backdrop-blur-md max-w-[90vw]">
-                    <ShieldCheck className="text-emerald-500 shrink-0 w-4 h-4" />
-                    <span className="truncate sm:whitespace-normal text-balance">Lokal 100%. Tidak ada batasan ukuran file.</span>
-                </div>
+                        {/* Main Headline */}
+                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-balance">
+                            Kelola File Anda secara{" "}
+                            <span className="text-primary">
+                                Privat dan Instan
+                            </span>
+                        </h1>
 
-                {/* Main Headline */}
-                <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight text-balance">
-                    Kelola File Anda secara <br className="hidden md:block" />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-primary-focus leading-tight pb-2 inline-block">
-                        Privat dan Instan
-                    </span>
-                </h1>
+                        {/* Subtitle */}
+                        <p className="text-base sm:text-lg md:text-xl text-foreground/70 max-w-2xl leading-relaxed">
+                            Setiap detik dokumen Anda diproses <strong className="font-semibold text-foreground">sepenuhnya di peramban Anda</strong>. Kompres, ubah, gabung PDF/Word, hingga hapus jejak foto tanpa mengunggahnya ke server mana pun. Keamanan mutlak gratis.
+                        </p>
 
-                {/* Subtitle */}
-                <p className="text-lg sm:text-xl md:text-2xl text-foreground/70 max-w-3xl mx-auto px-4 text-balance leading-relaxed">
-                    Setiap detik dokumen Anda diproses <strong className="font-bold text-foreground">sepenuhnya di peramban Anda</strong>. Kompres, ubah, gabung PDF, hingga hapus jejak foto tanpa mengunggahnya ke server mana pun. Keamanan mutlak gratis.
-                </p>
+                        {/* Action Buttons */}
+                        <div className="flex flex-wrap items-center gap-4 pt-2">
+                            <Link
+                                href="/tools/merge-pdf"
+                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95"
+                            >
+                                Mulai Gabung PDF
+                                <ArrowRight className="w-5 h-5" />
+                            </Link>
+                            <Link
+                                href="#tools"
+                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-bold text-foreground bg-surface hover:bg-surface/80 border border-border rounded-2xl transition-all hover:border-primary/40 active:scale-95"
+                            >
+                                <Zap className="w-5 h-5 text-amber-500" />
+                                Jelajahi Semua Alat
+                            </Link>
+                        </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
-                    <Link
-                        href="/tools/merge-pdf"
-                        className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-1"
-                    >
-                        Pilih PDF Anda
-                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                    <Link
-                        href="#tools"
-                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 text-base font-bold text-foreground bg-surface/80 hover:bg-surface border border-border/50 rounded-2xl transition-all hover:border-primary/30 backdrop-blur-md"
-                    >
-                        <Zap className="w-5 h-5 text-amber-500" />
-                        Jelajahi Alat Kami
-                    </Link>
+                        {/* Key Metrics / Trust Signals */}
+                        <div className="pt-6 border-t border-border/60 grid grid-cols-3 gap-4 max-w-lg">
+                            <div>
+                                <p className="text-xs font-medium text-foreground/50">Pemrosesan</p>
+                                <p className="text-sm sm:text-base font-bold text-foreground">100% Lokal</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-foreground/50">Keamanan</p>
+                                <p className="text-sm sm:text-base font-bold text-emerald-400">Zero Cloud Upload</p>
+                            </div>
+                            <div>
+                                <p className="text-xs font-medium text-foreground/50">Akses</p>
+                                <p className="text-sm sm:text-base font-bold text-foreground">Gratis Tanpa Kuota</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Interactive Quick-Access Showcase Panel */}
+                    <div className="lg:col-span-5">
+                        <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-border/80 shadow-2xl space-y-5 relative">
+                            {/* Panel Header */}
+                            <div className="flex items-center justify-between border-b border-border/60 pb-4">
+                                <div className="flex items-center gap-2.5">
+                                    <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                                        <Cpu className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-sm sm:text-base text-foreground">Akses Cepat Alat Unggulan</h3>
+                                        <p className="text-xs text-foreground/50">Pilih alat langsung untuk memulai</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-semibold border border-emerald-500/20">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span>Aktif</span>
+                                </div>
+                            </div>
+
+                            {/* Quick Tool Links */}
+                            <div className="space-y-3">
+                                {quickFeatures.map((tool) => (
+                                    <Link
+                                        key={tool.href}
+                                        href={tool.href}
+                                        className="group p-3.5 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/40 flex items-center justify-between gap-3 transition-all duration-200 hover:scale-[1.01]"
+                                    >
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="p-2.5 rounded-xl bg-surface border border-border shrink-0 group-hover:scale-105 transition-transform">
+                                                {tool.icon}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2">
+                                                    <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                                                        {tool.title}
+                                                    </p>
+                                                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-surface font-semibold text-foreground/60 border border-border/50 shrink-0">
+                                                        {tool.tag}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-foreground/60 truncate">
+                                                    {tool.desc}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <ArrowRight className="w-4 h-4 text-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+                                    </Link>
+                                ))}
+                            </div>
+
+                            {/* Panel Footer Action */}
+                            <Link
+                                href="#tools"
+                                className="block text-center py-3 rounded-xl bg-surface/50 hover:bg-surface text-xs font-bold text-foreground/70 hover:text-foreground border border-border/60 transition-colors"
+                            >
+                                <span className="inline-flex items-center gap-1.5">
+                                    <Sparkles className="w-3.5 h-3.5 text-primary" />
+                                    Lihat Semua 10+ Alat Gratis
+                                </span>
+                            </Link>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
