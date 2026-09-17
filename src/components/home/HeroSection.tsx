@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
     ArrowRight,
+    ArrowDown,
     ShieldCheck,
     Zap,
     Files,
@@ -44,8 +45,8 @@ export default function HeroSection() {
     ];
 
     return (
-        <section className="relative pt-12 md:pt-16 pb-20 md:pb-28 overflow-hidden">
-            <div className="container mx-auto px-4 lg:px-8 max-w-7xl">
+        <section className="relative min-h-[calc(100dvh-4rem)] flex flex-col justify-between pt-8 pb-6 md:pt-12 md:pb-8 overflow-hidden">
+            <div className="container mx-auto px-4 lg:px-8 max-w-7xl my-auto w-full">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
                     {/* Left Column: Headline, Description, and Primary Actions */}
                     <div className="lg:col-span-7 space-y-6 text-left">
@@ -167,6 +168,17 @@ export default function HeroSection() {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Bottom Scroll Indicator to Tools */}
+            <div className="pt-4 pb-2 flex justify-center w-full z-10">
+                <Link
+                    href="#tools"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-foreground/50 hover:text-foreground transition-colors py-2 px-4 rounded-full bg-surface/50 hover:bg-surface border border-border/50 backdrop-blur-sm animate-bounce"
+                >
+                    <span>Koleksi Alat Lengkap di Bawah</span>
+                    <ArrowDown className="w-3.5 h-3.5 text-primary" />
+                </Link>
             </div>
         </section>
     );

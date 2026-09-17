@@ -14,7 +14,7 @@ export default function Home() {
         <HeroSection />
 
         {/* 2. Etalase / Tools Grid */}
-        <div id="tools" className="container mx-auto px-4 py-16 scroll-mt-20">
+        <div id="tools" className="container mx-auto px-4 pt-20 pb-28 scroll-mt-24">
           <div className="max-w-5xl mx-auto space-y-10">
             <div className="text-center space-y-4">
               <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">
