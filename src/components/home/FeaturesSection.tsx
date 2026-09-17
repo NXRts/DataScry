@@ -31,8 +31,6 @@ export default function FeaturesSection() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                    <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-border to-transparent -translate-y-1/2 hidden md:block"></div>
-
                     {FEATURES.map((feature, idx) => (
                         <div key={idx} className="relative z-10 glass-panel p-8 rounded-3xl border border-border/50 hover:border-primary/30 transition-all hover:-translate-y-2 group shadow-xl shadow-black/5">
                             <div className={`w-16 h-16 rounded-2xl bg-${feature.color}-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-${feature.color}-500/20 transition-all`}>

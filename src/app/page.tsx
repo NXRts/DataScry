@@ -2,6 +2,7 @@ import Header from "@/components/layout/Header";
 import HomeGrid from "@/components/home/HomeGrid";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturesSection from "@/components/home/FeaturesSection";
+import PhilosophySection from "@/components/home/PhilosophySection";
 import CtaSection from "@/components/home/CtaSection";
 
 export default function Home() {
@@ -31,7 +32,10 @@ export default function Home() {
         {/* 3. Penjelasan Privasi / Features */}
         <FeaturesSection />
 
-        {/* 4. Kalimat Penutup (CTA) */}
+        {/* 4. Filosofi DataScry */}
+        <PhilosophySection />
+
+        {/* 5. Kalimat Penutup (CTA) */}
         <CtaSection />
       </main>
     </div>
