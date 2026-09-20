@@ -17,6 +17,14 @@ import Footer from "@/components/layout/Footer";
 export const metadata: Metadata = {
   title: "DataScry | 100% Offline PDF, Word & Image Tools",
   description: "Manajemen dokumen PDF, Word, dan alat optimasi privasi foto yang memproses segala jenis arsip secara instan, aman, 100% di browser Anda tanpa unggah API sedikit pun. Fitur unggulan iLovePDF kini di genggaman Anda secara luring.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({

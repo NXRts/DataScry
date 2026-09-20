@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="45%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Inner Glow -->
+    <radialGradient id="centerGlow" cx="50%" cy="45%" r="50%">
+      <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Shield Fill Gradient -->
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.03" />
+    </linearGradient>
+
+    <!-- Iris Gradient -->
+    <linearGradient id="irisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#93c5fd" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+
+    <!-- Filter for subtle drop shadow -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Squircle App Icon Container -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGrad)" />
+  <rect width="510" height="510" x="1" y="1" rx="119" fill="none" stroke="#60a5fa" stroke-width="4" stroke-opacity="0.35" />
+  
+  <!-- Ambient Center Glow -->
+  <circle cx="256" cy="245" r="160" fill="url(#centerGlow)" />
+
+  <!-- Main Shield Contour (Data / Security) -->
+  <g filter="url(#shadow)">
+    <!-- Shield Background Surface -->
+    <path 
+      d="M 256 92 C 295 128 344 144 382 146 C 388 146 392 150 392 156 C 392 268 340 372 261 427 C 258 429 254 429 251 427 C 172 372 120 268 120 156 C 120 150 124 146 130 146 C 168 144 217 128 256 92 Z" 
+      fill="url(#shieldGrad)" 
+      stroke="#ffffff" 
+      stroke-width="16" 
+      stroke-linejoin="round"
+      stroke-linecap="round"
+    />
+
+    <!-- Inner Scrying Eye (Scry / Transparency / Vision) -->
+    <!-- Eye Contour -->
+    <path 
+      d="M 180 256 Q 256 184 332 256 Q 256 328 180 256 Z" 
+      fill="#09090b" 
+      fill-opacity="0.6"
+      stroke="#ffffff" 
+      stroke-width="14" 
+      stroke-linejoin="round"
+    />
+
+    <!-- Iris Circle -->
+    <circle cx="256" cy="256" r="38" fill="url(#irisGrad)" stroke="#ffffff" stroke-width="6" />
+
+    <!-- Pupil Core -->
+    <circle cx="256" cy="256" r="18" fill="#0f172a" />
+
+    <!-- Pure Crystal Sparkle / Highlight -->
+    <circle cx="264" cy="248" r="7" fill="#ffffff" />
+    <circle cx="248" cy="264" r="3.5" fill="#ffffff" opacity="0.8" />
+  </g>
+</svg>
