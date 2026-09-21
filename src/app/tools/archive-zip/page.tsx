@@ -1,9 +1,9 @@
 import Header from "@/components/layout/Header";
-import ClientCompress from "@/components/tools/ClientCompress";
+import ClientArchiveZip from "@/components/tools/ClientArchiveZip";
 import Link from "next/link";
-import { ArrowLeft, Minimize2, ShieldCheck, Zap, Lock } from "lucide-react";
+import { ArrowLeft, FolderArchive, ShieldCheck, Zap, Lock } from "lucide-react";
 
-export default function CompressPage() {
+export default function ArchiveZipPage() {
     return (
         <div className="flex flex-col min-h-screen">
             <Header />
@@ -17,11 +17,11 @@ export default function CompressPage() {
                         </Link>
                         <div>
                             <h1 className="text-3xl sm:text-4xl font-black tracking-tight flex items-center gap-3">
-                                <Minimize2 className="w-8 h-8 text-blue-500" />
-                                Kompres PDF & Gambar
+                                <FolderArchive className="w-8 h-8 text-purple-500" />
+                                Kompres Berkas ke ZIP
                             </h1>
                             <p className="text-foreground/70 mt-1 text-sm sm:text-base">
-                                Perkecil ukuran dokumen PDF dan foto (JPG, PNG, WebP) dengan kontrol preset atau target KB presisi 100% lokal.
+                                Gabungkan dan padatkan banyak file (dokumen, foto, folder data) menjadi satu arsip .ZIP terkompresi 100% lokal.
                             </p>
                         </div>
                     </div>
@@ -30,20 +30,20 @@ export default function CompressPage() {
                     <div className="flex flex-wrap items-center gap-3 text-xs text-foreground/60">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
                             <ShieldCheck className="w-3.5 h-3.5" />
-                            Tanpa Kirim ke Server
+                            Algoritma DEFLATE di Browser
                         </span>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 font-medium">
                             <Zap className="w-3.5 h-3.5" />
-                            Target KB Khusus CASN / BKN
+                            Tanpa Batas Ukuran & Format File
                         </span>
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface border border-border/60 font-medium">
                             <Lock className="w-3.5 h-3.5 text-foreground/50" />
-                            Privasi Terjamin 100%
+                            Zero Server Upload
                         </span>
                     </div>
 
-                    {/* Interactive Compression Component */}
-                    <ClientCompress />
+                    {/* Interactive Archive Component */}
+                    <ClientArchiveZip />
                 </div>
             </main>
         </div>

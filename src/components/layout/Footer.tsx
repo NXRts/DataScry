@@ -32,7 +32,12 @@ export default function Footer() {
                             <ul className="space-y-3 text-sm text-foreground/60">
                                 <li>
                                     <Link href="/tools/compress" className="hover:text-primary transition-colors">
-                                        Kompresi File Lokal
+                                        Kompresi File Lokal (PDF & Foto)
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/tools/archive-zip" className="hover:text-primary transition-colors text-purple-400/80 font-medium">
+                                        Kompres Berkas ke ZIP
                                     </Link>
                                 </li>
                                 <li>
