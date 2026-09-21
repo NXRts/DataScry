@@ -9,7 +9,8 @@ import {
     ShieldCheck,
     FileSearch,
     FileText,
-    FileType
+    FileType,
+    FolderArchive
 } from "lucide-react";
 
 const TOOLS = [
@@ -47,6 +48,13 @@ const TOOLS = [
         icon: <Minimize2 size={32} className="text-blue-500" />,
         href: "/tools/compress",
         color: "blue"
+    },
+    {
+        title: "Kompres Berkas ke ZIP",
+        description: "Padatkan dan bungkus banyak file apa saja menjadi arsip .ZIP terkompresi.",
+        icon: <FolderArchive size={32} className="text-purple-500" />,
+        href: "/tools/archive-zip",
+        color: "purple"
     },
     {
         title: "Scrub EXIF Jejak Digital",
