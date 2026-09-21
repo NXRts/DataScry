@@ -10,7 +10,8 @@ import {
     FileSearch,
     FileText,
     FileType,
-    FolderArchive
+    FolderArchive,
+    RotateCw
 } from "lucide-react";
 
 const TOOLS = [
@@ -40,6 +41,13 @@ const TOOLS = [
         description: "Ekstrak satu atau beberapa halaman spesifik dari dokumen PDF besar.",
         icon: <Scissors size={32} className="text-rose-500" />,
         href: "/tools/split-pdf",
+        color: "rose"
+    },
+    {
+        title: "Putar Halaman PDF",
+        description: "Perbaiki orientasi halaman PDF yang miring atau terbalik dengan pratinjau visual instan.",
+        icon: <RotateCw size={32} className="text-rose-400" />,
+        href: "/tools/rotate-pdf",
         color: "rose"
     },
     {
