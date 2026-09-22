@@ -6,15 +6,19 @@ Dokumen ini merangkum rencana pengembangan fitur-fitur baru untuk **DataScry**. 
 
 ## 🌟 Prioritas Utama (High Impact & Rekomendasi)
 
-### 1. ✍️ Tanda Tangan Digital PDF (e-Sign PDF)
-- **Deskripsi**: Fitur untuk menggambar tanda tangan langsung di layar (mouse/touchscreen), mengunggah gambar paraf berlatar transparan, dan menempelkannya dengan presisi di halaman dokumen mana pun.
+### 1. ✅ ✍️ Tanda Tangan Digital PDF (e-Sign PDF) - [Selesai Diimplementasikan]
+- **Status**: ✅ **Tersedia di `/tools/sign-pdf`**
+- **Deskripsi**: Fitur untuk membubuhi tanda tangan atau paraf digital langsung di atas dokumen PDF tanpa perlu dicetak ataupun discan ulang, 100% lokal di browser.
 - **Kasus Penggunaan**: Surat lamaran kerja, formulir pendaftaran, surat pernyataan, dokumen kontrak, dan berkas administrasi kuliah/kantor.
 - **Fitur Utama**:
-  - Pad gambar tanda tangan interaktif (halus dan responsif).
-  - Pilihan warna tinta (hitam, biru tua).
-  - Unggah stempel/paraf transparan (PNG).
-  - Pengatur posisi & skala tanda tangan di atas pratinjau halaman PDF.
-- **Teknologi**: Canvas API + `pdf-lib`.
+  - 3 Metode input tanda tangan:
+    1. **Gambar Langsung (Draw)**: Kanvas mulus dengan dukungan sentuhan/stylus/mouse, pilihan warna tinta (Hitam, Biru Dongker, Biru Kantor), dan pengaturan ketebalan goresan pena.
+    2. **Unggah Paraf (Upload)**: Pengguna dapat mengunggah foto tanda tangan di atas kertas putih, dan sistem secara otomatis menghapus latar putih menjadi PNG transparan bersih!
+    3. **Ketik Nama (Type)**: Menghasilkan tanda tangan bergaya tulisan sambung (*cursive calligraphy*).
+  - Navigasi halaman PDF dan pratinjau kanvas beresolusi tajam.
+  - Overlay tanda tangan interaktif yang dapat digeser (drag & drop) dan diubah ukurannya (resize).
+  - Injeksi lossless langsung ke file PDF via `pdf-lib` dengan mapping koordinat presisi.
+- **Teknologi**: Canvas API + `pdfjs-dist` + `pdf-lib`.
 
 ---
 

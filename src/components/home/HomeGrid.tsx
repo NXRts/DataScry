@@ -12,7 +12,8 @@ import {
     FileType,
     FolderArchive,
     RotateCw,
-    Stamp
+    Stamp,
+    PenTool
 } from "lucide-react";
 
 const TOOLS = [
@@ -56,6 +57,13 @@ const TOOLS = [
         description: "Beri cap pengaman teks diagonal (CASN, Bank, Rahasia) untuk melindungi berkas penting.",
         icon: <Stamp size={32} className="text-rose-500" />,
         href: "/tools/watermark-pdf",
+        color: "rose"
+    },
+    {
+        title: "Tanda Tangan PDF",
+        description: "Bubuhi tanda tangan, paraf transparan, atau ketik nama langsung di atas dokumen PDF Anda.",
+        icon: <PenTool size={32} className="text-rose-500" />,
+        href: "/tools/sign-pdf",
         color: "rose"
     },
     {
