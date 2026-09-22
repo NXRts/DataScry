@@ -71,6 +71,11 @@ export default function Footer() {
                                     </Link>
                                 </li>
                                 <li>
+                                    <Link href="/tools/protect-pdf" className="hover:text-primary transition-colors text-amber-400/80 font-medium">
+                                        Kunci & Proteksi PDF
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/tools/merge-word" className="hover:text-primary transition-colors text-cyan-400/80 font-medium">
                                         Gabungkan Word (.docx)
                                     </Link>

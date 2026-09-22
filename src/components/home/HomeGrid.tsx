@@ -13,7 +13,8 @@ import {
     FolderArchive,
     RotateCw,
     Stamp,
-    PenTool
+    PenTool,
+    Lock
 } from "lucide-react";
 
 const TOOLS = [
@@ -65,6 +66,13 @@ const TOOLS = [
         icon: <PenTool size={32} className="text-rose-500" />,
         href: "/tools/sign-pdf",
         color: "rose"
+    },
+    {
+        title: "Kunci & Proteksi PDF",
+        description: "Kunci dokumen PDF dengan kata sandi rahasia dan enkripsi standar militer AES-256.",
+        icon: <Lock size={32} className="text-amber-500" />,
+        href: "/tools/protect-pdf",
+        color: "amber"
     },
     {
         title: "Kompres PDF & Gambar",
