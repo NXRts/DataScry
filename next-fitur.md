@@ -43,12 +43,15 @@ Dokumen ini merangkum rencana pengembangan fitur-fitur baru untuk **DataScry**. 
 
 ## 🛡️ Kategori Keamanan & Privasi Tingkat Lanjut
 
-### 4. 🏷️ Watermark & Stempel Pengaman PDF (PDF Watermark)
-- **Deskripsi**: Menambahkan teks cap pengaman transparan diagonal pada setiap halaman dokumen.
+### 4. ✅ 🏷️ Watermark & Stempel Pengaman PDF (PDF Watermark) - [Selesai Diimplementasikan]
+- **Status**: ✅ **Tersedia di `/tools/watermark-pdf`**
+- **Deskripsi**: Menambahkan teks cap pengaman transparan diagonal pada setiap halaman dokumen 100% lokal.
 - **Kasus Penggunaan**: Menambahkan tanda *"HANYA UNTUK VERIFIKASI BKN / CPNS"*, *"SALINAN KHUSUS BANK"*, atau *"DOKUMEN RAHASIA"* agar tidak disalahgunakan pihak ketiga.
 - **Fitur Utama**:
-  - Kustomisasi teks, tingkat transparansi (opacity), ukuran font, dan sudut kemiringan.
-  - Opsi penempatan (semua halaman atau halaman ganjil/genap).
+  - Preset cepat instansi Indonesia (CASN, Bank, Identitas, Rahasia, Salinan).
+  - Pratinjau interaktif real-time di layar.
+  - Kustomisasi teks, tingkat transparansi (opacity), ukuran font, warna tinta, sudut kemiringan, dan pola penempatan (Tengah / Berulang 3x3).
+  - Injeksi teks vektor lossless menggunakan `pdf-lib`.
 
 ### 5. ⬛ Sensor / Redaksi Data Sensitif (PDF Redactor)
 - **Deskripsi**: Menutup data pribadi (NIK, nomor KK, nomor rekening, alamat, tanda tangan lama) dengan kotak hitam permanen yang menghapus data di bawahnya.

@@ -11,7 +11,8 @@ import {
     FileText,
     FileType,
     FolderArchive,
-    RotateCw
+    RotateCw,
+    Stamp
 } from "lucide-react";
 
 const TOOLS = [
@@ -48,6 +49,13 @@ const TOOLS = [
         description: "Perbaiki orientasi halaman PDF yang miring atau terbalik dengan pratinjau visual instan.",
         icon: <RotateCw size={32} className="text-rose-400" />,
         href: "/tools/rotate-pdf",
+        color: "rose"
+    },
+    {
+        title: "Watermark PDF",
+        description: "Beri cap pengaman teks diagonal (CASN, Bank, Rahasia) untuk melindungi berkas penting.",
+        icon: <Stamp size={32} className="text-rose-500" />,
+        href: "/tools/watermark-pdf",
         color: "rose"
     },
     {
