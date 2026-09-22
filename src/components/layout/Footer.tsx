@@ -66,6 +66,11 @@ export default function Footer() {
                                     </Link>
                                 </li>
                                 <li>
+                                    <Link href="/tools/sign-pdf" className="hover:text-primary transition-colors text-rose-400/80 font-medium">
+                                        Tanda Tangan PDF (e-Sign)
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/tools/merge-word" className="hover:text-primary transition-colors text-cyan-400/80 font-medium">
                                         Gabungkan Word (.docx)
                                     </Link>
