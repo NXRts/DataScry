@@ -14,39 +14,106 @@ import {
     RefreshCw,
     Download,
     Maximize2,
-    Compass
+    Compass,
+    Monitor,
+    Layers,
+    Info,
+    Check
 } from "lucide-react";
 
-type PageSizeOption = "a4" | "letter" | "fit";
+type PageMode = "fit" | "document";
+type PageSizeOption = "fit" | "a4" | "letter";
 type OrientationOption = "auto" | "portrait" | "landscape";
 type MarginOption = "none" | "small" | "normal";
+type ImageFitOption = "contain" | "cover";
+
+interface ImageMeta {
+    file: File;
+    width: number;
+    height: number;
+    aspectRatio: number;
+    previewUrl: string;
+}
 
 const PAGE_DIMENSIONS = {
-    a4: { width: 595.28, height: 841.89, label: "A4 (Standar Dokumen)" },
-    letter: { width: 612.0, height: 792.0, label: "US Letter" },
-    fit: { width: 0, height: 0, label: "Sesuai Ukuran Gambar" },
+    a4: { width: 595.28, height: 841.89, label: "A4 (Standar Dokumen - 210×297mm)" },
+    letter: { width: 612.0, height: 792.0, label: "US Letter (216×279mm)" },
+    fit: { width: 0, height: 0, label: "Sesuai Ukuran Gambar (Otomatis)" },
 };
 
 const MARGIN_SIZES = {
-    none: { size: 0, label: "Tanpa Margin (Penuh)" },
-    small: { size: 20, label: "Margin Rapi (Standar)" },
-    normal: { size: 36, label: "Margin Lebar" },
+    none: { size: 0, label: "Tanpa Margin (Penuh / 0 mm)" },
+    small: { size: 15, label: "Margin Rapi (5 mm)" },
+    normal: { size: 30, label: "Margin Lebar (10 mm)" },
 };
 
 export default function ClientJpgToPdf() {
-    const [images, setImages] = useState<File[]>([]);
+    const [images, setImages] = useState<ImageMeta[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [processingProgress, setProcessingProgress] = useState<string>("");
     const [completePdf, setCompletePdf] = useState<Blob | null>(null);
 
-    // Settings
-    const [pageSize, setPageSize] = useState<PageSizeOption>("a4");
-    const [orientation, setOrientation] = useState<OrientationOption>("auto");
-    const [margin, setMargin] = useState<MarginOption>("small");
+    // Primary Layout Mode
+    // "fit" = Seamless borderless matching exact image dimensions (ideal for desktop screenshots & photos)
+    // "document" = Fixed paper size like A4/Letter (for printing & official documents)
+    const [pageMode, setPageMode] = useState<PageMode>("fit");
 
-    const handleFiles = (newFiles: File[]) => {
+    // Detailed Settings
+    const [pageSize, setPageSize] = useState<PageSizeOption>("fit");
+    const [orientation, setOrientation] = useState<OrientationOption>("auto");
+    const [margin, setMargin] = useState<MarginOption>("none");
+    const [imageFit, setImageFit] = useState<ImageFitOption>("contain");
+
+    // Notification banner
+    const [autoDetectNotice, setAutoDetectNotice] = useState<string | null>(null);
+
+    const handleFiles = async (newFiles: File[]) => {
         const imgFiles = newFiles.filter(f => f.type.startsWith("image/"));
-        setImages(prev => [...prev, ...imgFiles]);
+        if (imgFiles.length === 0) return;
+
+        // Load image dimensions to assist auto-detection
+        const loadedMetas: ImageMeta[] = [];
+        let hasScreenshot = false;
+
+        for (const file of imgFiles) {
+            const previewUrl = URL.createObjectURL(file);
+            const dims = await new Promise<{ width: number; height: number }>((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+                img.onerror = () => resolve({ width: 0, height: 0 });
+                img.src = previewUrl;
+            });
+
+            const ratio = dims.height > 0 ? dims.width / dims.height : 1;
+            loadedMetas.push({
+                file,
+                width: dims.width,
+                height: dims.height,
+                aspectRatio: ratio,
+                previewUrl,
+            });
+
+            // Detect desktop screenshots or wide landscape images (16:9 is 1.77, 16:10 is 1.6, ultrawide >= 2.0)
+            if (
+                ratio >= 1.35 || 
+                /screen|capture|cuplikan|tangkapan/i.test(file.name)
+            ) {
+                hasScreenshot = true;
+            }
+        }
+
+        setImages(prev => [...prev, ...loadedMetas]);
+
+        // Auto-switch to "fit" (Borderless) if screenshot or landscape image is detected
+        if (hasScreenshot) {
+            setPageMode("fit");
+            setPageSize("fit");
+            setMargin("none");
+            setOrientation("auto");
+            setAutoDetectNotice(
+                "💡 Terdeteksi tangkapan layar (screenshot): Mode 'Pas Ukuran Asli Gambar (Tanpa Border)' dipilih otomatis agar gambar tidak mengecil dan bebas dari border putih."
+            );
+        }
     };
 
     const moveImage = (index: number, direction: "left" | "right") => {
@@ -62,28 +129,49 @@ export default function ClientJpgToPdf() {
     };
 
     const removeImage = (index: number) => {
-        setImages(prev => prev.filter((_, i) => i !== index));
+        setImages(prev => {
+            const target = prev[index];
+            if (target?.previewUrl) {
+                URL.revokeObjectURL(target.previewUrl);
+            }
+            return prev.filter((_, i) => i !== index);
+        });
+    };
+
+    const handleSwitchMode = (mode: PageMode) => {
+        setPageMode(mode);
+        if (mode === "fit") {
+            setPageSize("fit");
+            setMargin("none");
+            setOrientation("auto");
+        } else {
+            setPageSize("a4");
+            setMargin("small");
+            setOrientation("auto");
+            setImageFit("contain");
+        }
     };
 
     const generatePDF = async () => {
         if (images.length === 0) return;
         setIsProcessing(true);
         setCompletePdf(null);
-        setProcessingProgress("Memulai persiapan dokumen...");
+        setProcessingProgress("Memulai persiapan dokumen PDF...");
 
         try {
             const pdfDoc = await PDFDocument.create();
 
             for (let i = 0; i < images.length; i++) {
-                const file = images[i];
+                const item = images[i];
+                const file = item.file;
                 setProcessingProgress(`Memproses foto ${i + 1} dari ${images.length}...`);
 
                 let image;
-                let imgWidth = 0;
-                let imgHeight = 0;
+                let imgWidth = item.width;
+                let imgHeight = item.height;
 
                 try {
-                    // Normalisasi gambar via createImageBitmap (otomatis membaca EXIF orientation)
+                    // Normalisasi gambar via createImageBitmap (otomatis membaca orientasi EXIF kamera)
                     let bitmap: ImageBitmap;
                     try {
                         bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
@@ -101,14 +189,23 @@ export default function ClientJpgToPdf() {
                     if (!ctx) continue;
                     ctx.drawImage(bitmap, 0, 0);
 
-                    // Konversi ke JPEG terkompresi berkualitas tinggi (0.92)
+                    // Untuk berkas PNG (screenshot teks/kode), simpan sebagai PNG murni agar bebas dari blur kompresi JPEG
+                    const isPng = file.type === "image/png" || file.name.toLowerCase().endsWith(".png");
+                    const mimeType = isPng ? "image/png" : "image/jpeg";
+                    const quality = isPng ? undefined : 0.95;
+
                     const blob = await new Promise<Blob | null>((resolve) => {
-                        canvas.toBlob((b) => resolve(b), "image/jpeg", 0.92);
+                        canvas.toBlob((b) => resolve(b), mimeType, quality);
                     });
 
                     if (!blob) continue;
                     const arrayBuffer = await blob.arrayBuffer();
-                    image = await pdfDoc.embedJpg(arrayBuffer);
+
+                    if (isPng) {
+                        image = await pdfDoc.embedPng(arrayBuffer);
+                    } else {
+                        image = await pdfDoc.embedJpg(arrayBuffer);
+                    }
                 } catch (err) {
                     console.warn(`Pemrosesan canvas gagal untuk ${file.name}, mencoba embedding langsung:`, err);
                     try {
@@ -137,16 +234,28 @@ export default function ClientJpgToPdf() {
                 const marginSize = MARGIN_SIZES[margin].size;
                 let pageW: number;
                 let pageH: number;
+                let drawW: number;
+                let drawH: number;
+                let x: number;
+                let y: number;
 
-                if (pageSize === "fit") {
-                    // Mode ukuran alami: gunakan konversi 150 DPI agar tidak terjadi pembesaran 500%
-                    const dpiScale = 72 / 150;
+                if (pageMode === "fit" || pageSize === "fit") {
+                    // MODE PAS UKURAN ASLI (BORDERLESS)
+                    // Gunakan skala layar 96 DPI standar (1 px = 0.75 pt) sehingga 1920x1080 -> 1440x810 pt
+                    const dpiScale = 72 / 96;
                     const naturalW = imgWidth * dpiScale;
                     const naturalH = imgHeight * dpiScale;
+
                     pageW = naturalW + (marginSize * 2);
                     pageH = naturalH + (marginSize * 2);
+
+                    drawW = naturalW;
+                    drawH = naturalH;
+                    x = marginSize;
+                    y = marginSize;
                 } else {
-                    const base = PAGE_DIMENSIONS[pageSize];
+                    // MODE STANDAR DOKUMEN (A4 / Letter)
+                    const base = PAGE_DIMENSIONS[pageSize as "a4" | "letter"] || PAGE_DIMENSIONS.a4;
                     const isImgLandscape = imgWidth > imgHeight;
 
                     let isPageLandscape = false;
@@ -165,19 +274,25 @@ export default function ClientJpgToPdf() {
                         pageW = Math.min(base.width, base.height);
                         pageH = Math.max(base.width, base.height);
                     }
+
+                    const usableW = Math.max(pageW - (marginSize * 2), 10);
+                    const usableH = Math.max(pageH - (marginSize * 2), 10);
+
+                    if (imageFit === "cover") {
+                        // Penuhi Halaman (Fill / Crop tepi tanpa border putih sama sekali)
+                        const scale = Math.max(usableW / imgWidth, usableH / imgHeight);
+                        drawW = imgWidth * scale;
+                        drawH = imgHeight * scale;
+                    } else {
+                        // Paskan Gambar (Contain / Letterbox utuh)
+                        const scale = Math.min(usableW / imgWidth, usableH / imgHeight);
+                        drawW = imgWidth * scale;
+                        drawH = imgHeight * scale;
+                    }
+
+                    x = marginSize + (usableW - drawW) / 2;
+                    y = marginSize + (usableH - drawH) / 2;
                 }
-
-                // 2. Hitung Skala Gambar agar Pas dan Terpusat (Centering)
-                const usableW = Math.max(pageW - (marginSize * 2), 10);
-                const usableH = Math.max(pageH - (marginSize * 2), 10);
-
-                const scale = Math.min(usableW / imgWidth, usableH / imgHeight);
-                const drawW = imgWidth * scale;
-                const drawH = imgHeight * scale;
-
-                // Pada pdf-lib, koordinat y=0 adalah sudut bawah halaman
-                const x = marginSize + (usableW - drawW) / 2;
-                const y = marginSize + (usableH - drawH) / 2;
 
                 const page = pdfDoc.addPage([pageW, pageH]);
                 page.drawImage(image, {
@@ -213,10 +328,23 @@ export default function ClientJpgToPdf() {
     };
 
     const resetState = () => {
+        images.forEach(item => {
+            if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
+        });
         setImages([]);
         setCompletePdf(null);
         setIsProcessing(false);
         setProcessingProgress("");
+        setAutoDetectNotice(null);
+    };
+
+    const formatRatio = (r: number) => {
+        if (Math.abs(r - 16 / 9) < 0.05) return "16:9 (Layar Lebar)";
+        if (Math.abs(r - 16 / 10) < 0.05) return "16:10 (Monitor)";
+        if (Math.abs(r - 4 / 3) < 0.05) return "4:3 (Foto Standar)";
+        if (Math.abs(r - 1) < 0.05) return "1:1 (Persegi)";
+        if (Math.abs(r - 9 / 16) < 0.05) return "9:16 (Layar HP)";
+        return r > 1 ? `${r.toFixed(2)}:1 (Lanskap)` : `1:${(1 / r).toFixed(2)} (Potret)`;
     };
 
     return (
@@ -226,8 +354,8 @@ export default function ClientJpgToPdf() {
                     <Dropzone
                         onFilesAccepted={handleFiles}
                         accept="image/*"
-                        title="Unggah Foto / Gambar"
-                        description="Mendukung JPG, PNG, WebP. Format potret dan lanskap akan otomatis disesuaikan ukurannya ke standar dokumen."
+                        title="Unggah Foto atau Tangkapan Layar (Screenshot)"
+                        description="Mendukung JPG, PNG, WebP. Screenshot desktop dan foto akan otomatis disesuaikan secara proporsional tanpa border putih."
                         icons={
                             <div className="flex items-center gap-1.5">
                                 <span className="text-amber-500 font-bold">JPG / PNG / WebP</span>
@@ -236,73 +364,152 @@ export default function ClientJpgToPdf() {
                     />
 
                     {images.length > 0 && (
-                        <div className="space-y-8">
+                        <div className="space-y-8 animate-fade-in">
+                            {/* Auto Detect Notice Banner */}
+                            {autoDetectNotice && (
+                                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs sm:text-sm flex items-start gap-3 shadow-lg">
+                                    <Info className="w-5 h-5 shrink-0 mt-0.5 text-amber-400" />
+                                    <div className="flex-1 font-medium">{autoDetectNotice}</div>
+                                </div>
+                            )}
+
                             {/* Panel Pengaturan Tata Letak Dokumen */}
-                            <div className="glass-panel p-6 rounded-2xl border border-border/80 space-y-6">
-                                <div className="flex items-center justify-between border-b border-border/40 pb-4">
+                            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-border/80 space-y-6 shadow-xl">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
                                     <div className="flex items-center gap-2">
                                         <Settings2 className="w-5 h-5 text-amber-500" />
                                         <h3 className="font-bold text-foreground text-base sm:text-lg">
-                                            Pengaturan Halaman PDF
+                                            Format & Ukuran Halaman PDF
                                         </h3>
                                     </div>
-                                    <span className="text-xs text-foreground/60 hidden sm:inline">
-                                        Mencegah hasil zoom berlebih pada dokumen
+                                    <span className="text-xs text-foreground/60">
+                                        Pilih bagaimana gambar disesuaikan pada halaman PDF
                                     </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    {/* 1. Ukuran Kertas */}
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wider flex items-center gap-1.5">
-                                            <FileText className="w-3.5 h-3.5 text-amber-500" />
-                                            Ukuran Kertas
-                                        </label>
-                                        <select
-                                            value={pageSize}
-                                            onChange={(e) => setPageSize(e.target.value as PageSizeOption)}
-                                            className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border text-foreground text-sm focus:outline-none focus:border-amber-500 transition-colors"
-                                        >
-                                            <option value="a4">A4 (Standar Dokumen - 210×297mm)</option>
-                                            <option value="letter">US Letter (216×279mm)</option>
-                                            <option value="fit">Pas Ukuran Gambar (Proporsional)</option>
-                                        </select>
-                                    </div>
+                                {/* Mode Pilihan Cepat: Pas Ukuran Asli vs Kertas Dokumen */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => handleSwitchMode("fit")}
+                                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative ${
+                                            pageMode === "fit"
+                                                ? "bg-amber-500/10 border-amber-500/60 shadow-lg text-foreground ring-1 ring-amber-500/30"
+                                                : "bg-surface/50 border-border/60 hover:bg-surface text-foreground/70"
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2.5">
+                                                <Monitor className={`w-5 h-5 ${pageMode === "fit" ? "text-amber-500" : "text-foreground/50"}`} />
+                                                <span className="font-bold text-sm sm:text-base">
+                                                    Pas Ukuran Asli Gambar (Borderless)
+                                                </span>
+                                            </div>
+                                            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
+                                                Rekomendasi Screenshot
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-foreground/60 leading-relaxed">
+                                            Ukuran halaman PDF persis 1:1 mengikuti gambar Anda. <strong>Tanpa border putih sama sekali</strong>, gambar tampil maksimal dan tajam di layar penuh.
+                                        </p>
+                                    </button>
 
-                                    {/* 2. Orientasi */}
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wider flex items-center gap-1.5">
-                                            <Compass className="w-3.5 h-3.5 text-amber-500" />
-                                            Orientasi Halaman
-                                        </label>
-                                        <select
-                                            value={orientation}
-                                            onChange={(e) => setOrientation(e.target.value as OrientationOption)}
-                                            className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border text-foreground text-sm focus:outline-none focus:border-amber-500 transition-colors"
-                                        >
-                                            <option value="auto">Otomatis (Sesuai Foto Masing-masing)</option>
-                                            <option value="portrait">Paksa Potret (Tegak)</option>
-                                            <option value="landscape">Paksa Lanskap (Mendatar)</option>
-                                        </select>
-                                    </div>
-
-                                    {/* 3. Margin */}
-                                    <div className="space-y-2">
-                                        <label className="text-xs font-semibold text-foreground/70 uppercase tracking-wider flex items-center gap-1.5">
-                                            <Maximize2 className="w-3.5 h-3.5 text-amber-500" />
-                                            Batas Tepi (Margin)
-                                        </label>
-                                        <select
-                                            value={margin}
-                                            onChange={(e) => setMargin(e.target.value as MarginOption)}
-                                            className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border text-foreground text-sm focus:outline-none focus:border-amber-500 transition-colors"
-                                        >
-                                            <option value="small">Margin Rapi (~7mm, Bagus Dicetak)</option>
-                                            <option value="none">Tanpa Margin (Gambar Penuh Halaman)</option>
-                                            <option value="normal">Margin Lebar (~13mm)</option>
-                                        </select>
-                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => handleSwitchMode("document")}
+                                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all ${
+                                            pageMode === "document"
+                                                ? "bg-amber-500/10 border-amber-500/60 shadow-lg text-foreground ring-1 ring-amber-500/30"
+                                                : "bg-surface/50 border-border/60 hover:bg-surface text-foreground/70"
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="flex items-center gap-2.5">
+                                                <Layers className={`w-5 h-5 ${pageMode === "document" ? "text-amber-500" : "text-foreground/50"}`} />
+                                                <span className="font-bold text-sm sm:text-base">
+                                                    Kertas Standar Dokumen (A4 / Cetak)
+                                                </span>
+                                            </div>
+                                            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-surface border border-border/70 text-foreground/50 font-medium">
+                                                Siap Print
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-foreground/60 leading-relaxed">
+                                            Menempatkan gambar pada ukuran kertas dokumen standar (A4 / Letter) untuk keperluan arsip administrasi atau dicetak ke printer fisik.
+                                        </p>
+                                    </button>
                                 </div>
+
+                                {/* Opsi Detail jika Mode Kertas Dokumen Dipilih */}
+                                {pageMode === "document" && (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-surface/60 border border-border/60 animate-fade-in">
+                                        {/* 1. Ukuran Kertas */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                                <FileText className="w-3.5 h-3.5 text-amber-500" />
+                                                Ukuran Kertas
+                                            </label>
+                                            <select
+                                                value={pageSize}
+                                                onChange={(e) => setPageSize(e.target.value as PageSizeOption)}
+                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
+                                            >
+                                                <option value="a4">A4 (210 × 297 mm)</option>
+                                                <option value="letter">US Letter (216 × 279 mm)</option>
+                                            </select>
+                                        </div>
+
+                                        {/* 2. Orientasi */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                                <Compass className="w-3.5 h-3.5 text-amber-500" />
+                                                Orientasi Halaman
+                                            </label>
+                                            <select
+                                                value={orientation}
+                                                onChange={(e) => setOrientation(e.target.value as OrientationOption)}
+                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
+                                            >
+                                                <option value="auto">Otomatis Sesuai Foto</option>
+                                                <option value="landscape">Paksa Lanskap (Mendatar)</option>
+                                                <option value="portrait">Paksa Potret (Tegak)</option>
+                                            </select>
+                                        </div>
+
+                                        {/* 3. Gaya Penyesuaian Gambar */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                                <Maximize2 className="w-3.5 h-3.5 text-amber-500" />
+                                                Penataan Gambar
+                                            </label>
+                                            <select
+                                                value={imageFit}
+                                                onChange={(e) => setImageFit(e.target.value as ImageFitOption)}
+                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
+                                            >
+                                                <option value="contain">Paskan Gambar (Utuh)</option>
+                                                <option value="cover">Penuhi Kertas (Tanpa Border)</option>
+                                            </select>
+                                        </div>
+
+                                        {/* 4. Margin */}
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                                <Maximize2 className="w-3.5 h-3.5 text-amber-500" />
+                                                Batas Tepi (Margin)
+                                            </label>
+                                            <select
+                                                value={margin}
+                                                onChange={(e) => setMargin(e.target.value as MarginOption)}
+                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
+                                            >
+                                                <option value="none">Tanpa Margin (0 mm)</option>
+                                                <option value="small">Margin Rapi (5 mm)</option>
+                                                <option value="normal">Margin Lebar (10 mm)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Header List Gambar & Tombol Proses */}
@@ -312,14 +519,14 @@ export default function ClientJpgToPdf() {
                                         Foto Terpilih ({images.length})
                                     </h2>
                                     <p className="text-xs text-foreground/60 mt-0.5">
-                                        Gunakan tombol panah untuk mengatur urutan halaman di PDF Anda.
+                                        Gunakan tombol panah untuk mengatur urutan halaman pada dokumen PDF Anda.
                                     </p>
                                 </div>
 
                                 <button
                                     onClick={generatePDF}
                                     disabled={isProcessing}
-                                    className={`px-8 py-3 rounded-full font-bold text-white transition-all shadow-lg flex items-center justify-center gap-2 ${
+                                    className={`px-8 py-3.5 rounded-full font-bold text-white transition-all shadow-lg flex items-center justify-center gap-2 ${
                                         isProcessing 
                                             ? "bg-amber-500/50 cursor-not-allowed" 
                                             : "bg-amber-500 hover:bg-amber-600 hover:scale-105 active:scale-95 shadow-amber-500/20"
@@ -328,12 +535,12 @@ export default function ClientJpgToPdf() {
                                     {isProcessing ? (
                                         <>
                                             <RefreshCw className="w-4 h-4 animate-spin" />
-                                            <span>Memproses...</span>
+                                            <span>Memproses PDF...</span>
                                         </>
                                     ) : (
                                         <>
                                             <Sparkles className="w-4 h-4" />
-                                            <span>Konversi ke PDF</span>
+                                            <span>Konversi ke PDF Sekarang</span>
                                         </>
                                     )}
                                 </button>
@@ -341,7 +548,7 @@ export default function ClientJpgToPdf() {
 
                             {/* Progress bar info jika sedang proses */}
                             {isProcessing && processingProgress && (
-                                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-medium flex items-center gap-2 animate-pulse">
+                                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm font-medium flex items-center gap-2 animate-pulse">
                                     <RefreshCw className="w-4 h-4 animate-spin" />
                                     <span>{processingProgress}</span>
                                 </div>
@@ -349,15 +556,22 @@ export default function ClientJpgToPdf() {
 
                             {/* Grid Pratinjau & Manajemen Urutan */}
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                                {images.map((img, idx) => (
+                                {images.map((item, idx) => (
                                     <div
-                                        key={`${img.name}-${idx}`}
+                                        key={`${item.file.name}-${idx}`}
                                         className="relative aspect-3/4 rounded-2xl overflow-hidden glass-panel border border-border/80 group flex flex-col bg-surface/50 shadow-sm"
                                     >
                                         {/* Label Nomor Halaman */}
-                                        <div className="absolute top-2.5 left-2.5 z-10 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md text-white text-[11px] font-bold border border-white/10">
+                                        <div className="absolute top-2.5 left-2.5 z-10 px-2 py-1 rounded-md bg-black/75 backdrop-blur-md text-white text-[11px] font-bold border border-white/10">
                                             Hal {idx + 1}
                                         </div>
+
+                                        {/* Dimensi & Aspek Rasio Tag */}
+                                        {item.width > 0 && (
+                                            <div className="absolute bottom-12 left-2 z-10 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md text-white/90 text-[10px] font-medium border border-white/10">
+                                                {item.width}×{item.height} • {formatRatio(item.aspectRatio)}
+                                            </div>
+                                        )}
 
                                         {/* Tombol Hapus */}
                                         <button
@@ -371,16 +585,16 @@ export default function ClientJpgToPdf() {
                                         {/* Preview Gambar */}
                                         <div className="flex-1 relative overflow-hidden flex items-center justify-center bg-black/40">
                                             <img
-                                                src={URL.createObjectURL(img)}
-                                                alt={img.name}
+                                                src={item.previewUrl}
+                                                alt={item.file.name}
                                                 className="w-full h-full object-contain p-2"
                                             />
                                         </div>
 
                                         {/* Bar Kontrol Bawah (Nama File & Urutan) */}
                                         <div className="p-2.5 bg-surface/90 border-t border-border/50 flex items-center justify-between gap-1">
-                                            <p className="text-foreground/80 text-xs truncate flex-1 font-medium" title={img.name}>
-                                                {img.name}
+                                            <p className="text-foreground/80 text-xs truncate flex-1 font-medium" title={item.file.name}>
+                                                {item.file.name}
                                             </p>
 
                                             <div className="flex items-center gap-1">
@@ -410,7 +624,7 @@ export default function ClientJpgToPdf() {
                 </>
             ) : (
                 /* Sukses & Download State */
-                <div className="p-8 sm:p-12 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-6 max-w-2xl mx-auto mt-6 glass-panel">
+                <div className="p-8 sm:p-12 rounded-3xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-6 max-w-2xl mx-auto mt-6 glass-panel animate-fade-in shadow-2xl">
                     <div className="w-20 h-20 mx-auto bg-emerald-500/20 rounded-full flex items-center justify-center mb-2 shadow-inner">
                         <CheckCircle2 className="w-10 h-10 text-emerald-400" />
                     </div>
@@ -420,7 +634,11 @@ export default function ClientJpgToPdf() {
                             PDF Siap Diunduh!
                         </h3>
                         <p className="text-foreground/70 text-base max-w-md mx-auto">
-                            Semua gambar berhasil diselaraskan ke ukuran standar dokumen (A4) yang rapi, proporsional, dan tidak lagi ngezoom raksasa.
+                            {pageMode === "fit" ? (
+                                <span>Dokumen PDF Anda telah disesuaikan <strong>100% pas dengan ukuran asli gambar tanpa border putih</strong> yang mengganggu.</span>
+                            ) : (
+                                <span>Dokumen PDF Anda telah diselaraskan ke ukuran kertas standar <strong>{pageSize.toUpperCase()}</strong> yang rapi dan siap cetak.</span>
+                            )}
                         </p>
                     </div>
 
@@ -438,7 +656,7 @@ export default function ClientJpgToPdf() {
                             className="px-8 py-4 rounded-2xl bg-surface hover:bg-surface/80 text-foreground font-bold transition-all border border-border hover:scale-105 active:scale-95 w-full sm:w-auto flex items-center justify-center gap-2"
                         >
                             <RefreshCw className="w-4 h-4" />
-                            <span>Konversi Lagi</span>
+                            <span>Konversi Berkas Lain</span>
                         </button>
                     </div>
                 </div>
