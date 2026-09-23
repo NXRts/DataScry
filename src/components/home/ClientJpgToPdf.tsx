@@ -19,7 +19,8 @@ import {
     Monitor,
     Layers,
     Info,
-    Check
+    Check,
+    RotateCcw
 } from "lucide-react";
 
 type PageMode = "fit" | "document";
@@ -490,9 +491,20 @@ export default function ClientJpgToPdf() {
                                             Format & Ukuran Halaman PDF
                                         </h3>
                                     </div>
-                                    <span className="text-xs text-foreground/60">
-                                        Pilih bagaimana gambar disesuaikan pada halaman PDF
-                                    </span>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs text-foreground/60 hidden md:inline">
+                                            Pilih bagaimana gambar disesuaikan pada halaman PDF
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={resetState}
+                                            className="text-xs text-foreground/50 hover:text-rose-400 transition-colors flex items-center gap-1.5 cursor-pointer"
+                                            title="Reset semua pilihan dan ganti berkas"
+                                        >
+                                            <RotateCcw className="w-3.5 h-3.5" />
+                                            <span>Ganti / Reset Berkas</span>
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Mode Pilihan Cepat: Pas Ukuran Asli vs Kertas Dokumen */}
@@ -650,9 +662,21 @@ export default function ClientJpgToPdf() {
                             {/* Header List Gambar & Tombol Proses */}
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
-                                        Foto Terpilih ({images.length})
-                                    </h2>
+                                    <div className="flex items-center gap-3">
+                                        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
+                                            Foto Terpilih ({images.length})
+                                        </h2>
+                                        <button
+                                            type="button"
+                                            onClick={resetState}
+                                            disabled={isProcessing}
+                                            className="px-3 py-1 rounded-full text-xs font-semibold text-rose-400 hover:text-rose-300 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-40"
+                                            title="Hapus semua foto yang telah dipilih"
+                                        >
+                                            <Trash2 className="w-3.5 h-3.5" />
+                                            <span>Clear Semua</span>
+                                        </button>
+                                    </div>
                                     <p className="text-xs text-foreground/60 mt-0.5">
                                         Gunakan tombol panah untuk mengatur urutan halaman pada dokumen PDF Anda.
                                     </p>
