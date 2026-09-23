@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, PDFName, PDFNumber, PDFBool } from "pdf-lib";
 import { 
     Settings2, 
     Trash2, 
@@ -349,17 +349,15 @@ export default function ClientJpgToPdf() {
                 let y: number;
 
                 if (pageMode === "fit" || pageSize === "fit") {
-                    // MODE PAS UKURAN ASLI (BORDERLESS)
-                    // Gunakan skala layar 96 DPI standar (1 px = 0.75 pt) sehingga 1920x1080 -> 1440x810 pt
-                    const dpiScale = 72 / 96;
-                    const naturalW = imgWidth * dpiScale;
-                    const naturalH = imgHeight * dpiScale;
+                    // MODE PAS UKURAN ASLI (1:1 NATIVE SCREEN RESOLUTION & BORDERLESS)
+                    // 1 piksel gambar = 1 pt PDF (misal screenshot 1920x1080 -> halaman PDF 1920x1080 pt).
+                    // Saat dibuka di Google Drive pada zoom bawaan 100%, halaman tampil 100% BESAR & PENUH
+                    // (1920px lebar layar). Baris kode VS Code dan terminal tajam maksimal tanpa mengecil!
+                    pageW = imgWidth + (marginSize * 2);
+                    pageH = imgHeight + (marginSize * 2);
 
-                    pageW = naturalW + (marginSize * 2);
-                    pageH = naturalH + (marginSize * 2);
-
-                    drawW = naturalW;
-                    drawH = naturalH;
+                    drawW = imgWidth;
+                    drawH = imgHeight;
                     x = marginSize;
                     y = marginSize;
                 } else {
@@ -410,6 +408,25 @@ export default function ClientJpgToPdf() {
                     width: drawW,
                     height: drawH,
                 });
+            }
+
+            // Set OpenAction ke FitH (Fit to Width / Melebar Penuh)
+            // Ini memerintahkan penampil PDF (Google Drive, Chrome, Acrobat) untuk otomatis
+            // melebarkan dokumen 100% dari tepi kiri ke kanan layar, sehingga tulisan kodingan besar
+            // dan dokumen bisa di-scroll ke bawah layaknya dokumen biasa.
+            try {
+                const firstPage = pdfDoc.getPage(0);
+                if (firstPage) {
+                    const pageHeight = firstPage.getHeight();
+                    const openAction = pdfDoc.context.obj([
+                        firstPage.ref,
+                        PDFName.of('FitH'),
+                        PDFNumber.of(pageHeight)
+                    ]);
+                    pdfDoc.catalog.set(PDFName.of('OpenAction'), openAction);
+                }
+            } catch (prefErr) {
+                console.warn("Gagal menyetel open action FitH:", prefErr);
             }
 
             setProcessingProgress("Menyusun dan merender berkas PDF...");
@@ -507,7 +524,7 @@ export default function ClientJpgToPdf() {
                                     </div>
                                 </div>
 
-                                {/* Mode Pilihan Cepat: Pas Ukuran Asli vs Kertas Dokumen */}
+                                 {/* Mode Pilihan Cepat: Pas Ukuran Asli vs Kertas Dokumen */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <button
                                         type="button"
@@ -524,21 +541,26 @@ export default function ClientJpgToPdf() {
                                                     <div className={`p-2 rounded-xl transition-colors ${pageMode === "fit" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
                                                         <Monitor className="w-5 h-5" />
                                                     </div>
-                                                    <span className="font-bold text-base text-foreground">
-                                                        Pas Ukuran Asli Gambar
-                                                    </span>
+                                                    <div>
+                                                        <span className="font-bold text-base text-foreground block">
+                                                            Pas Ukuran Asli Gambar
+                                                        </span>
+                                                        <span className="text-[11px] text-amber-400 font-medium">
+                                                            1:1 Skala Resolusi Penuh
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30 shrink-0">
-                                                    Rekomendasi
+                                                    Rekomendasi Google Drive & Layar
                                                 </span>
                                             </div>
                                             <p className="text-xs text-foreground/60 leading-relaxed">
-                                                Ukuran halaman PDF persis 1:1 mengikuti gambar Anda. <strong>Tanpa border putih sama sekali</strong>, gambar tampil maksimal dan tajam di layar penuh.
+                                                Ukuran halaman PDF persis 1:1 mengikuti resolusi monitor Anda (misal 1920×1080 pt). <strong>Tampil besar penuh di Google Drive</strong>, tulisan kodingan tajam maksimal, dan <strong>tanpa border putih</strong>.
                                             </p>
                                         </div>
 
                                         <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                                            <span className="text-foreground/50">Cocok untuk: Screenshot layar, foto, poster</span>
+                                            <span className="text-foreground/50">Cocok untuk: Screenshot koding, tugas di G-Drive, foto HD</span>
                                             {pageMode === "fit" && (
                                                 <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
                                                     <Check className="w-3.5 h-3.5" />
@@ -563,21 +585,26 @@ export default function ClientJpgToPdf() {
                                                     <div className={`p-2 rounded-xl transition-colors ${pageMode === "document" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
                                                         <Layers className="w-5 h-5" />
                                                     </div>
-                                                    <span className="font-bold text-base text-foreground">
-                                                        Kertas Standar Dokumen
-                                                    </span>
+                                                    <div>
+                                                        <span className="font-bold text-base text-foreground block">
+                                                            Kertas Standar Dokumen
+                                                        </span>
+                                                        <span className="text-[11px] text-foreground/50 font-medium">
+                                                            Format Cetak Fisik
+                                                        </span>
+                                                    </div>
                                                 </div>
                                                 <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-surface border border-border/80 text-foreground/60 font-medium shrink-0">
                                                     A4 / Letter
                                                 </span>
                                             </div>
                                             <p className="text-xs text-foreground/60 leading-relaxed">
-                                                Menempatkan gambar pada ukuran kertas dokumen standar (A4 / Letter) untuk keperluan arsip administrasi atau dicetak ke printer fisik.
+                                                Menempatkan gambar pada ukuran kertas fisik standar (A4 / Letter) untuk dicetak ke mesin printer fisik atau arsip administrasi resmi.
                                             </p>
                                         </div>
 
                                         <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                                            <span className="text-foreground/50">Cocok untuk: Berkas formulir, dokumen cetak</span>
+                                            <span className="text-foreground/50">Cocok untuk: Cetak printer kertas nyata, berkas kantor</span>
                                             {pageMode === "document" && (
                                                 <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
                                                     <Check className="w-3.5 h-3.5" />
@@ -590,71 +617,80 @@ export default function ClientJpgToPdf() {
 
                                 {/* Opsi Detail jika Mode Kertas Dokumen Dipilih */}
                                 {pageMode === "document" && (
-                                    <div 
-                                        ref={dropdownContainerRef}
-                                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 sm:p-5 rounded-2xl bg-surface/60 border border-border/60 animate-fade-in"
-                                    >
-                                        {/* 1. Ukuran Kertas */}
-                                        <CustomSelect
-                                            id="pageSize"
-                                            label="Ukuran Kertas"
-                                            icon={<FileText className="w-3.5 h-3.5 text-amber-500" />}
-                                            value={pageSize}
-                                            options={[
-                                                { value: "a4", label: "A4 (210 × 297 mm)", description: "Standar Dokumen & Surat" },
-                                                { value: "letter", label: "US Letter (216 × 279 mm)", description: "Standar Internasional AS" },
-                                            ]}
-                                            onChange={(val) => setPageSize(val as PageSizeOption)}
-                                            activeDropdown={activeDropdown}
-                                            setActiveDropdown={setActiveDropdown}
-                                        />
+                                    <div className="space-y-3 animate-fade-in">
+                                        <div 
+                                            ref={dropdownContainerRef}
+                                            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 sm:p-5 rounded-2xl bg-surface/60 border border-border/60"
+                                        >
+                                            {/* 1. Ukuran Kertas */}
+                                            <CustomSelect
+                                                id="pageSize"
+                                                label="Ukuran Kertas"
+                                                icon={<FileText className="w-3.5 h-3.5 text-amber-500" />}
+                                                value={pageSize}
+                                                options={[
+                                                    { value: "a4", label: "A4 (210 × 297 mm)", description: "Standar Dokumen & Surat" },
+                                                    { value: "letter", label: "US Letter (216 × 279 mm)", description: "Standar Internasional AS" },
+                                                ]}
+                                                onChange={(val) => setPageSize(val as PageSizeOption)}
+                                                activeDropdown={activeDropdown}
+                                                setActiveDropdown={setActiveDropdown}
+                                            />
 
-                                        {/* 2. Orientasi */}
-                                        <CustomSelect
-                                            id="orientation"
-                                            label="Orientasi Halaman"
-                                            icon={<Compass className="w-3.5 h-3.5 text-amber-500" />}
-                                            value={orientation}
-                                            options={[
-                                                { value: "auto", label: "Otomatis Sesuai Foto", description: "Otomatis potret atau lanskap" },
-                                                { value: "landscape", label: "Paksa Lanskap (Mendatar)", description: "Lebar lebih panjang dari tinggi" },
-                                                { value: "portrait", label: "Paksa Potret (Tegak)", description: "Tinggi lebih panjang dari lebar" },
-                                            ]}
-                                            onChange={(val) => setOrientation(val as OrientationOption)}
-                                            activeDropdown={activeDropdown}
-                                            setActiveDropdown={setActiveDropdown}
-                                        />
+                                            {/* 2. Orientasi */}
+                                            <CustomSelect
+                                                id="orientation"
+                                                label="Orientasi Halaman"
+                                                icon={<Compass className="w-3.5 h-3.5 text-amber-500" />}
+                                                value={orientation}
+                                                options={[
+                                                    { value: "auto", label: "Otomatis Sesuai Foto", description: "Otomatis potret atau lanskap" },
+                                                    { value: "landscape", label: "Paksa Lanskap (Mendatar)", description: "Lebar lebih panjang dari tinggi" },
+                                                    { value: "portrait", label: "Paksa Potret (Tegak)", description: "Tinggi lebih panjang dari lebar" },
+                                                ]}
+                                                onChange={(val) => setOrientation(val as OrientationOption)}
+                                                activeDropdown={activeDropdown}
+                                                setActiveDropdown={setActiveDropdown}
+                                            />
 
-                                        {/* 3. Gaya Penyesuaian Gambar */}
-                                        <CustomSelect
-                                            id="imageFit"
-                                            label="Penataan Gambar"
-                                            icon={<Maximize2 className="w-3.5 h-3.5 text-amber-500" />}
-                                            value={imageFit}
-                                            options={[
-                                                { value: "contain", label: "Paskan Gambar (Utuh)", description: "Seluruh foto terlihat tanpa terpotong" },
-                                                { value: "cover", label: "Penuhi Kertas (Cover)", description: "Penuh sampai tepi tanpa border putih" },
-                                            ]}
-                                            onChange={(val) => setImageFit(val as ImageFitOption)}
-                                            activeDropdown={activeDropdown}
-                                            setActiveDropdown={setActiveDropdown}
-                                        />
+                                            {/* 3. Gaya Penyesuaian Gambar */}
+                                            <CustomSelect
+                                                id="imageFit"
+                                                label="Penataan Gambar"
+                                                icon={<Maximize2 className="w-3.5 h-3.5 text-amber-500" />}
+                                                value={imageFit}
+                                                options={[
+                                                    { value: "contain", label: "Paskan Gambar (Utuh)", description: "Seluruh foto terlihat tanpa terpotong" },
+                                                    { value: "cover", label: "Penuhi Kertas (Cover)", description: "Penuh sampai tepi tanpa border putih" },
+                                                ]}
+                                                onChange={(val) => setImageFit(val as ImageFitOption)}
+                                                activeDropdown={activeDropdown}
+                                                setActiveDropdown={setActiveDropdown}
+                                            />
 
-                                        {/* 4. Margin */}
-                                        <CustomSelect
-                                            id="margin"
-                                            label="Batas Tepi (Margin)"
-                                            icon={<Maximize2 className="w-3.5 h-3.5 text-amber-500" />}
-                                            value={margin}
-                                            options={[
-                                                { value: "none", label: "Tanpa Margin (0 mm)", description: "Penuh sampai ujung kertas" },
-                                                { value: "small", label: "Margin Rapi (5 mm)", description: "Batas aman cetak printer" },
-                                                { value: "normal", label: "Margin Lebar (10 mm)", description: "Ruang untuk staples / jilid" },
-                                            ]}
-                                            onChange={(val) => setMargin(val as MarginOption)}
-                                            activeDropdown={activeDropdown}
-                                            setActiveDropdown={setActiveDropdown}
-                                        />
+                                            {/* 4. Margin */}
+                                            <CustomSelect
+                                                id="margin"
+                                                label="Batas Tepi (Margin)"
+                                                icon={<Maximize2 className="w-3.5 h-3.5 text-amber-500" />}
+                                                value={margin}
+                                                options={[
+                                                    { value: "none", label: "Tanpa Margin (0 mm)", description: "Penuh sampai ujung kertas" },
+                                                    { value: "small", label: "Margin Rapi (5 mm)", description: "Batas aman cetak printer" },
+                                                    { value: "normal", label: "Margin Lebar (10 mm)", description: "Ruang untuk staples / jilid" },
+                                                ]}
+                                                onChange={(val) => setMargin(val as MarginOption)}
+                                                activeDropdown={activeDropdown}
+                                                setActiveDropdown={setActiveDropdown}
+                                            />
+                                        </div>
+
+                                        <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300 flex items-start gap-2.5">
+                                            <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                                            <div className="leading-relaxed">
+                                                <span className="font-semibold text-blue-200">Tips Google Drive & Layar:</span> Ukuran kertas A4 fisik (21×29,7 cm) secara alami tampak lebih kecil di layar monitor saat dibuka di Google Drive (zoom bawaan 100%). Jika berkas ditujukan untuk dibaca dosen/rekan di laptop via Google Drive, disarankan menggunakan mode <strong>Pas Ukuran Asli Gambar</strong> agar dokumen langsung besar memenuhi jendela preview tanpa dosen harus memperbesar zoom.
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
