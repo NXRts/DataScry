@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import { PDFDocument } from "pdf-lib";
 import { 
@@ -8,6 +8,7 @@ import {
     Trash2, 
     ChevronLeft, 
     ChevronRight, 
+    ChevronDown,
     FileText, 
     CheckCircle2, 
     Sparkles, 
@@ -47,6 +48,95 @@ const MARGIN_SIZES = {
     normal: { size: 30, label: "Margin Lebar (10 mm)" },
 };
 
+interface CustomSelectOption<T extends string> {
+    value: T;
+    label: string;
+    description?: string;
+}
+
+interface CustomSelectProps<T extends string> {
+    label: string;
+    icon: React.ReactNode;
+    value: T;
+    options: CustomSelectOption<T>[];
+    onChange: (value: T) => void;
+    id: string;
+    activeDropdown: string | null;
+    setActiveDropdown: (id: string | null) => void;
+}
+
+function CustomSelect<T extends string>({
+    label,
+    icon,
+    value,
+    options,
+    onChange,
+    id,
+    activeDropdown,
+    setActiveDropdown,
+}: CustomSelectProps<T>) {
+    const isOpen = activeDropdown === id;
+    const selectedOption = options.find((o) => o.value === value) || options[0];
+
+    return (
+        <div className="space-y-1.5 relative">
+            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5 select-none">
+                {icon}
+                {label}
+            </label>
+            <div className="relative">
+                <button
+                    type="button"
+                    onClick={() => setActiveDropdown(isOpen ? null : id)}
+                    className={`w-full px-3 py-2.5 rounded-xl border text-left text-xs font-medium transition-all flex items-center justify-between gap-2 cursor-pointer ${
+                        isOpen
+                            ? "bg-surface border-amber-500 ring-2 ring-amber-500/20 shadow-md text-foreground"
+                            : "bg-surface/80 hover:bg-surface border-border/80 hover:border-amber-500/40 text-foreground/90"
+                    }`}
+                >
+                    <span className="truncate">{selectedOption?.label}</span>
+                    <ChevronDown
+                        className={`w-3.5 h-3.5 text-foreground/40 shrink-0 transition-transform duration-200 ${
+                            isOpen ? "rotate-180 text-amber-500" : ""
+                        }`}
+                    />
+                </button>
+
+                {isOpen && (
+                    <div className="absolute top-full left-0 right-0 z-50 mt-1.5 min-w-52.5 p-1.5 rounded-2xl bg-neutral-900/95 backdrop-blur-xl border border-border/80 shadow-2xl space-y-1 animate-fade-in">
+                        {options.map((opt) => {
+                            const isSelected = opt.value === value;
+                            return (
+                                <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => {
+                                        onChange(opt.value);
+                                        setActiveDropdown(null);
+                                    }}
+                                    className={`w-full px-3 py-2 rounded-xl text-left text-xs transition-colors flex items-center justify-between gap-2 cursor-pointer ${
+                                        isSelected
+                                            ? "bg-amber-500/15 text-amber-400 font-semibold"
+                                            : "text-foreground/80 hover:bg-surface/80 hover:text-foreground font-normal"
+                                    }`}
+                                >
+                                    <div className="truncate">
+                                        <div className="truncate">{opt.label}</div>
+                                        {opt.description && (
+                                            <div className="text-[10px] text-foreground/50">{opt.description}</div>
+                                        )}
+                                    </div>
+                                    {isSelected && <Check className="w-3.5 h-3.5 text-amber-400 shrink-0" />}
+                                </button>
+                            );
+                        })}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 export default function ClientJpgToPdf() {
     const [images, setImages] = useState<ImageMeta[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -63,6 +153,24 @@ export default function ClientJpgToPdf() {
     const [orientation, setOrientation] = useState<OrientationOption>("auto");
     const [margin, setMargin] = useState<MarginOption>("none");
     const [imageFit, setImageFit] = useState<ImageFitOption>("contain");
+
+    // Active dropdown state for custom selects
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const dropdownContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleOutsideClick = (e: MouseEvent) => {
+            if (dropdownContainerRef.current && !dropdownContainerRef.current.contains(e.target as Node)) {
+                setActiveDropdown(null);
+            }
+        };
+        if (activeDropdown) {
+            document.addEventListener("mousedown", handleOutsideClick);
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, [activeDropdown]);
 
     // Notification banner
     const [autoDetectNotice, setAutoDetectNotice] = useState<string | null>(null);
@@ -392,122 +500,149 @@ export default function ClientJpgToPdf() {
                                     <button
                                         type="button"
                                         onClick={() => handleSwitchMode("fit")}
-                                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative ${
+                                        className={`p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between group ${
                                             pageMode === "fit"
                                                 ? "bg-amber-500/10 border-amber-500/60 shadow-lg text-foreground ring-1 ring-amber-500/30"
                                                 : "bg-surface/50 border-border/60 hover:bg-surface text-foreground/70"
                                         }`}
                                     >
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="flex items-center gap-2.5">
-                                                <Monitor className={`w-5 h-5 ${pageMode === "fit" ? "text-amber-500" : "text-foreground/50"}`} />
-                                                <span className="font-bold text-sm sm:text-base">
-                                                    Pas Ukuran Asli Gambar (Borderless)
+                                        <div>
+                                            <div className="flex items-center justify-between gap-3 mb-2.5">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className={`p-2 rounded-xl transition-colors ${pageMode === "fit" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
+                                                        <Monitor className="w-5 h-5" />
+                                                    </div>
+                                                    <span className="font-bold text-base text-foreground">
+                                                        Pas Ukuran Asli Gambar
+                                                    </span>
+                                                </div>
+                                                <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30 shrink-0">
+                                                    Rekomendasi
                                                 </span>
                                             </div>
-                                            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
-                                                Rekomendasi Screenshot
-                                            </span>
+                                            <p className="text-xs text-foreground/60 leading-relaxed">
+                                                Ukuran halaman PDF persis 1:1 mengikuti gambar Anda. <strong>Tanpa border putih sama sekali</strong>, gambar tampil maksimal dan tajam di layar penuh.
+                                            </p>
                                         </div>
-                                        <p className="text-xs text-foreground/60 leading-relaxed">
-                                            Ukuran halaman PDF persis 1:1 mengikuti gambar Anda. <strong>Tanpa border putih sama sekali</strong>, gambar tampil maksimal dan tajam di layar penuh.
-                                        </p>
+
+                                        <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
+                                            <span className="text-foreground/50">Cocok untuk: Screenshot layar, foto, poster</span>
+                                            {pageMode === "fit" && (
+                                                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
+                                                    <Check className="w-3.5 h-3.5" />
+                                                    Aktif
+                                                </span>
+                                            )}
+                                        </div>
                                     </button>
 
                                     <button
                                         type="button"
                                         onClick={() => handleSwitchMode("document")}
-                                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all ${
+                                        className={`p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between group ${
                                             pageMode === "document"
                                                 ? "bg-amber-500/10 border-amber-500/60 shadow-lg text-foreground ring-1 ring-amber-500/30"
                                                 : "bg-surface/50 border-border/60 hover:bg-surface text-foreground/70"
                                         }`}
                                     >
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="flex items-center gap-2.5">
-                                                <Layers className={`w-5 h-5 ${pageMode === "document" ? "text-amber-500" : "text-foreground/50"}`} />
-                                                <span className="font-bold text-sm sm:text-base">
-                                                    Kertas Standar Dokumen (A4 / Cetak)
+                                        <div>
+                                            <div className="flex items-center justify-between gap-3 mb-2.5">
+                                                <div className="flex items-center gap-2.5">
+                                                    <div className={`p-2 rounded-xl transition-colors ${pageMode === "document" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
+                                                        <Layers className="w-5 h-5" />
+                                                    </div>
+                                                    <span className="font-bold text-base text-foreground">
+                                                        Kertas Standar Dokumen
+                                                    </span>
+                                                </div>
+                                                <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-surface border border-border/80 text-foreground/60 font-medium shrink-0">
+                                                    A4 / Letter
                                                 </span>
                                             </div>
-                                            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-surface border border-border/70 text-foreground/50 font-medium">
-                                                Siap Print
-                                            </span>
+                                            <p className="text-xs text-foreground/60 leading-relaxed">
+                                                Menempatkan gambar pada ukuran kertas dokumen standar (A4 / Letter) untuk keperluan arsip administrasi atau dicetak ke printer fisik.
+                                            </p>
                                         </div>
-                                        <p className="text-xs text-foreground/60 leading-relaxed">
-                                            Menempatkan gambar pada ukuran kertas dokumen standar (A4 / Letter) untuk keperluan arsip administrasi atau dicetak ke printer fisik.
-                                        </p>
+
+                                        <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
+                                            <span className="text-foreground/50">Cocok untuk: Berkas formulir, dokumen cetak</span>
+                                            {pageMode === "document" && (
+                                                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
+                                                    <Check className="w-3.5 h-3.5" />
+                                                    Aktif
+                                                </span>
+                                            )}
+                                        </div>
                                     </button>
                                 </div>
 
                                 {/* Opsi Detail jika Mode Kertas Dokumen Dipilih */}
                                 {pageMode === "document" && (
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-surface/60 border border-border/60 animate-fade-in">
+                                    <div 
+                                        ref={dropdownContainerRef}
+                                        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 sm:p-5 rounded-2xl bg-surface/60 border border-border/60 animate-fade-in"
+                                    >
                                         {/* 1. Ukuran Kertas */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
-                                                <FileText className="w-3.5 h-3.5 text-amber-500" />
-                                                Ukuran Kertas
-                                            </label>
-                                            <select
-                                                value={pageSize}
-                                                onChange={(e) => setPageSize(e.target.value as PageSizeOption)}
-                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
-                                            >
-                                                <option value="a4">A4 (210 × 297 mm)</option>
-                                                <option value="letter">US Letter (216 × 279 mm)</option>
-                                            </select>
-                                        </div>
+                                        <CustomSelect
+                                            id="pageSize"
+                                            label="Ukuran Kertas"
+                                            icon={<FileText className="w-3.5 h-3.5 text-amber-500" />}
+                                            value={pageSize}
+                                            options={[
+                                                { value: "a4", label: "A4 (210 × 297 mm)", description: "Standar Dokumen & Surat" },
+                                                { value: "letter", label: "US Letter (216 × 279 mm)", description: "Standar Internasional AS" },
+                                            ]}
+                                            onChange={(val) => setPageSize(val as PageSizeOption)}
+                                            activeDropdown={activeDropdown}
+                                            setActiveDropdown={setActiveDropdown}
+                                        />
 
                                         {/* 2. Orientasi */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
-                                                <Compass className="w-3.5 h-3.5 text-amber-500" />
-                                                Orientasi Halaman
-                                            </label>
-                                            <select
-                                                value={orientation}
-                                                onChange={(e) => setOrientation(e.target.value as OrientationOption)}
-                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
-                                            >
-                                                <option value="auto">Otomatis Sesuai Foto</option>
-                                                <option value="landscape">Paksa Lanskap (Mendatar)</option>
-                                                <option value="portrait">Paksa Potret (Tegak)</option>
-                                            </select>
-                                        </div>
+                                        <CustomSelect
+                                            id="orientation"
+                                            label="Orientasi Halaman"
+                                            icon={<Compass className="w-3.5 h-3.5 text-amber-500" />}
+                                            value={orientation}
+                                            options={[
+                                                { value: "auto", label: "Otomatis Sesuai Foto", description: "Otomatis potret atau lanskap" },
+                                                { value: "landscape", label: "Paksa Lanskap (Mendatar)", description: "Lebar lebih panjang dari tinggi" },
+                                                { value: "portrait", label: "Paksa Potret (Tegak)", description: "Tinggi lebih panjang dari lebar" },
+                                            ]}
+                                            onChange={(val) => setOrientation(val as OrientationOption)}
+                                            activeDropdown={activeDropdown}
+                                            setActiveDropdown={setActiveDropdown}
+                                        />
 
                                         {/* 3. Gaya Penyesuaian Gambar */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
-                                                <Maximize2 className="w-3.5 h-3.5 text-amber-500" />
-                                                Penataan Gambar
-                                            </label>
-                                            <select
-                                                value={imageFit}
-                                                onChange={(e) => setImageFit(e.target.value as ImageFitOption)}
-                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
-                                            >
-                                                <option value="contain">Paskan Gambar (Utuh)</option>
-                                                <option value="cover">Penuhi Kertas (Tanpa Border)</option>
-                                            </select>
-                                        </div>
+                                        <CustomSelect
+                                            id="imageFit"
+                                            label="Penataan Gambar"
+                                            icon={<Maximize2 className="w-3.5 h-3.5 text-amber-500" />}
+                                            value={imageFit}
+                                            options={[
+                                                { value: "contain", label: "Paskan Gambar (Utuh)", description: "Seluruh foto terlihat tanpa terpotong" },
+                                                { value: "cover", label: "Penuhi Kertas (Cover)", description: "Penuh sampai tepi tanpa border putih" },
+                                            ]}
+                                            onChange={(val) => setImageFit(val as ImageFitOption)}
+                                            activeDropdown={activeDropdown}
+                                            setActiveDropdown={setActiveDropdown}
+                                        />
 
                                         {/* 4. Margin */}
-                                        <div className="space-y-1.5">
-                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
-                                                <Maximize2 className="w-3.5 h-3.5 text-amber-500" />
-                                                Batas Tepi (Margin)
-                                            </label>
-                                            <select
-                                                value={margin}
-                                                onChange={(e) => setMargin(e.target.value as MarginOption)}
-                                                className="w-full px-3 py-2 rounded-xl bg-surface border border-border text-foreground text-xs focus:outline-none focus:border-amber-500 transition-colors"
-                                            >
-                                                <option value="none">Tanpa Margin (0 mm)</option>
-                                                <option value="small">Margin Rapi (5 mm)</option>
-                                                <option value="normal">Margin Lebar (10 mm)</option>
-                                            </select>
-                                        </div>
+                                        <CustomSelect
+                                            id="margin"
+                                            label="Batas Tepi (Margin)"
+                                            icon={<Maximize2 className="w-3.5 h-3.5 text-amber-500" />}
+                                            value={margin}
+                                            options={[
+                                                { value: "none", label: "Tanpa Margin (0 mm)", description: "Penuh sampai ujung kertas" },
+                                                { value: "small", label: "Margin Rapi (5 mm)", description: "Batas aman cetak printer" },
+                                                { value: "normal", label: "Margin Lebar (10 mm)", description: "Ruang untuk staples / jilid" },
+                                            ]}
+                                            onChange={(val) => setMargin(val as MarginOption)}
+                                            activeDropdown={activeDropdown}
+                                            setActiveDropdown={setActiveDropdown}
+                                        />
                                     </div>
                                 )}
                             </div>
