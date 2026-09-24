@@ -543,15 +543,15 @@ export default function ClientJpgToPdf() {
                             )}
 
                             {/* Panel Pengaturan Tata Letak Dokumen */}
-                            <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-border/80 space-y-6 shadow-xl">
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+                            <div className="glass-panel p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border border-border/80 space-y-5 sm:space-y-6 shadow-xl">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
                                     <div className="flex items-center gap-2">
-                                        <Settings2 className="w-5 h-5 text-amber-500" />
-                                        <h3 className="font-bold text-foreground text-base sm:text-lg">
+                                        <Settings2 className="w-5 h-5 text-amber-500 shrink-0" />
+                                        <h3 className="font-bold text-foreground text-sm sm:text-base md:text-lg">
                                             Format & Ukuran Halaman PDF
                                         </h3>
                                     </div>
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex items-center justify-between sm:justify-end gap-3">
                                         <span className="text-xs text-foreground/60 hidden md:inline">
                                             Pilih bagaimana gambar disesuaikan pada halaman PDF
                                         </span>
@@ -567,45 +567,54 @@ export default function ClientJpgToPdf() {
                                     </div>
                                 </div>
 
-                                 {/* Mode Pilihan Cepat: Pas Ukuran Asli vs Kertas Dokumen */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Mode Pilihan Cepat: Pas Ukuran Asli vs Kertas Dokumen */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4">
                                     <button
                                         type="button"
                                         onClick={() => handleSwitchMode("fit")}
-                                        className={`p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between group ${
+                                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between group cursor-pointer ${
                                             pageMode === "fit"
                                                 ? "bg-amber-500/10 border-amber-500/60 shadow-lg text-foreground ring-1 ring-amber-500/30"
                                                 : "bg-surface/50 border-border/60 hover:bg-surface text-foreground/70"
                                         }`}
                                     >
-                                        <div>
-                                            <div className="flex items-center justify-between gap-3 mb-2.5">
-                                                <div className="flex items-center gap-2.5">
-                                                    <div className={`p-2 rounded-xl transition-colors ${pageMode === "fit" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
+                                        <div className="space-y-2.5">
+                                            <div className="flex items-start justify-between gap-2.5">
+                                                <div className="flex items-center gap-2.5 min-w-0">
+                                                    <div className={`p-2 sm:p-2.5 rounded-xl transition-colors shrink-0 ${pageMode === "fit" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
                                                         <Monitor className="w-5 h-5" />
                                                     </div>
-                                                    <div>
-                                                        <span className="font-bold text-base text-foreground block">
+                                                    <div className="min-w-0">
+                                                        <span className="font-bold text-sm sm:text-base text-foreground block leading-snug">
                                                             Pas Ukuran Asli Gambar
                                                         </span>
-                                                        <span className="text-[11px] text-amber-400 font-medium">
+                                                        <span className="text-[11px] sm:text-xs text-amber-400 font-medium block mt-0.5">
                                                             1:1 Skala Resolusi Penuh
                                                         </span>
                                                     </div>
                                                 </div>
-                                                <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30 shrink-0">
-                                                    Rekomendasi Google Drive & Layar
+
+                                                <span className="hidden sm:inline-flex text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30 shrink-0">
+                                                    Rekomendasi Layar
                                                 </span>
                                             </div>
+
+                                            {/* Badge versi mobile yang rapi tanpa mendesak judul */}
+                                            <div className="sm:hidden flex items-center gap-1.5">
+                                                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30">
+                                                    ★ Rekomendasi Layar & Google Drive
+                                                </span>
+                                            </div>
+
                                             <p className="text-xs text-foreground/60 leading-relaxed">
                                                 Ukuran halaman PDF persis 1:1 mengikuti resolusi monitor Anda (misal 1920×1080 pt). <strong>Tampil besar penuh di Google Drive</strong>, tulisan kodingan tajam maksimal, dan <strong>tanpa border putih</strong>.
                                             </p>
                                         </div>
 
                                         <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                                            <span className="text-foreground/50">Cocok untuk: Screenshot koding, tugas di G-Drive, foto HD</span>
+                                            <span className="text-foreground/50 text-[11px] sm:text-xs">Cocok untuk: Screenshot koding, tugas di G-Drive, foto HD</span>
                                             {pageMode === "fit" && (
-                                                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
+                                                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold shrink-0 ml-2">
                                                     <Check className="w-3.5 h-3.5" />
                                                     Aktif
                                                 </span>
@@ -616,40 +625,42 @@ export default function ClientJpgToPdf() {
                                     <button
                                         type="button"
                                         onClick={() => handleSwitchMode("document")}
-                                        className={`p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between group ${
+                                        className={`p-4 sm:p-5 rounded-2xl border text-left transition-all relative flex flex-col justify-between group cursor-pointer ${
                                             pageMode === "document"
                                                 ? "bg-amber-500/10 border-amber-500/60 shadow-lg text-foreground ring-1 ring-amber-500/30"
                                                 : "bg-surface/50 border-border/60 hover:bg-surface text-foreground/70"
                                         }`}
                                     >
-                                        <div>
-                                            <div className="flex items-center justify-between gap-3 mb-2.5">
-                                                <div className="flex items-center gap-2.5">
-                                                    <div className={`p-2 rounded-xl transition-colors ${pageMode === "document" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
+                                        <div className="space-y-2.5">
+                                            <div className="flex items-start justify-between gap-2.5">
+                                                <div className="flex items-center gap-2.5 min-w-0">
+                                                    <div className={`p-2 sm:p-2.5 rounded-xl transition-colors shrink-0 ${pageMode === "document" ? "bg-amber-500/20 text-amber-400" : "bg-surface text-foreground/50"}`}>
                                                         <Layers className="w-5 h-5" />
                                                     </div>
-                                                    <div>
-                                                        <span className="font-bold text-base text-foreground block">
+                                                    <div className="min-w-0">
+                                                        <span className="font-bold text-sm sm:text-base text-foreground block leading-snug">
                                                             Kertas Standar Dokumen
                                                         </span>
-                                                        <span className="text-[11px] text-foreground/50 font-medium">
+                                                        <span className="text-[11px] sm:text-xs text-foreground/50 font-medium block mt-0.5">
                                                             Format Cetak Fisik
                                                         </span>
                                                     </div>
                                                 </div>
+
                                                 <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-surface border border-border/80 text-foreground/60 font-medium shrink-0">
                                                     A4 / Letter
                                                 </span>
                                             </div>
+
                                             <p className="text-xs text-foreground/60 leading-relaxed">
                                                 Menempatkan gambar pada ukuran kertas fisik standar (A4 / Letter) untuk dicetak ke mesin printer fisik atau arsip administrasi resmi.
                                             </p>
                                         </div>
 
                                         <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                                            <span className="text-foreground/50">Cocok untuk: Cetak printer kertas nyata, berkas kantor</span>
+                                            <span className="text-foreground/50 text-[11px] sm:text-xs">Cocok untuk: Cetak printer kertas nyata, berkas kantor</span>
                                             {pageMode === "document" && (
-                                                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold">
+                                                <span className="inline-flex items-center gap-1 text-amber-400 font-semibold shrink-0 ml-2">
                                                     <Check className="w-3.5 h-3.5" />
                                                     Aktif
                                                 </span>
@@ -764,7 +775,7 @@ export default function ClientJpgToPdf() {
                                 <button
                                     onClick={generatePDF}
                                     disabled={isProcessing}
-                                    className={`px-8 py-3.5 rounded-full font-bold text-white transition-all shadow-lg flex items-center justify-center gap-2 ${
+                                    className={`w-full sm:w-auto px-8 py-3.5 rounded-full font-bold text-white transition-all shadow-lg flex items-center justify-center gap-2 cursor-pointer ${
                                         isProcessing 
                                             ? "bg-amber-500/50 cursor-not-allowed" 
                                             : "bg-amber-500 hover:bg-amber-600 hover:scale-105 active:scale-95 shadow-amber-500/20"
@@ -900,10 +911,10 @@ export default function ClientJpgToPdf() {
                             </p>
                         </div>
 
-                        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                        <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 w-full">
                             <button
                                 onClick={handleDownload}
-                                className="px-7 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition-all shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
+                                className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold transition-all shadow-xl shadow-emerald-500/20 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
                             >
                                 <Download className="w-5 h-5" />
                                 <span>Unduh PDF ({(completePdf.size / 1024 / 1024).toFixed(2)} MB)</span>
@@ -911,7 +922,7 @@ export default function ClientJpgToPdf() {
 
                             <button
                                 onClick={() => setIsPdfModalOpen(true)}
-                                className="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-all shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
+                                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-bold transition-all shadow-xl shadow-amber-500/20 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
                             >
                                 <Eye className="w-5 h-5" />
                                 <span>Pratinjau Layar Penuh</span>
@@ -919,7 +930,7 @@ export default function ClientJpgToPdf() {
                             
                             <button
                                 onClick={resetState}
-                                className="px-6 py-3.5 rounded-2xl bg-surface hover:bg-surface/80 text-foreground font-bold transition-all border border-border hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
+                                className="w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-surface hover:bg-surface/80 text-foreground font-bold transition-all border border-border hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer text-sm sm:text-base"
                             >
                                 <RefreshCw className="w-4 h-4" />
                                 <span>Konversi Berkas Lain</span>
