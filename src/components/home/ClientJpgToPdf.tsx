@@ -1205,7 +1205,7 @@ export default function ClientJpgToPdf() {
                                 <img
                                     src={images[previewImageIndex].previewUrl}
                                     alt={images[previewImageIndex].file.name}
-                                    className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl pointer-events-none"
+                                    className="max-h-[72vh] w-auto max-w-full object-contain rounded-none shadow-2xl pointer-events-none"
                                     draggable={false}
                                 />
                             </div>
