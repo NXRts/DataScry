@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
+import "pdfjs-dist/build/pdf.worker.mjs";
 import { PDFDocument, rgb, degrees, StandardFonts } from "pdf-lib";
 import {
     Stamp,
@@ -21,9 +22,9 @@ import {
     Type
 } from "lucide-react";
 
-// Configure PDF.js worker using jsdelivr
-if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+// Configure PDF.js worker using local public worker
+if (typeof window !== "undefined") {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 }
 
 type WatermarkColor = "gray" | "red" | "blue" | "green";

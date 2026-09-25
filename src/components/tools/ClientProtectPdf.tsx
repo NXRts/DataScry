@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
+import "pdfjs-dist/build/pdf.worker.mjs";
 import { encryptPDF, AlreadyEncryptedError } from "@pdfsmaller/pdf-encrypt";
 import {
     Lock,
@@ -27,9 +28,9 @@ import {
     Sparkles
 } from "lucide-react";
 
-// Setup PDF.js worker using jsdelivr
-if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+// Setup PDF.js worker using local public worker
+if (typeof window !== "undefined") {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 }
 
 type Algorithm = "AES-256" | "RC4";

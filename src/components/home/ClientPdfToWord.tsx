@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
+import "pdfjs-dist/build/pdf.worker.mjs";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 
 export default function ClientPdfToWord() {
@@ -13,7 +14,7 @@ export default function ClientPdfToWord() {
 
     useEffect(() => {
         if (typeof window !== "undefined" && pdfjsLib?.GlobalWorkerOptions) {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+            pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
         }
     }, []);
 

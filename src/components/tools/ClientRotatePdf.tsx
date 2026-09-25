@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
+import "pdfjs-dist/build/pdf.worker.mjs";
 import { PDFDocument, degrees } from "pdf-lib";
 import {
     RotateCw,
@@ -18,9 +19,9 @@ import {
     RefreshCw
 } from "lucide-react";
 
-// Configure PDF.js worker using jsdelivr matching the installed pdfjs-dist version
-if (typeof window !== "undefined" && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+// Configure PDF.js worker using local public worker
+if (typeof window !== "undefined") {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 }
 
 interface PageThumbnail {
