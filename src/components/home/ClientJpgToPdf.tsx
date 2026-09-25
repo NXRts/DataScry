@@ -23,6 +23,8 @@ import {
     RotateCcw,
     Eye,
     ExternalLink,
+    ZoomIn,
+    ZoomOut,
     X
 } from "lucide-react";
 
@@ -183,39 +185,159 @@ export default function ClientJpgToPdf() {
     const [previewPdfUrl, setPreviewPdfUrl] = useState<string | null>(null);
     const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
-    // Pratinjau Foto/Gambar Terpilih (Lightbox Modal)
+    // Pratinjau Foto/Gambar Terpilih (Lightbox Modal) & Zoom State
     const [previewImageIndex, setPreviewImageIndex] = useState<number | null>(null);
+    const [imageZoom, setImageZoom] = useState(1);
+    const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const dragStartRef = useRef({ x: 0, y: 0 });
+    const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+    const lightboxBodyRef = useRef<HTMLDivElement>(null);
 
-    // Otomatis buat URL objek saat PDF selesai dibuat
-    useEffect(() => {
-        if (completePdf) {
-            const url = URL.createObjectURL(completePdf);
-            setPreviewPdfUrl(url);
-            return () => {
-                URL.revokeObjectURL(url);
-            };
+    const handleZoomIn = () => {
+        setImageZoom((prev) => Math.min(4, Math.round((prev + 0.25) * 100) / 100));
+    };
+
+    const handleZoomOut = () => {
+        setImageZoom((prev) => {
+            const next = Math.max(0.5, Math.round((prev - 0.25) * 100) / 100);
+            if (next <= 1) setPanOffset({ x: 0, y: 0 });
+            return next;
+        });
+    };
+
+    const handleResetZoom = () => {
+        setImageZoom(1);
+        setPanOffset({ x: 0, y: 0 });
+    };
+
+    const handleToggleZoom = () => {
+        if (imageZoom !== 1) {
+            handleResetZoom();
         } else {
-            setPreviewPdfUrl(null);
+            setImageZoom(2);
         }
-    }, [completePdf]);
+    };
 
-    // Navigasi keyboard Escape & Panah Kiri/Kanan untuk Pratinjau
+    const openImagePreview = (index: number) => {
+        setPreviewImageIndex(index);
+        handleResetZoom();
+    };
+
+    const closeLightbox = () => {
+        setPreviewImageIndex(null);
+        handleResetZoom();
+    };
+
+    const goToPrevImage = () => {
+        if (previewImageIndex !== null && previewImageIndex > 0) {
+            setPreviewImageIndex(previewImageIndex - 1);
+            handleResetZoom();
+        }
+    };
+
+    const goToNextImage = () => {
+        if (previewImageIndex !== null && previewImageIndex < images.length - 1) {
+            setPreviewImageIndex(previewImageIndex + 1);
+            handleResetZoom();
+        }
+    };
+
+    // Zooming via mouse wheel over image container
+    useEffect(() => {
+        const el = lightboxBodyRef.current;
+        if (!el || previewImageIndex === null) return;
+
+        const onWheel = (e: WheelEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.deltaY < 0) {
+                setImageZoom((prev) => Math.min(4, Math.round((prev + 0.25) * 100) / 100));
+            } else {
+                setImageZoom((prev) => {
+                    const next = Math.max(0.5, Math.round((prev - 0.25) * 100) / 100);
+                    if (next <= 1) setPanOffset({ x: 0, y: 0 });
+                    return next;
+                });
+            }
+        };
+
+        el.addEventListener("wheel", onWheel, { passive: false });
+        return () => {
+            el.removeEventListener("wheel", onWheel);
+        };
+    }, [previewImageIndex]);
+
+    // Navigasi keyboard Escape, Panah Kiri/Kanan, Zoom (+, -, 0)
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
                 setIsPdfModalOpen(false);
-                setPreviewImageIndex(null);
+                closeLightbox();
             } else if (previewImageIndex !== null) {
                 if (e.key === "ArrowLeft" && previewImageIndex > 0) {
-                    setPreviewImageIndex(previewImageIndex - 1);
+                    goToPrevImage();
                 } else if (e.key === "ArrowRight" && previewImageIndex < images.length - 1) {
-                    setPreviewImageIndex(previewImageIndex + 1);
+                    goToNextImage();
+                } else if (e.key === "+" || e.key === "=") {
+                    e.preventDefault();
+                    handleZoomIn();
+                } else if (e.key === "-" || e.key === "_") {
+                    e.preventDefault();
+                    handleZoomOut();
+                } else if (e.key === "0") {
+                    e.preventDefault();
+                    handleResetZoom();
                 }
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [previewImageIndex, images.length]);
+    }, [previewImageIndex, images.length, imageZoom]);
+
+    // Mouse and Touch dragging handlers
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (imageZoom > 1 && e.button === 0) {
+            e.preventDefault();
+            setIsDragging(true);
+            dragStartRef.current = { x: e.clientX - panOffset.x, y: e.clientY - panOffset.y };
+        }
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging || imageZoom <= 1) return;
+        e.preventDefault();
+        setPanOffset({
+            x: e.clientX - dragStartRef.current.x,
+            y: e.clientY - dragStartRef.current.y,
+        });
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (imageZoom > 1 && e.touches.length === 1) {
+            touchStartRef.current = {
+                x: e.touches[0].clientX - panOffset.x,
+                y: e.touches[0].clientY - panOffset.y,
+            };
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (imageZoom > 1 && touchStartRef.current && e.touches.length === 1) {
+            setPanOffset({
+                x: e.touches[0].clientX - touchStartRef.current.x,
+                y: e.touches[0].clientY - touchStartRef.current.y,
+            });
+        }
+    };
+
+    const handleTouchEnd = () => {
+        touchStartRef.current = null;
+    };
 
     const handleFiles = async (newFiles: File[]) => {
         const imgFiles = newFiles.filter(f => f.type.startsWith("image/"));
@@ -826,7 +948,7 @@ export default function ClientJpgToPdf() {
                                         <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
                                             <button
                                                 type="button"
-                                                onClick={() => setPreviewImageIndex(idx)}
+                                                onClick={() => openImagePreview(idx)}
                                                 className="p-1.5 bg-black/75 hover:bg-amber-500 text-white rounded-lg transition-all hover:scale-110 shadow-sm cursor-pointer"
                                                 title="Pratinjau foto ini (Layar Penuh)"
                                             >
@@ -844,7 +966,7 @@ export default function ClientJpgToPdf() {
 
                                         {/* Preview Gambar (Dapat diklik untuk memperbesar) */}
                                         <div 
-                                            onClick={() => setPreviewImageIndex(idx)}
+                                            onClick={() => openImagePreview(idx)}
                                             className="flex-1 relative overflow-hidden flex items-center justify-center bg-black/40 cursor-zoom-in group/img"
                                             title="Klik untuk melihat pratinjau penuh"
                                         >
@@ -995,19 +1117,19 @@ export default function ClientJpgToPdf() {
             {/* Modal Pratinjau Foto Asli (Image Lightbox Modal) */}
             {previewImageIndex !== null && images[previewImageIndex] && (
                 <div 
-                    className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in"
                     onClick={(e) => {
-                        if (e.target === e.currentTarget) setPreviewImageIndex(null);
+                        if (e.target === e.currentTarget) closeLightbox();
                     }}
                 >
-                    <div className="relative w-full max-w-5xl bg-neutral-900/95 border border-border/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[92vh]">
+                    <div className="relative w-full max-w-5xl bg-neutral-900/95 border border-border/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[94vh]">
                         {/* Header Lightbox */}
-                        <div className="p-4 sm:px-6 border-b border-border/50 flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <div className="p-3 sm:p-4 sm:px-6 border-b border-border/50 flex items-center justify-between gap-2 sm:gap-4">
+                            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                                 <span className="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-400 text-xs font-bold border border-amber-500/30 shrink-0">
                                     Hal {previewImageIndex + 1} dari {images.length}
                                 </span>
-                                <span className="text-xs sm:text-sm font-semibold text-foreground truncate max-w-xs sm:max-w-md">
+                                <span className="text-xs sm:text-sm font-semibold text-foreground truncate max-w-28 sm:max-w-xs md:max-w-md">
                                     {images[previewImageIndex].file.name}
                                 </span>
                                 <span className="text-xs text-foreground/50 hidden md:inline shrink-0">
@@ -1015,33 +1137,104 @@ export default function ClientJpgToPdf() {
                                 </span>
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() => setPreviewImageIndex(null)}
-                                className="p-2 rounded-xl bg-surface/80 hover:bg-surface text-foreground/60 hover:text-foreground border border-border/60 transition-colors cursor-pointer shrink-0"
-                                title="Tutup (Esc)"
-                            >
-                                <X className="w-4 h-4" />
-                            </button>
+                            {/* Toolbar Kontrol Zoom & Tutup */}
+                            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                                <div className="flex items-center bg-surface/80 border border-border/70 rounded-xl p-0.5 sm:p-1 shadow-inner">
+                                    <button
+                                        type="button"
+                                        onClick={handleZoomOut}
+                                        disabled={imageZoom <= 0.5}
+                                        className="p-1 sm:p-1.5 rounded-lg hover:bg-surface text-foreground/70 hover:text-foreground disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                                        title="Perkecil Zoom (-)"
+                                    >
+                                        <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleResetZoom}
+                                        className="px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-lg hover:bg-surface text-[11px] sm:text-xs font-bold text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
+                                        title="Reset Zoom ke 100% (Tekan 0)"
+                                    >
+                                        {Math.round(imageZoom * 100)}%
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={handleZoomIn}
+                                        disabled={imageZoom >= 4}
+                                        className="p-1 sm:p-1.5 rounded-lg hover:bg-surface text-foreground/70 hover:text-foreground disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                                        title="Perbesar Zoom (+)"
+                                    >
+                                        <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    </button>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={closeLightbox}
+                                    className="p-1.5 sm:p-2 rounded-xl bg-surface/80 hover:bg-surface text-foreground/60 hover:text-foreground border border-border/60 transition-colors cursor-pointer shrink-0"
+                                    title="Tutup (Esc)"
+                                >
+                                    <X className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Body Lightbox (Foto Besar & Navigasi) */}
-                        <div className="flex-1 overflow-auto p-4 sm:p-6 flex items-center justify-center bg-black/60 relative">
-                            <img
-                                src={images[previewImageIndex].previewUrl}
-                                alt={images[previewImageIndex].file.name}
-                                className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl"
-                            />
+                        {/* Body Lightbox (Foto Besar, Zoom & Navigasi) */}
+                        <div 
+                            ref={lightboxBodyRef}
+                            className="flex-1 overflow-hidden p-2 sm:p-6 flex items-center justify-center bg-black/75 relative select-none"
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseUp}
+                            onTouchStart={handleTouchStart}
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}
+                        >
+                            <div
+                                className="transition-transform duration-100 ease-out origin-center flex items-center justify-center will-change-transform"
+                                style={{
+                                    transform: `translate3d(${panOffset.x}px, ${panOffset.y}px, 0) scale(${imageZoom})`,
+                                    cursor: imageZoom > 1 ? (isDragging ? "grabbing" : "grab") : "zoom-in",
+                                }}
+                                onDoubleClick={handleToggleZoom}
+                                title={imageZoom > 1 ? "Tahan & geser untuk melihat area lain, klik ganda untuk reset" : "Klik ganda untuk memperbesar (2x)"}
+                            >
+                                <img
+                                    src={images[previewImageIndex].previewUrl}
+                                    alt={images[previewImageIndex].file.name}
+                                    className="max-h-[72vh] w-auto max-w-full object-contain rounded-xl shadow-2xl pointer-events-none"
+                                    draggable={false}
+                                />
+                            </div>
+
+                            {/* Floating Reset Zoom Badge saat di-zoom */}
+                            {imageZoom !== 1 && (
+                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-neutral-900/90 backdrop-blur-md border border-amber-500/40 text-white text-xs shadow-2xl animate-fade-in">
+                                    <span className="font-medium text-amber-400">Zoom: {Math.round(imageZoom * 100)}%</span>
+                                    <button
+                                        type="button"
+                                        onClick={handleResetZoom}
+                                        className="px-2 py-0.5 rounded-md bg-amber-500 hover:bg-amber-600 text-white font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                                        title="Kembalikan ke ukuran normal"
+                                    >
+                                        <RotateCcw className="w-3 h-3" />
+                                        <span>Reset</span>
+                                    </button>
+                                </div>
+                            )}
 
                             {/* Navigasi Panah Kiri */}
                             {previewImageIndex > 0 && (
                                 <button
                                     type="button"
-                                    onClick={() => setPreviewImageIndex(previewImageIndex - 1)}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/75 hover:bg-amber-500 text-white border border-white/20 transition-all hover:scale-110 shadow-xl cursor-pointer"
+                                    onClick={goToPrevImage}
+                                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-black/75 hover:bg-amber-500 text-white border border-white/20 transition-all hover:scale-110 shadow-xl cursor-pointer"
                                     title="Halaman Sebelumnya (Panah Kiri)"
                                 >
-                                    <ChevronLeft className="w-5 h-5" />
+                                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                             )}
 
@@ -1049,19 +1242,20 @@ export default function ClientJpgToPdf() {
                             {previewImageIndex < images.length - 1 && (
                                 <button
                                     type="button"
-                                    onClick={() => setPreviewImageIndex(previewImageIndex + 1)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-black/75 hover:bg-amber-500 text-white border border-white/20 transition-all hover:scale-110 shadow-xl cursor-pointer"
+                                    onClick={goToNextImage}
+                                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-2.5 sm:p-3 rounded-full bg-black/75 hover:bg-amber-500 text-white border border-white/20 transition-all hover:scale-110 shadow-xl cursor-pointer"
                                     title="Halaman Berikutnya (Panah Kanan)"
                                 >
-                                    <ChevronRight className="w-5 h-5" />
+                                    <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
                                 </button>
                             )}
                         </div>
 
                         {/* Footer Lightbox */}
-                        <div className="p-3 sm:px-6 border-t border-border/50 bg-surface/50 flex items-center justify-between text-xs text-foreground/60">
-                            <span>Gunakan tombol panah ⬅ ➡ keyboard atau Esc untuk menutup</span>
-                            <span>Format: {formatRatio(images[previewImageIndex].aspectRatio)}</span>
+                        <div className="p-2.5 sm:p-3 sm:px-6 border-t border-border/50 bg-surface/50 flex flex-col sm:flex-row items-center justify-between gap-1.5 text-xs text-foreground/60">
+                            <span className="hidden sm:inline">Tips: Scroll mouse / klik ganda untuk zoom • Geser untuk navigasi • ⬅ ➡ untuk ganti halaman • Esc untuk keluar</span>
+                            <span className="sm:hidden text-[11px]">Ketuk 2x untuk zoom • Geser untuk memindahkan</span>
+                            <span className="text-[11px] sm:text-xs">Format: {formatRatio(images[previewImageIndex].aspectRatio)}</span>
                         </div>
                     </div>
                 </div>
