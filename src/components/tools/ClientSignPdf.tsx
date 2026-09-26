@@ -23,8 +23,13 @@ import {
     ChevronRight,
     Move,
     Maximize2,
-    Eye
+    Eye,
+    AlertCircle,
+    X,
+    ZoomIn
 } from "lucide-react";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
+import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
 
 // Setup PDF.js worker using local public worker
 if (typeof window !== "undefined") {
@@ -58,6 +63,11 @@ export default function ClientSignPdf() {
 
     const [isSaving, setIsSaving] = useState<boolean>(false);
     const [isSaved, setIsSaved] = useState<boolean>(false);
+    const [signedPdfBlob, setSignedPdfBlob] = useState<Blob | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    // Lightbox modal state
+    const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
 
     // Refs
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -130,6 +140,8 @@ export default function ClientSignPdf() {
         setPageCount(0);
         setCurrentPageIndex(0);
         setActiveSignatureDataUrl(null);
+        setSignedPdfBlob(null);
+        setErrorMessage(null);
         setIsSaved(false);
         setIsLoading(false);
         if (fileInputRef.current) {
@@ -285,14 +297,28 @@ export default function ClientSignPdf() {
         setIsDragging(false);
     };
 
+    const openLightbox = () => {
+        if (!pageCanvasDataUrl) return;
+        setLightboxItem({
+            url: pageCanvasDataUrl,
+            title: `Halaman ${currentPageIndex + 1} (${file?.name || "Dokumen PDF"})`,
+            pageNumber: currentPageIndex + 1,
+            totalPages: pageCount,
+            width: canvasSize.width,
+            height: canvasSize.height,
+            aspectRatio: "A4"
+        });
+    };
+
     // Final Embed & Save via pdf-lib
     const saveSignedPdf = async () => {
         if (!file || !activeSignatureDataUrl) {
-            alert("Silakan buat atau pilih tanda tangan terlebih dahulu.");
+            setErrorMessage("Silakan buat atau pilih tanda tangan terlebih dahulu.");
             return;
         }
 
         setIsSaving(true);
+        setErrorMessage(null);
 
         try {
             const arrayBuffer = await file.arrayBuffer();
@@ -306,7 +332,6 @@ export default function ClientSignPdf() {
             const embeddedSig = await pdfDoc.embedPng(sigArrayBuffer);
 
             // Calculate precise coordinates relative to the PDF's point system
-            // In PDF, (0, 0) is bottom-left, while DOM is top-left
             const pdfX = (sigPosition.x / canvasSize.width) * pdfWidth;
             const pdfY = ((canvasSize.height - sigPosition.y - sigSize.height) / canvasSize.height) * pdfHeight;
             const pdfW = (sigSize.width / canvasSize.width) * pdfWidth;
@@ -322,29 +347,18 @@ export default function ClientSignPdf() {
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([new Uint8Array(pdfBytes)], { type: "application/pdf" });
 
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            const nameParts = file.name.split(".");
-            const ext = nameParts.pop();
-            const baseName = nameParts.join(".");
-            a.download = `${baseName}-bertandatangan.${ext}`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
+            setSignedPdfBlob(blob);
             setIsSaved(true);
         } catch (err) {
             console.error("Failed to save signed PDF:", err);
-            alert("Gagal menyematkan tanda tangan ke dokumen PDF. Silakan coba lagi.");
+            setErrorMessage("Gagal menyematkan tanda tangan ke dokumen PDF. Silakan coba lagi.");
         } finally {
             setIsSaving(false);
         }
     };
 
     return (
-        <div className="space-y-8 w-full">
+        <div className="space-y-8 w-full max-w-5xl mx-auto">
             {/* Hidden Input for direct file picking */}
             <input
                 ref={fileInputRef}
@@ -357,6 +371,24 @@ export default function ClientSignPdf() {
                     }
                 }}
             />
+
+            {/* In-App Error Notification */}
+            {errorMessage && (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-start justify-between gap-3 text-rose-400 animate-fade-in shadow-lg">
+                    <div className="flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5 shrink-0 text-rose-500" />
+                        <span className="text-sm font-semibold">{errorMessage}</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setErrorMessage(null)}
+                        className="p-1 hover:bg-rose-500/20 rounded-lg text-rose-400 transition-colors"
+                        title="Tutup pesan"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
 
             {!file ? (
                 <div className="animate-fade-in">
@@ -702,7 +734,7 @@ export default function ClientSignPdf() {
                                             <img
                                                 src={pageCanvasDataUrl}
                                                 alt={`Halaman ${currentPageIndex + 1}`}
-                                                className="w-full h-full object-contain pointer-events-none"
+                                                className="w-full h-full object-contain pointer-events-none rounded-none"
                                             />
                                         )}
 
@@ -725,7 +757,7 @@ export default function ClientSignPdf() {
                                                 <img
                                                     src={activeSignatureDataUrl}
                                                     alt="Tanda Tangan"
-                                                    className="w-full h-full object-contain pointer-events-none"
+                                                    className="w-full h-full object-contain pointer-events-none rounded-none"
                                                 />
                                                 {/* Drag handle tooltip */}
                                                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[9px] px-2 py-0.5 rounded pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap flex items-center gap-1">
@@ -744,14 +776,42 @@ export default function ClientSignPdf() {
                                     </div>
                                 </div>
 
-                                <p className="text-center text-xs text-foreground/50">
-                                    💡 <em>Sentuh dan geser kotak tanda tangan di atas lembar dokumen untuk menempatkannya tepat di atas kolom nama/paraf.</em>
-                                </p>
+                                <div className="flex items-center justify-between text-xs text-foreground/50 pt-1">
+                                    <span>💡 Sentuh dan geser kotak tanda tangan untuk menempatkannya tepat di kolom paraf.</span>
+                                    <button
+                                        type="button"
+                                        onClick={openLightbox}
+                                        className="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1 cursor-pointer"
+                                    >
+                                        <Eye className="w-3.5 h-3.5" />
+                                        <span>Zoom Lembar Dokumen</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    {/* Output Result: Live Embedded PDF Viewer */}
+                    {signedPdfBlob && (
+                        <div className="space-y-4 pt-4 animate-fade-in">
+                            <PdfEmbeddedViewer
+                                blob={signedPdfBlob}
+                                fileName={`${file.name.replace(/\.pdf$/i, "")}-bertandatangan.pdf`}
+                                title="Dokumen PDF Bertanda Tangan Siap Diunduh"
+                                accentColor="rose"
+                            />
+                        </div>
+                    )}
                 </div>
             )}
+
+            {/* Modal Lightbox Reusable untuk Zoom Dokumen */}
+            <MediaLightboxModal
+                isOpen={lightboxItem !== null}
+                onClose={() => setLightboxItem(null)}
+                item={lightboxItem}
+                accentColor="rose"
+            />
         </div>
     );
 }

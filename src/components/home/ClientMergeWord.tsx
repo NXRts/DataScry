@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import { mergeDocx } from "@/lib/mergeDocx";
-import { ArrowUp, ArrowDown, FileText, Download, CheckCircle2, Sliders } from "lucide-react";
+import { ArrowUp, ArrowDown, FileText, Download, CheckCircle2, Sliders, RotateCcw } from "lucide-react";
 
 export default function ClientMergeWord() {
     const [docxFiles, setDocxFiles] = useState<File[]>([]);
@@ -114,21 +114,32 @@ export default function ClientMergeWord() {
                                         Urutkan file sesuai urutan penggabungan yang diinginkan.
                                     </p>
                                 </div>
-                                <button
-                                    onClick={handleMerge}
-                                    disabled={isProcessing || docxFiles.length < 2}
-                                    className={`px-6 py-2.5 rounded-full font-bold text-white transition-all ${
-                                        isProcessing || docxFiles.length < 2
-                                            ? "bg-cyan-500/50 cursor-not-allowed"
-                                            : "bg-cyan-500 hover:bg-cyan-600 hover:scale-105 active:scale-95 shadow-lg shadow-cyan-500/25"
-                                    }`}
-                                >
-                                    {isProcessing
-                                        ? "Menggabungkan..."
-                                        : docxFiles.length < 2
-                                        ? "Minimal 2 Word"
-                                        : "Gabungkan Word"}
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={resetState}
+                                        className="px-3.5 py-2 rounded-full border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                        title="Hapus semua berkas"
+                                    >
+                                        <RotateCcw className="w-3.5 h-3.5" />
+                                        <span>Clear Semua</span>
+                                    </button>
+                                    <button
+                                        onClick={handleMerge}
+                                        disabled={isProcessing || docxFiles.length < 2}
+                                        className={`px-6 py-2.5 rounded-full font-bold text-white transition-all cursor-pointer ${
+                                            isProcessing || docxFiles.length < 2
+                                                ? "bg-cyan-500/50 cursor-not-allowed"
+                                                : "bg-cyan-500 hover:bg-cyan-600 hover:scale-105 active:scale-95 shadow-lg shadow-cyan-500/25"
+                                        }`}
+                                    >
+                                        {isProcessing
+                                            ? "Menggabungkan..."
+                                            : docxFiles.length < 2
+                                            ? "Minimal 2 Word"
+                                            : "Gabungkan Word"}
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Options Panel for Neat Output */}

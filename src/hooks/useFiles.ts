@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { PrivaFile, getAllFiles, saveFile, deleteFile, updateFileStatus } from "../lib/db";
+import { PrivaFile, getAllFiles, saveFile, deleteFile, updateFileStatus, clearAllFiles } from "../lib/db";
 
 export function useFiles() {
     const [files, setFiles] = useState<PrivaFile[]>([]);
@@ -42,6 +42,11 @@ export function useFiles() {
         await loadFiles();
     };
 
+    const clearAll = async () => {
+        await clearAllFiles();
+        await loadFiles();
+    };
+
     const updateStatus = async (id: string, updates: Partial<PrivaFile>) => {
         await updateFileStatus(id, updates);
         // Locally update state to avoid full DB reload for every progress tick
@@ -53,6 +58,7 @@ export function useFiles() {
         isLoading,
         addFiles,
         removeFile,
+        clearAll,
         updateStatus,
     };
 }

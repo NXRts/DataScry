@@ -16,8 +16,13 @@ import {
     Loader2,
     HardDrive,
     Trash2,
-    Check
+    Check,
+    AlertCircle,
+    X,
+    Eye,
+    Image as ImageIcon
 } from "lucide-react";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 
 type CompressionLevel = 9 | 6 | 1 | 0;
 
@@ -26,6 +31,8 @@ interface ArchiveItem {
     file: File;
     name: string;
     size: number;
+    previewUrl?: string;
+    isImage: boolean;
 }
 
 export default function ClientArchiveZip() {
@@ -37,31 +44,47 @@ export default function ClientArchiveZip() {
     const [currentFileTask, setCurrentFileTask] = useState<string>("");
     const [resultBlob, setResultBlob] = useState<Blob | null>(null);
     const [resultSize, setResultSize] = useState<number>(0);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFilesAccepted = (acceptedFiles: File[]) => {
-        const newItems: ArchiveItem[] = acceptedFiles.map(file => ({
-            id: `${file.name}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            file,
-            name: file.name,
-            size: file.size
-        }));
+        const newItems: ArchiveItem[] = acceptedFiles.map(file => {
+            const isImage = file.type.startsWith("image/");
+            return {
+                id: `${file.name}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                file,
+                name: file.name,
+                size: file.size,
+                isImage,
+                previewUrl: isImage ? URL.createObjectURL(file) : undefined
+            };
+        });
         setFiles(prev => [...prev, ...newItems]);
         setResultBlob(null);
+        setErrorMessage(null);
     };
 
     const handleClearAll = () => {
+        files.forEach(f => {
+            if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+        });
         setFiles([]);
         setResultBlob(null);
         setProgress(0);
         setCurrentFileTask("");
+        setErrorMessage(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
     };
 
     const handleRemoveFile = (id: string) => {
-        setFiles(prev => prev.filter(f => f.id !== id));
+        setFiles(prev => {
+            const target = prev.find(f => f.id === id);
+            if (target?.previewUrl) URL.revokeObjectURL(target.previewUrl);
+            return prev.filter(f => f.id !== id);
+        });
         setResultBlob(null);
     };
 
@@ -109,7 +132,7 @@ export default function ClientArchiveZip() {
             setProgress(100);
         } catch (error) {
             console.error("Failed to create ZIP:", error);
-            alert("Gagal membuat arsip ZIP. Silakan coba kurangi ukuran atau jumlah berkas.");
+            setErrorMessage("Gagal membuat arsip ZIP. Silakan coba kurangi ukuran atau jumlah berkas.");
         } finally {
             setIsCreating(false);
         }
@@ -132,6 +155,16 @@ export default function ClientArchiveZip() {
         ? Math.round(((totalOriginalSize - resultSize) / totalOriginalSize) * 100)
         : 0;
 
+    const imageItems = files
+        .map((item, originalIndex) => ({ item, originalIndex }))
+        .filter(({ item }) => item.isImage && !!item.previewUrl);
+
+    const lightboxItems: LightboxItem[] = imageItems.map(({ item }) => ({
+        title: item.name,
+        url: item.previewUrl || "",
+        size: item.size
+    }));
+
     return (
         <div className="space-y-8 w-full">
             {/* Hidden native picker for direct pick */}
@@ -146,6 +179,24 @@ export default function ClientArchiveZip() {
                     }
                 }}
             />
+
+            {/* In-App Error Notification Banner */}
+            {errorMessage && (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-rose-300 flex items-start justify-between gap-3 animate-fade-in">
+                    <div className="flex items-center gap-2.5">
+                        <AlertCircle className="w-5 h-5 text-rose-400 shrink-0" />
+                        <span className="text-sm font-medium">{errorMessage}</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setErrorMessage(null)}
+                        className="text-rose-400 hover:text-rose-200 transition-colors p-1"
+                        aria-label="Tutup notifikasi"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
 
             {/* Configuration Panel */}
             <div className="glass-panel p-6 sm:p-7 rounded-3xl border border-border/80 shadow-xl space-y-6">
@@ -364,19 +415,49 @@ export default function ClientArchiveZip() {
                                         <span className="text-xs font-mono text-foreground/40 w-5 text-right">
                                             {idx + 1}
                                         </span>
-                                        <FileText className="w-4 h-4 text-purple-400 shrink-0" />
+                                        {item.isImage && item.previewUrl ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const lIndex = imageItems.findIndex(i => i.item.id === item.id);
+                                                    if (lIndex !== -1) setLightboxIndex(lIndex);
+                                                }}
+                                                className="w-8 h-8 rounded-none border border-purple-500/30 overflow-hidden shrink-0 group/img relative cursor-pointer"
+                                                title="Klik untuk pratinjau resolusi penuh (Zoom & Pan)"
+                                            >
+                                                <img src={item.previewUrl} alt={item.name} className="w-full h-full object-cover rounded-none" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity text-white">
+                                                    <Eye className="w-3.5 h-3.5" />
+                                                </div>
+                                            </button>
+                                        ) : (
+                                            <FileText className="w-4 h-4 text-purple-400 shrink-0" />
+                                        )}
                                         <p className="font-semibold text-sm text-foreground truncate max-w-xs sm:max-w-md">
                                             {item.name}
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-3 shrink-0">
+                                    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                                        {item.isImage && item.previewUrl && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const lIndex = imageItems.findIndex(i => i.item.id === item.id);
+                                                    if (lIndex !== -1) setLightboxIndex(lIndex);
+                                                }}
+                                                className="p-1 text-foreground/40 hover:text-purple-400 hover:bg-purple-500/10 rounded-md transition-colors cursor-pointer"
+                                                title="Pratinjau gambar (Zoom & Pan)"
+                                            >
+                                                <Eye className="w-3.5 h-3.5" />
+                                            </button>
+                                        )}
                                         <span className="text-xs font-mono text-foreground/60">
                                             {formatBytes(item.size)}
                                         </span>
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveFile(item.id)}
-                                            className="p-1 text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors"
+                                            className="p-1 text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-md transition-colors cursor-pointer"
                                             title="Hapus dari daftar"
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
@@ -388,6 +469,18 @@ export default function ClientArchiveZip() {
                     </div>
                 </div>
             )}
+
+            {/* Media Lightbox Modal for Image Previews */}
+            <MediaLightboxModal
+                isOpen={lightboxIndex !== null}
+                item={lightboxIndex !== null ? lightboxItems[lightboxIndex] : null}
+                onClose={() => setLightboxIndex(null)}
+                onNavigatePrev={() => lightboxIndex !== null && setLightboxIndex(Math.max(0, lightboxIndex - 1))}
+                onNavigateNext={() => lightboxIndex !== null && setLightboxIndex(Math.min(lightboxItems.length - 1, lightboxIndex + 1))}
+                hasPrev={lightboxIndex !== null && lightboxIndex > 0}
+                hasNext={lightboxIndex !== null && lightboxIndex < lightboxItems.length - 1}
+                accentColor="purple"
+            />
         </div>
     );
 }

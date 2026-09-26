@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import ExifReader from "exifreader";
 import { PDFDocument } from "pdf-lib";
-import { FileSearch, ArrowLeft, Loader2, RotateCcw, FolderOpen, FileText, Copy, Check } from "lucide-react";
+import { FileSearch, ArrowLeft, Loader2, RotateCcw, FolderOpen, FileText, Copy, Check, Eye, Image as ImageIcon } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/layout/Header";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
+import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
 
 interface MetadataItem {
     key: string;
@@ -16,14 +18,27 @@ interface MetadataItem {
 
 export default function MetadataViewerPage() {
     const [file, setFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const [showPdfViewer, setShowPdfViewer] = useState(false);
     const [metadata, setMetadata] = useState<MetadataItem[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
+    useEffect(() => {
+        return () => {
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+        };
+    }, [previewUrl]);
+
     const handleClear = () => {
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
         setFile(null);
+        setPreviewUrl(null);
+        setIsLightboxOpen(false);
+        setShowPdfViewer(false);
         setMetadata([]);
         setError(null);
         setIsLoading(false);
@@ -60,6 +75,9 @@ export default function MetadataViewerPage() {
         if (files.length === 0) return;
         const selectedFile = files[0];
         setFile(selectedFile);
+        if (previewUrl) URL.revokeObjectURL(previewUrl);
+        const url = URL.createObjectURL(selectedFile);
+        setPreviewUrl(url);
         setIsLoading(true);
         setError(null);
         setMetadata([]);
@@ -223,6 +241,75 @@ export default function MetadataViewerPage() {
                                 </div>
                             </div>
 
+                            {/* Interactive Visual Media Preview Bar */}
+                            {previewUrl && (
+                                <div className="p-4 sm:p-5 rounded-2xl bg-surface/60 border border-border/70 backdrop-blur-md shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in">
+                                    <div className="flex items-center gap-3.5 min-w-0 w-full sm:w-auto">
+                                        {file.type.startsWith("image/") ? (
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLightboxOpen(true)}
+                                                className="w-14 h-14 bg-black/40 rounded-none border border-primary/40 overflow-hidden shrink-0 group relative cursor-pointer"
+                                                title="Klik untuk perbesar foto (Zoom & Pan)"
+                                            >
+                                                <img src={previewUrl} alt={file.name} className="w-full h-full object-cover rounded-none" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white transition-opacity">
+                                                    <Eye className="w-4 h-4" />
+                                                </div>
+                                            </button>
+                                        ) : (
+                                            <div className="w-14 h-14 bg-blue-500/10 rounded-xl border border-blue-500/20 flex items-center justify-center shrink-0 text-blue-400">
+                                                <FileText className="w-6 h-6" />
+                                            </div>
+                                        )}
+                                        <div className="flex flex-col min-w-0">
+                                            <h4 className="text-sm sm:text-base font-bold text-foreground">
+                                                {file.type.startsWith("image/") ? "Pratinjau Foto Resolusi Penuh" : "Pratinjau Dokumen PDF"}
+                                            </h4>
+                                            <p className="text-xs text-foreground/60 mt-0.5">
+                                                {file.type.startsWith("image/")
+                                                    ? "Periksa detail foto dengan zoom halus 50%-400% dan drag-to-pan."
+                                                    : "Buka dan baca dokumen PDF langsung di dalam aplikasi."}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {file.type.startsWith("image/") ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsLightboxOpen(true)}
+                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 text-xs sm:text-sm font-bold text-primary transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                            <span>Lihat Foto (Zoom & Pan)</span>
+                                        </button>
+                                    ) : file.type === "application/pdf" ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPdfViewer(!showPdfViewer)}
+                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-xs sm:text-sm font-bold text-blue-400 transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                                        >
+                                            <FileText className="w-4 h-4" />
+                                            <span>{showPdfViewer ? "Sembunyikan Dokumen" : "Buka Reader PDF"}</span>
+                                        </button>
+                                    ) : null}
+                                </div>
+                            )}
+
+                            {/* Embedded PDF Viewer if opened */}
+                            {showPdfViewer && file.type === "application/pdf" && previewUrl && (
+                                <div className="animate-fade-in">
+                                    <PdfEmbeddedViewer
+                                        url={previewUrl}
+                                        fileName={file.name}
+                                        fileSize={file.size}
+                                        title="Reader Dokumen PDF"
+                                        onClose={() => setShowPdfViewer(false)}
+                                        accentColor="blue"
+                                    />
+                                </div>
+                            )}
+
                             {isLoading ? (
                                 <div className="flex flex-col items-center justify-center py-20 bg-surface/30 rounded-2xl border border-border/50">
                                     <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
@@ -338,6 +425,21 @@ export default function MetadataViewerPage() {
                     )}
                 </div>
             </main>
+
+            {/* Media Lightbox Modal for Images */}
+            {file && file.type.startsWith("image/") && previewUrl && (
+                <MediaLightboxModal
+                    isOpen={isLightboxOpen}
+                    item={{
+                        url: previewUrl,
+                        title: file.name,
+                        size: file.size,
+                        mimeType: file.type
+                    }}
+                    onClose={() => setIsLightboxOpen(false)}
+                    accentColor="blue"
+                />
+            )}
         </div>
     );
 }

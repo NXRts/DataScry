@@ -1,19 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import FilePreview from "@/components/ui/FilePreview";
 import { useFiles } from "@/hooks/useFiles";
 import imageCompression from 'browser-image-compression';
 import ExifReader from 'exifreader';
 import { PDFDocument } from 'pdf-lib';
+import { RotateCcw } from "lucide-react";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 
 interface ClientHomeProps {
     defaultAction?: "compress" | "scrub";
 }
 
 export default function ClientHome({ defaultAction }: ClientHomeProps) {
-    const { files, addFiles, removeFile, updateStatus } = useFiles();
+    const { files, addFiles, removeFile, updateStatus, clearAll } = useFiles();
+    const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
 
     const handleFiles = async (newFiles: File[]) => {
         await addFiles(newFiles);
@@ -156,14 +159,25 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
                 <div className="space-y-6">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <h2 className="text-2xl font-bold tracking-tight">Your Files ({files.length})</h2>
-                        {defaultAction && hasIdleFiles && (
+                        <div className="flex items-center gap-2.5">
                             <button
-                                onClick={processAll}
-                                className="px-6 py-2 rounded-xl bg-primary text-white font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+                                type="button"
+                                onClick={() => clearAll()}
+                                className="px-3.5 py-2 rounded-xl border border-rose-500/30 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold text-xs sm:text-sm flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
+                                title="Hapus semua berkas"
                             >
-                                Process All Files
+                                <RotateCcw className="w-4 h-4" />
+                                <span>Clear Semua</span>
                             </button>
-                        )}
+                            {defaultAction && hasIdleFiles && (
+                                <button
+                                    onClick={processAll}
+                                    className="px-6 py-2 rounded-xl bg-primary text-white font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20 cursor-pointer text-xs sm:text-sm"
+                                >
+                                    Process All Files
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {files.map((file) => (
@@ -175,12 +189,32 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
                                 onRemove={() => removeFile(file.id)}
                                 onAction={(type: "compress" | "scrub" | "pdf-merge") => handleAction(file.id, type)}
                                 onDownload={() => handleDownload(file.id)}
+                                onPreview={() => {
+                                    const fileObj = file.originalBlob as File;
+                                    if (fileObj.type.startsWith("image/")) {
+                                        const url = URL.createObjectURL(fileObj);
+                                        setLightboxItem({
+                                            url,
+                                            title: fileObj.name,
+                                            size: fileObj.size,
+                                            mimeType: fileObj.type
+                                        });
+                                    }
+                                }}
                                 defaultAction={defaultAction}
                             />
                         ))}
                     </div>
                 </div>
             )}
+
+            {/* Media Lightbox Modal */}
+            <MediaLightboxModal
+                isOpen={lightboxItem !== null}
+                item={lightboxItem}
+                onClose={() => setLightboxItem(null)}
+                accentColor="emerald"
+            />
         </div>
     );
 }
