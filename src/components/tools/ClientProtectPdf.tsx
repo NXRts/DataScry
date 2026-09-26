@@ -25,8 +25,10 @@ import {
     CheckSquare,
     Square,
     HelpCircle,
-    Sparkles
+    Sparkles,
+    ZoomIn
 } from "lucide-react";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 
 // Setup PDF.js worker using local public worker
 if (typeof window !== "undefined") {
@@ -40,6 +42,7 @@ export default function ClientProtectPdf() {
     const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
     const [pageCount, setPageCount] = useState<number>(0);
     const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+    const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
 
     // Password fields
     const [password, setPassword] = useState<string>("");
@@ -330,8 +333,21 @@ export default function ClientProtectPdf() {
                                 </button>
                             </div>
 
-                            {/* Thumbnail */}
-                            <div className="relative aspect-3/4 rounded-2xl overflow-hidden bg-black/40 border border-border/60 flex items-center justify-center">
+                            {/* Thumbnail Clickable for Lightbox Zoom */}
+                            <div 
+                                onClick={() => {
+                                    if (!thumbnailUrl) return;
+                                    setLightboxItem({
+                                        url: thumbnailUrl,
+                                        title: `Halaman Depan: ${file?.name || "Dokumen PDF"}`,
+                                        pageNumber: 1,
+                                        totalPages: pageCount,
+                                        aspectRatio: "A4 Portrait"
+                                    });
+                                }}
+                                className="relative aspect-3/4 rounded-2xl overflow-hidden bg-black/40 border border-border/60 flex items-center justify-center cursor-pointer group/thumb shadow-inner"
+                                title="Klik untuk memperbesar pratinjau halaman"
+                            >
                                 {isAnalyzing ? (
                                     <div className="flex flex-col items-center gap-2 text-foreground/50">
                                         <Loader2 className="w-6 h-6 animate-spin text-amber-500" />
@@ -341,7 +357,7 @@ export default function ClientProtectPdf() {
                                     <img
                                         src={thumbnailUrl}
                                         alt="Pratinjau Halaman Depan"
-                                        className="w-full h-full object-contain"
+                                        className="w-full h-full object-contain rounded-none pointer-events-none"
                                     />
                                 ) : (
                                     <FileText className="w-12 h-12 text-foreground/30" />
@@ -349,6 +365,12 @@ export default function ClientProtectPdf() {
 
                                 <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/10 text-[11px] font-medium text-white">
                                     {pageCount} Halaman
+                                </div>
+
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+                                    <div className="p-2 rounded-full bg-amber-500 text-white shadow-lg transform scale-90 group-hover/thumb:scale-100 transition-transform">
+                                        <ZoomIn className="w-4 h-4" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -663,6 +685,14 @@ export default function ClientProtectPdf() {
                     </div>
                 </div>
             )}
+
+            {/* Modal Lightbox Reusable untuk Zoom Pratinjau Dokumen */}
+            <MediaLightboxModal
+                isOpen={lightboxItem !== null}
+                onClose={() => setLightboxItem(null)}
+                item={lightboxItem}
+                accentColor="amber"
+            />
         </div>
     );
 }

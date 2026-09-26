@@ -20,8 +20,11 @@ import {
     FileArchive,
     Check,
     FolderOpen,
-    Info
+    Info,
+    Eye
 } from "lucide-react";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
+import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
 
 type CompressionMode = "recommended" | "extreme" | "light" | "custom";
 
@@ -41,7 +44,29 @@ export default function ClientCompress() {
     const [mode, setMode] = useState<CompressionMode>("recommended");
     const [customTargetKB, setCustomTargetKB] = useState<number>(300);
     const [isProcessingAll, setIsProcessingAll] = useState(false);
+    const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
+    const [activePdfPreview, setActivePdfPreview] = useState<{ blob: Blob; fileName: string } | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handlePreview = (item: CompressFileItem) => {
+        const isPdf = item.file.type === "application/pdf";
+        const targetBlob = item.compressedBlob || item.file;
+
+        if (isPdf) {
+            setActivePdfPreview({
+                blob: targetBlob,
+                fileName: item.file.name
+            });
+        } else {
+            const previewUrl = URL.createObjectURL(targetBlob);
+            setLightboxItem({
+                url: previewUrl,
+                title: `${item.file.name} ${item.compressedSize ? "(Hasil Kompresi)" : "(Asli)"}`,
+                size: item.compressedSize || item.originalSize,
+                aspectRatio: item.file.type.replace("image/", "").toUpperCase()
+            });
+        }
+    };
 
     const handleFilesAccepted = (acceptedFiles: File[]) => {
         const newItems: CompressFileItem[] = acceptedFiles.map(file => ({
@@ -574,11 +599,21 @@ export default function ClientCompress() {
                                                 </button>
                                             )}
 
+                                            {/* Preview Button (Eye) for checking image/pdf quality */}
+                                            <button
+                                                type="button"
+                                                onClick={() => handlePreview(item)}
+                                                className="p-1.5 rounded-lg bg-surface border border-border/70 hover:bg-surface/80 text-foreground/70 hover:text-blue-400 transition-colors cursor-pointer"
+                                                title={item.file.type === "application/pdf" ? "Buka Pratinjau PDF" : "Pratinjau Kualitas Gambar (Zoom & Pan)"}
+                                            >
+                                                <Eye className="w-4 h-4" />
+                                            </button>
+
                                             {/* Remove button */}
                                             <button
                                                 type="button"
                                                 onClick={() => handleRemoveFile(item.id)}
-                                                className="p-1.5 text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                                                className="p-1.5 text-foreground/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
                                                 title="Hapus file ini dari daftar"
                                             >
                                                 ✕
@@ -589,8 +624,29 @@ export default function ClientCompress() {
                             })}
                         </div>
                     </div>
+
+                    {/* Active PDF Embedded Preview */}
+                    {activePdfPreview && (
+                        <div className="pt-2 animate-fade-in">
+                            <PdfEmbeddedViewer
+                                blob={activePdfPreview.blob}
+                                fileName={activePdfPreview.fileName}
+                                title={`Pratinjau Dokumen: ${activePdfPreview.fileName}`}
+                                onClose={() => setActivePdfPreview(null)}
+                                accentColor="blue"
+                            />
+                        </div>
+                    )}
                 </div>
             )}
+
+            {/* Reusable Image Lightbox Modal with Zoom & Pan */}
+            <MediaLightboxModal
+                isOpen={lightboxItem !== null}
+                onClose={() => setLightboxItem(null)}
+                item={lightboxItem}
+                accentColor="blue"
+            />
         </div>
     );
 }

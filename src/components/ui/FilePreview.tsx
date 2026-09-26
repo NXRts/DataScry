@@ -1,6 +1,6 @@
 "use client";
 
-import { File, Image as ImageIcon, Trash2, ShieldCheck, Minimize2, FileOutput } from "lucide-react";
+import { File, Image as ImageIcon, Trash2, ShieldCheck, Minimize2, FileOutput, Eye } from "lucide-react";
 import { useMemo } from "react";
 import ProgressBar from "./ProgressBar";
 
@@ -11,10 +11,11 @@ interface FilePreviewProps {
     onRemove?: () => void;
     onAction?: (actionType: "compress" | "scrub" | "pdf-merge") => void;
     onDownload?: () => void;
+    onPreview?: () => void;
     defaultAction?: "compress" | "scrub";
 }
 
-export default function FilePreview({ file, progress = 0, status = "idle", onRemove, onAction, onDownload, defaultAction }: FilePreviewProps) {
+export default function FilePreview({ file, progress = 0, status = "idle", onRemove, onAction, onDownload, onPreview, defaultAction }: FilePreviewProps) {
     const isImage = file.type.startsWith("image/");
     const isPDF = file.type === "application/pdf";
 
@@ -38,9 +39,24 @@ export default function FilePreview({ file, progress = 0, status = "idle", onRem
             )}
 
             <div className="flex gap-4 items-start">
-                <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-surface border border-border flex items-center justify-center">
+                <div
+                    onClick={() => {
+                        if (isImage && onPreview) onPreview();
+                    }}
+                    className={`w-16 h-16 rounded-none overflow-hidden shrink-0 bg-surface border border-border flex items-center justify-center relative ${
+                        isImage && onPreview ? "cursor-pointer group/thumb hover:border-primary/50" : ""
+                    }`}
+                    title={isImage && onPreview ? "Klik untuk perbesar foto (Zoom & Pan)" : undefined}
+                >
                     {isImage && objectUrl ? (
-                        <img src={objectUrl} alt={file.name} className="w-full h-full object-cover" />
+                        <>
+                            <img src={objectUrl} alt={file.name} className="w-full h-full object-cover rounded-none" />
+                            {onPreview && (
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 flex items-center justify-center transition-opacity text-white">
+                                    <Eye size={16} />
+                                </div>
+                            )}
+                        </>
                     ) : isImage ? (
                         <ImageIcon className="text-foreground/40" size={24} />
                     ) : (

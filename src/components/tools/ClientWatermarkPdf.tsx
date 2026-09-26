@@ -12,15 +12,17 @@ import {
     Sparkles,
     CheckCircle2,
     Loader2,
-    HardDrive,
     FolderOpen,
     Check,
     RotateCcw,
-    ShieldAlert,
     Sliders,
     Eye,
-    Type
+    AlertCircle,
+    X,
+    ZoomIn
 } from "lucide-react";
+import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
+import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
 
 // Configure PDF.js worker using local public worker
 if (typeof window !== "undefined") {
@@ -50,18 +52,26 @@ export default function ClientWatermarkPdf() {
 
     const [isApplying, setIsApplying] = useState<boolean>(false);
     const [isDownloaded, setIsDownloaded] = useState<boolean>(false);
+    const [savedPdfBlob, setSavedPdfBlob] = useState<Blob | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    // Lightbox Modal
+    const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileAccepted = async (acceptedFiles: File[]) => {
         const pdfFile = acceptedFiles.find(f => f.type === "application/pdf" || f.name.toLowerCase().endsWith(".pdf"));
         if (!pdfFile) {
-            alert("Silakan pilih berkas dokumen berformat PDF.");
+            setErrorMessage("Silakan pilih berkas dokumen berformat PDF yang valid.");
             return;
         }
 
         setFile(pdfFile);
         setIsLoading(true);
+        setErrorMessage(null);
         setPreviewDataUrl("");
+        setSavedPdfBlob(null);
         setIsDownloaded(false);
 
         try {
@@ -79,14 +89,14 @@ export default function ClientWatermarkPdf() {
             if (context) {
                 canvas.width = viewport.width;
                 canvas.height = viewport.height;
-                await firstPage.render({ canvasContext: context, viewport, canvas }).promise;
-                const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
-                setPreviewDataUrl(dataUrl);
                 setPreviewDimensions({ width: viewport.width, height: viewport.height });
+
+                await firstPage.render({ canvasContext: context, viewport, canvas }).promise;
+                setPreviewDataUrl(canvas.toDataURL("image/jpeg", 0.9));
             }
         } catch (error) {
-            console.error("Error loading PDF preview:", error);
-            alert("Gagal membaca dokumen PDF. Pastikan file valid atau tidak terenkripsi rusak.");
+            console.error("Error reading PDF:", error);
+            setErrorMessage("Gagal memuat pratinjau dokumen PDF. Pastikan dokumen tidak terkunci.");
             setFile(null);
         } finally {
             setIsLoading(false);
@@ -97,36 +107,30 @@ export default function ClientWatermarkPdf() {
         setFile(null);
         setPreviewDataUrl("");
         setPageCount(0);
+        setSavedPdfBlob(null);
         setIsDownloaded(false);
-        setIsLoading(false);
+        setErrorMessage(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
     };
 
-    const presets = [
-        { label: "Verifikasi CASN / BKN", text: `HANYA UNTUK VERIFIKASI CASN ${currentYear}` },
-        { label: "Pembukaan Rekening Bank", text: "HANYA UNTUK PEMBUKAAN REKENING BANK" },
-        { label: "Verifikasi Identitas", text: "HANYA UNTUK VERIFIKASI IDENTITAS" },
-        { label: "Dokumen Rahasia", text: "CONFIDENTIAL - DOKUMEN RAHASIA" },
-        { label: "Salinan Dokumen", text: "SALINAN / COPY ONLY" },
-    ];
-
-    const getColorRgb = (c: WatermarkColor): [number, number, number] => {
+    // Helper: Map WatermarkColor to pdf-lib rgb values
+    const getPdfLibColor = (c: WatermarkColor) => {
         switch (c) {
             case "red":
-                return [0.85, 0.15, 0.15]; // Red
+                return rgb(0.88, 0.15, 0.15);
             case "blue":
-                return [0.15, 0.4, 0.9]; // Blue
+                return rgb(0.12, 0.35, 0.85);
             case "green":
-                return [0.1, 0.65, 0.3]; // Green
+                return rgb(0.1, 0.65, 0.3);
             case "gray":
             default:
-                return [0.3, 0.3, 0.35]; // Neutral dark gray
+                return rgb(0.35, 0.35, 0.35);
         }
     };
 
-    const getColorCss = (c: WatermarkColor): string => {
+    const getColorCss = (c: WatermarkColor) => {
         switch (c) {
             case "red":
                 return "#ef4444";
@@ -136,88 +140,95 @@ export default function ClientWatermarkPdf() {
                 return "#10b981";
             case "gray":
             default:
-                return "#94a3b8";
+                return "#71717a";
         }
     };
 
-    const applyWatermarkAndDownload = async () => {
-        if (!file || !watermarkText.trim()) {
-            alert("Teks watermark tidak boleh kosong.");
-            return;
-        }
-
+    const applyWatermarkAndSave = async () => {
+        if (!file || !watermarkText.trim()) return;
         setIsApplying(true);
+        setErrorMessage(null);
 
         try {
             const arrayBuffer = await file.arrayBuffer();
             const pdfDoc = await PDFDocument.load(arrayBuffer, { ignoreEncryption: true });
-            const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-            const [r, g, b] = getColorRgb(color);
-            const textToDraw = watermarkText.trim();
+            const helveticaFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
             const pages = pdfDoc.getPages();
-            const textWidth = font.widthOfTextAtSize(textToDraw, fontSize);
-            const textHeight = font.heightAtSize(fontSize);
-            const rad = (angle * Math.PI) / 180;
+            const watermarkColor = getPdfLibColor(color);
 
             pages.forEach((page) => {
                 const { width, height } = page.getSize();
-
-                const drawAtCenter = (cx: number, cy: number) => {
-                    const x = cx - (textWidth / 2) * Math.cos(rad) + (textHeight / 2) * Math.sin(rad);
-                    const y = cy - (textWidth / 2) * Math.sin(rad) - (textHeight / 2) * Math.cos(rad);
-
-                    page.drawText(textToDraw, {
-                        x,
-                        y,
-                        size: fontSize,
-                        font,
-                        color: rgb(r, g, b),
-                        opacity,
-                        rotate: degrees(angle),
-                    });
-                };
+                const text = watermarkText.trim();
+                const textWidth = helveticaFont.widthOfTextAtSize(text, fontSize);
+                const textHeight = helveticaFont.heightAtSize(fontSize);
 
                 if (layout === "center") {
-                    drawAtCenter(width / 2, height / 2);
-                } else {
-                    // Tiled 3x3 pattern
-                    const cols = [width * 0.25, width * 0.5, width * 0.75];
-                    const rows = [height * 0.25, height * 0.5, height * 0.75];
-                    cols.forEach(cx => {
-                        rows.forEach(cy => {
-                            drawAtCenter(cx, cy);
-                        });
+                    page.drawText(text, {
+                        x: width / 2 - (textWidth / 2) * Math.cos((angle * Math.PI) / 180),
+                        y: height / 2 - (textWidth / 2) * Math.sin((angle * Math.PI) / 180),
+                        size: fontSize,
+                        font: helveticaFont,
+                        color: watermarkColor,
+                        opacity: opacity,
+                        rotate: degrees(angle),
                     });
+                } else if (layout === "tiled") {
+                    const stepX = width / 2.5;
+                    const stepY = height / 3.5;
+
+                    for (let x = stepX / 2; x < width; x += stepX) {
+                        for (let y = stepY / 2; y < height; y += stepY) {
+                            page.drawText(text, {
+                                x: x - textWidth / 2,
+                                y: y - textHeight / 2,
+                                size: fontSize * 0.75,
+                                font: helveticaFont,
+                                color: watermarkColor,
+                                opacity: opacity * 0.85,
+                                rotate: degrees(angle),
+                            });
+                        }
+                    }
                 }
             });
 
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([new Uint8Array(pdfBytes)], { type: "application/pdf" });
 
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            const nameParts = file.name.split(".");
-            const ext = nameParts.pop();
-            const baseName = nameParts.join(".");
-            a.download = `${baseName}-watermark.${ext}`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
+            setSavedPdfBlob(blob);
             setIsDownloaded(true);
         } catch (error) {
             console.error("Error applying watermark:", error);
-            alert("Gagal menyisipkan watermark pada dokumen. Silakan coba kembali.");
+            setErrorMessage("Gagal menyisipkan watermark pada dokumen. Silakan coba kembali.");
         } finally {
             setIsApplying(false);
         }
     };
 
+    const openLightbox = () => {
+        if (!previewDataUrl) return;
+        setLightboxItem({
+            url: previewDataUrl,
+            title: `Pratinjau Halaman 1 (${file?.name || "Dokumen"})`,
+            pageNumber: 1,
+            totalPages: pageCount,
+            width: previewDimensions.width,
+            height: previewDimensions.height,
+            aspectRatio: "A4 Portrait"
+        });
+    };
+
+    const presets = [
+        { label: "CASN / CPNS", text: `HANYA UNTUK VERIFIKASI CASN ${currentYear}` },
+        { label: "Pribadi / KTP", text: "DOKUMEN PRIBADI - BUKAN UNTUK PINJAMAN ONLINE" },
+        { label: "Lamaran Kerja", text: `VERIFIKASI LAMARAN KERJA ${currentYear}` },
+        { label: "Bank / KPR", text: "HANYA UNTUK KELENGKAPAN BERKAS BANK" },
+        { label: "Draft / Rahasia", text: "DOKUMEN RAHASIA - DRAFT SAJA" }
+    ];
+
     return (
-        <div className="space-y-8 w-full">
+        <div className="space-y-8 w-full max-w-5xl mx-auto">
             {/* Hidden native input for direct file change */}
             <input
                 ref={fileInputRef}
@@ -231,21 +242,37 @@ export default function ClientWatermarkPdf() {
                 }}
             />
 
-            {!file ? (
-                <div className="animate-fade-in">
-                    <Dropzone
-                        onFilesAccepted={handleFileAccepted}
-                        accept="application/pdf"
-                        title="Tarik & Letakkan File PDF di Sini"
-                        description="Mendukung KTP, Ijazah, KK, berkas lamaran, dan dokumen PDF apapun. Watermark ditambahkan 100% lokal tanpa upload ke server."
-                        icons={
-                            <div className="flex items-center gap-2 text-rose-500 font-semibold text-sm">
-                                <FileText className="w-5 h-5" />
-                                <span>Dokumen PDF (Semua Halaman & Resolusi)</span>
-                            </div>
-                        }
-                    />
+            {/* In-App Error Notification */}
+            {errorMessage && (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-start justify-between gap-3 text-rose-400 animate-fade-in shadow-lg">
+                    <div className="flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5 shrink-0 text-rose-500" />
+                        <span className="text-sm font-semibold">{errorMessage}</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => setErrorMessage(null)}
+                        className="p-1 hover:bg-rose-500/20 rounded-lg text-rose-400 transition-colors"
+                        title="Tutup pesan"
+                    >
+                        <X className="w-4 h-4" />
+                    </button>
                 </div>
+            )}
+
+            {!file ? (
+                <Dropzone
+                    onFilesAccepted={handleFileAccepted}
+                    accept="application/pdf"
+                    title="Tarik & Letakkan File PDF di Sini"
+                    description="Mendukung KTP, Ijazah, KK, berkas lamaran, dan dokumen PDF apa saja. Watermark ditambahkan 100% lokal tanpa upload ke server."
+                    icons={
+                        <div className="flex items-center gap-2 text-rose-500 font-semibold text-sm">
+                            <Stamp className="w-5 h-5" />
+                            <span>Dokumen PDF (Semua Halaman & Resolusi)</span>
+                        </div>
+                    }
+                />
             ) : isLoading ? (
                 <div className="glass-panel p-12 rounded-3xl border border-border/80 text-center space-y-4 shadow-xl">
                     <Loader2 className="w-10 h-10 animate-spin text-rose-500 mx-auto" />
@@ -257,7 +284,7 @@ export default function ClientWatermarkPdf() {
                     {/* Top File Action Card */}
                     <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-border/80 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-3.5 min-w-0">
-                            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-500 shrink-0">
+                            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center shrink-0">
                                 <Stamp className="w-6 h-6" />
                             </div>
                             <div className="min-w-0">
@@ -278,7 +305,7 @@ export default function ClientWatermarkPdf() {
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-foreground/80 hover:text-foreground bg-surface hover:bg-surface/80 border border-border/70 rounded-xl transition-all active:scale-95"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-foreground/80 hover:text-foreground bg-surface hover:bg-surface/80 border border-border/70 rounded-xl transition-all cursor-pointer"
                             >
                                 <FolderOpen className="w-4 h-4 text-rose-500" />
                                 <span>Ganti PDF</span>
@@ -286,10 +313,10 @@ export default function ClientWatermarkPdf() {
                             <button
                                 type="button"
                                 onClick={handleClear}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-foreground/70 hover:text-rose-400 bg-surface hover:bg-rose-500/10 border border-border/70 hover:border-rose-500/30 rounded-xl transition-all active:scale-95"
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 rounded-xl transition-all cursor-pointer"
                             >
                                 <RotateCcw className="w-4 h-4" />
-                                <span>Clear</span>
+                                <span>Clear Semua</span>
                             </button>
                         </div>
                     </div>
@@ -329,10 +356,11 @@ export default function ClientWatermarkPdf() {
                                                 key={preset.label}
                                                 type="button"
                                                 onClick={() => setWatermarkText(preset.text)}
-                                                className={`px-3 py-1.5 text-xs font-semibold rounded-xl border transition-all ${watermarkText === preset.text
-                                                    ? "bg-rose-500/20 text-rose-400 border-rose-500/40 ring-1 ring-rose-500/30"
-                                                    : "bg-surface hover:bg-surface/80 text-foreground/70 border-border/60"
-                                                    }`}
+                                                className={`text-xs px-3 py-1.5 rounded-lg border transition-all cursor-pointer ${
+                                                    watermarkText === preset.text
+                                                        ? "bg-rose-500/20 border-rose-500 text-rose-400 font-bold"
+                                                        : "bg-surface hover:bg-surface/80 border-border/70 text-foreground/70"
+                                                }`}
                                             >
                                                 {preset.label}
                                             </button>
@@ -340,131 +368,125 @@ export default function ClientWatermarkPdf() {
                                     </div>
                                 </div>
 
-                                {/* Style Attributes Grid */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2 border-t border-border/40">
+                                {/* Styling Options: Color, Opacity, Angle, Layout */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                                     {/* Color Picker */}
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold uppercase tracking-wider text-foreground/70">
+                                        <label className="text-xs font-bold text-foreground/70 uppercase tracking-wider">
                                             Warna Tinta
                                         </label>
-                                        <div className="grid grid-cols-4 gap-2">
-                                            {[
-                                                { key: "red" as WatermarkColor, label: "Merah", bg: "bg-red-500" },
-                                                { key: "gray" as WatermarkColor, label: "Abu-abu", bg: "bg-slate-400" },
-                                                { key: "blue" as WatermarkColor, label: "Biru", bg: "bg-blue-500" },
-                                                { key: "green" as WatermarkColor, label: "Hijau", bg: "bg-emerald-500" },
-                                            ].map((c) => (
+                                        <div className="flex items-center gap-2">
+                                            {(["red", "blue", "green", "gray"] as WatermarkColor[]).map((c) => (
                                                 <button
-                                                    key={c.key}
+                                                    key={c}
                                                     type="button"
-                                                    onClick={() => setColor(c.key)}
-                                                    className={`p-2 rounded-xl border flex flex-col items-center gap-1.5 transition-all ${color === c.key
-                                                        ? "border-foreground/80 bg-surface/80 ring-2 ring-rose-500/30"
-                                                        : "border-border/60 bg-surface/40 hover:bg-surface"
-                                                        }`}
+                                                    onClick={() => setColor(c)}
+                                                    className={`w-9 h-9 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
+                                                        color === c
+                                                            ? "ring-2 ring-rose-500 scale-105 border-transparent"
+                                                            : "border-border/80 hover:scale-105"
+                                                    }`}
+                                                    style={{ backgroundColor: getColorCss(c) }}
+                                                    title={`Warna ${c}`}
                                                 >
-                                                    <span className={`w-4 h-4 rounded-full ${c.bg}`}></span>
-                                                    <span className="text-[10px] font-semibold text-foreground/70">{c.label}</span>
+                                                    {color === c && <Check className="w-4 h-4 text-white drop-shadow" />}
                                                 </button>
                                             ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Layout Choice */}
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-foreground/70 uppercase tracking-wider">
+                                            Penataan Stempel
+                                        </label>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => setLayout("center")}
+                                                className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                                                    layout === "center"
+                                                        ? "bg-rose-500/15 border-rose-500 text-rose-400 font-bold"
+                                                        : "bg-surface border-border text-foreground/70 hover:bg-surface/80"
+                                                }`}
+                                            >
+                                                Tengah (Besar)
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setLayout("tiled")}
+                                                className={`py-2 px-3 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                                                    layout === "tiled"
+                                                        ? "bg-rose-500/15 border-rose-500 text-rose-400 font-bold"
+                                                        : "bg-surface border-border text-foreground/70 hover:bg-surface/80"
+                                                }`}
+                                            >
+                                                Ubin Penuh (3×3)
+                                            </button>
                                         </div>
                                     </div>
 
                                     {/* Angle Selector */}
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold uppercase tracking-wider text-foreground/70">
-                                            Kemiringan Sudut
+                                        <label className="text-xs font-bold text-foreground/70 uppercase tracking-wider">
+                                            Kemiringan Sudut ({angle}°)
                                         </label>
                                         <div className="grid grid-cols-3 gap-2">
-                                            {[
-                                                { key: -45 as WatermarkAngle, label: "Diagonal (-45°)" },
-                                                { key: 0 as WatermarkAngle, label: "Datar (0°)" },
-                                                { key: 45 as WatermarkAngle, label: "Diagonal (+45°)" },
-                                            ].map((a) => (
+                                            {([-45, 0, 45] as WatermarkAngle[]).map((a) => (
                                                 <button
-                                                    key={a.key}
+                                                    key={a}
                                                     type="button"
-                                                    onClick={() => setAngle(a.key)}
-                                                    className={`py-2 px-1 text-center rounded-xl border text-xs font-semibold transition-all ${angle === a.key
-                                                        ? "bg-rose-500/20 text-rose-400 border-rose-500/40 ring-1 ring-rose-500/30"
-                                                        : "bg-surface/40 border-border/60 hover:bg-surface text-foreground/70"
-                                                        }`}
+                                                    onClick={() => setAngle(a)}
+                                                    className={`py-2 px-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer ${
+                                                        angle === a
+                                                            ? "bg-rose-500/15 border-rose-500 text-rose-400 font-bold"
+                                                            : "bg-surface border-border text-foreground/70 hover:bg-surface/80"
+                                                    }`}
                                                 >
-                                                    {a.label}
+                                                    {a === -45 ? "Diagonal ↗" : a === 0 ? "Datar ➔" : "Diagonal ↘"}
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Layout & Sliders */}
-                                <div className="space-y-4 pt-2 border-t border-border/40">
-                                    {/* Layout Mode */}
+                                    {/* Opacity Slider */}
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold uppercase tracking-wider text-foreground/70">
-                                            Pola Penempatan
-                                        </label>
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <button
-                                                type="button"
-                                                onClick={() => setLayout("center")}
-                                                className={`p-3 rounded-xl border text-left transition-all ${layout === "center"
-                                                    ? "bg-rose-500/15 border-rose-500/50 text-foreground ring-1 ring-rose-500/30"
-                                                    : "bg-surface/40 border-border/60 hover:bg-surface text-foreground/70"
-                                                    }`}
-                                            >
-                                                <div className="text-xs font-bold">Tengah Halaman (Center)</div>
-                                                <div className="text-[10px] text-foreground/50 mt-0.5">Satu cap diagonal besar di tengah</div>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setLayout("tiled")}
-                                                className={`p-3 rounded-xl border text-left transition-all ${layout === "tiled"
-                                                    ? "bg-rose-500/15 border-rose-500/50 text-foreground ring-1 ring-rose-500/30"
-                                                    : "bg-surface/40 border-border/60 hover:bg-surface text-foreground/70"
-                                                    }`}
-                                            >
-                                                <div className="text-xs font-bold">Pola Berulang (Tiled 3x3)</div>
-                                                <div className="text-[10px] text-foreground/50 mt-0.5">Mencegah crop atau manipulasi tepi</div>
-                                            </button>
+                                        <div className="flex justify-between text-xs">
+                                            <label className="font-bold text-foreground/70 uppercase tracking-wider">
+                                                Transparansi
+                                            </label>
+                                            <span className="font-semibold text-rose-400">{Math.round(opacity * 100)}%</span>
                                         </div>
+                                        <input
+                                            type="range"
+                                            min="0.1"
+                                            max="0.9"
+                                            step="0.05"
+                                            value={opacity}
+                                            onChange={(e) => setOpacity(parseFloat(e.target.value))}
+                                            className="w-full accent-rose-500 cursor-pointer"
+                                        />
+                                        <span className="text-[10px] text-foreground/50 block">Rekomendasi: 30% - 40% agar teks dokumen tetap terbaca.</span>
                                     </div>
 
-                                    {/* Sliders: Opacity & Size */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between text-xs font-bold">
-                                                <span className="text-foreground/70 uppercase tracking-wider">Transparansi:</span>
-                                                <span className="text-rose-400 font-mono">{Math.round(opacity * 100)}%</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="0.1"
-                                                max="0.8"
-                                                step="0.05"
-                                                value={opacity}
-                                                onChange={(e) => setOpacity(parseFloat(e.target.value))}
-                                                className="w-full accent-rose-500 cursor-pointer"
-                                            />
-                                            <span className="text-[10px] text-foreground/50 block">Disarankan 25-40% agar teks dokumen tetap terbaca.</span>
+                                    {/* Font Size Slider */}
+                                    <div className="space-y-2 sm:col-span-2">
+                                        <div className="flex justify-between text-xs">
+                                            <label className="font-bold text-foreground/70 uppercase tracking-wider">
+                                                Ukuran Huruf
+                                            </label>
+                                            <span className="font-semibold text-rose-400">{fontSize} pt</span>
                                         </div>
-
-                                        <div className="space-y-2">
-                                            <div className="flex justify-between text-xs font-bold">
-                                                <span className="text-foreground/70 uppercase tracking-wider">Ukuran Huruf:</span>
-                                                <span className="text-rose-400 font-mono">{fontSize} pt</span>
-                                            </div>
-                                            <input
-                                                type="range"
-                                                min="18"
-                                                max="72"
-                                                step="2"
-                                                value={fontSize}
-                                                onChange={(e) => setFontSize(parseInt(e.target.value))}
-                                                className="w-full accent-rose-500 cursor-pointer"
-                                            />
-                                            <span className="text-[10px] text-foreground/50 block">Sesuaikan dengan panjang kalimat Anda.</span>
-                                        </div>
+                                        <input
+                                            type="range"
+                                            min="18"
+                                            max="72"
+                                            step="2"
+                                            value={fontSize}
+                                            onChange={(e) => setFontSize(parseInt(e.target.value, 10))}
+                                            className="w-full accent-rose-500 cursor-pointer"
+                                        />
+                                        <span className="text-[10px] text-foreground/50 block">Sesuaikan dengan panjang kalimat Anda.</span>
                                     </div>
                                 </div>
 
@@ -472,27 +494,23 @@ export default function ClientWatermarkPdf() {
                                 <div className="pt-4 border-t border-border/50">
                                     <button
                                         type="button"
-                                        onClick={applyWatermarkAndDownload}
+                                        onClick={applyWatermarkAndSave}
                                         disabled={isApplying}
-                                        className={`w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl text-base font-bold text-white shadow-xl transition-all ${isApplying
-                                            ? "bg-rose-500/50 cursor-not-allowed"
-                                            : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/30 hover:scale-[1.01] active:scale-95 cursor-pointer"
-                                            }`}
+                                        className={`w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl text-base font-bold text-white shadow-xl transition-all cursor-pointer ${
+                                            isApplying
+                                                ? "bg-rose-500/50 cursor-not-allowed"
+                                                : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/30 hover:scale-[1.01] active:scale-95"
+                                        }`}
                                     >
                                         {isApplying ? (
                                             <>
                                                 <Loader2 className="w-5 h-5 animate-spin" />
                                                 <span>Menerapkan Watermark ke {pageCount} Halaman...</span>
                                             </>
-                                        ) : isDownloaded ? (
-                                            <>
-                                                <Check className="w-5 h-5" />
-                                                <span>Unduh Ulang Dokumen Bertanda</span>
-                                            </>
                                         ) : (
                                             <>
-                                                <Download className="w-5 h-5" />
-                                                <span>Cap & Unduh PDF Berwatermark</span>
+                                                <Stamp className="w-5 h-5" />
+                                                <span>Cap & Tampilkan Hasil PDF ({pageCount} Hal)</span>
                                             </>
                                         )}
                                     </button>
@@ -513,13 +531,17 @@ export default function ClientWatermarkPdf() {
                                     </span>
                                 </div>
 
-                                {/* Preview Canvas Container */}
-                                <div className="relative w-full aspect-3/4 max-w-sm mx-auto bg-black/40 rounded-2xl overflow-hidden border border-border/60 shadow-inner flex items-center justify-center select-none">
+                                {/* Preview Canvas Container Clickable for Lightbox Zoom */}
+                                <div
+                                    onClick={openLightbox}
+                                    className="relative w-full aspect-3/4 max-w-sm mx-auto bg-black/40 rounded-2xl overflow-hidden border border-border/60 shadow-inner flex items-center justify-center select-none cursor-pointer group/thumb"
+                                    title="Klik untuk melihat pratinjau zoom detail"
+                                >
                                     {previewDataUrl ? (
                                         <img
                                             src={previewDataUrl}
                                             alt="Pratinjau Dokumen"
-                                            className="w-full h-full object-contain"
+                                            className="w-full h-full object-contain rounded-none pointer-events-none"
                                         />
                                     ) : (
                                         <div className="text-center p-6 space-y-2">
@@ -537,7 +559,7 @@ export default function ClientWatermarkPdf() {
                                                     style={{
                                                         color: getColorCss(color),
                                                         opacity,
-                                                        fontSize: `${fontSize * 0.45}px`, // Scaled for preview viewport
+                                                        fontSize: `${fontSize * 0.45}px`,
                                                         transform: `rotate(${angle}deg)`,
                                                         textShadow: "0 1px 2px rgba(0,0,0,0.3)",
                                                     }}
@@ -565,16 +587,43 @@ export default function ClientWatermarkPdf() {
                                             )}
                                         </div>
                                     )}
+
+                                    {/* Hover Zoom Icon */}
+                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
+                                        <div className="p-2.5 rounded-full bg-rose-500 text-white shadow-lg transform scale-90 group-hover/thumb:scale-100 transition-transform">
+                                            <ZoomIn className="w-5 h-5" />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <p className="text-center text-[11px] text-foreground/50 leading-relaxed">
-                                    Stempel akan disematkan pada seluruh {pageCount} halaman dokumen dengan kualitas teks tajam & anti-pecah.
+                                    Stempel akan disematkan pada seluruh {pageCount} halaman dokumen dengan kualitas teks tajam & anti-pecah. Klik gambar untuk zoom.
                                 </p>
                             </div>
                         </div>
                     </div>
+
+                    {/* Output Result: Live Embedded PDF Viewer */}
+                    {savedPdfBlob && (
+                        <div className="space-y-4 pt-4 animate-fade-in">
+                            <PdfEmbeddedViewer
+                                blob={savedPdfBlob}
+                                fileName={`${file.name.replace(/\.pdf$/i, "")}-watermark.pdf`}
+                                title="Dokumen PDF Berwatermark Siap Diunduh"
+                                accentColor="rose"
+                            />
+                        </div>
+                    )}
                 </div>
             )}
+
+            {/* Modal Lightbox Reusable untuk Memeriksa Detail Dokumen */}
+            <MediaLightboxModal
+                isOpen={lightboxItem !== null}
+                onClose={() => setLightboxItem(null)}
+                item={lightboxItem}
+                accentColor="rose"
+            />
         </div>
     );
 }
