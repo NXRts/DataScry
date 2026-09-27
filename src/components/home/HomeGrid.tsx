@@ -14,7 +14,8 @@ import {
     RotateCw,
     Stamp,
     PenTool,
-    Lock
+    Lock,
+    Eraser
 } from "lucide-react";
 
 const TOOLS = [
@@ -31,6 +32,13 @@ const TOOLS = [
         icon: <FileImage size={32} className="text-amber-500" />,
         href: "/tools/pdf-to-jpg",
         color: "amber"
+    },
+    {
+        title: "Hapus Latar Belakang",
+        description: "Potong background foto secara otomatis dan bersih dengan resolusi tajam HD.",
+        icon: <Eraser size={32} className="text-emerald-400" />,
+        href: "/tools/remove-background",
+        color: "emerald"
     },
     {
         title: "Gabungkan PDF",
