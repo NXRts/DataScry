@@ -28,38 +28,51 @@ No files are ever uploaded to a server, ensuring your data remains 100% private,
 
 DataScry offers a comprehensive suite of tools built into a seamless, unified dark-mode interface:
 
-- **📄 Word Tools**:
+- **🤖 AI & Image Suite**:
+  - **✨ Remove Background (HD Lossless)**: On-device AI background removal powered by neural networks (ISNet FP16) running 100% locally with interactive before/after split slider and photo studio background presets.
+  - **🖼️ JPG to PDF**: Compile multiple JPG, PNG, or WebP images into a properly scaled, standard A4/Letter PDF document with custom margins, ordering, and orientation (*Gold Standard Lightbox Zoom 400%*).
+  - **📄 PDF to JPG**: Extract high-resolution images from each page of your PDF documents with custom page selection, ZIP archiving, and single downloads.
+  - **🗜️ Image & Document Compress**: Optimize and compress files locally with multi-level quality controls and real-time byte-saving preview.
+
+- **📑 PDF Power Tools**:
+  - **🔗 Merge PDF**: Seamlessly combine multiple PDF files into one with visual drag-and-drop page ordering.
+  - **✂️ Split PDF**: Extract specific pages, ranges, or split multi-page PDF documents cleanly.
+  - **🔄 Rotate PDF**: Rotate document pages by 90°, 180°, or 270° individually or in bulk.
+  - **✍️ Sign PDF**: Interactive touch-enabled canvas to draw, import transparent signatures, and stamp on any document page.
+  - **💧 Watermark PDF**: Stamp custom text or transparent image logos with angle, opacity, and grid layout controls.
+  - **🔒 Protect PDF**: Encrypt documents with strong passwords using client-side WebAssembly.
+
+- **📄 Office & Document Tools**:
   - **🔗 Merge Word (.docx)**: Combine multiple Word documents into a single cohesive `.docx` file 100% locally.
   - **📝 Word to PDF**: Convert `.docx` files to PDF with clean local rendering.
   - **📑 PDF to Word**: Extract and convert PDF documents into editable Word files.
-- **📑 PDF Tools**:
-  - **🖼️ JPG to PDF**: Compile multiple JPG, PNG, or WebP images into a properly scaled, standard A4/Letter PDF document with custom margins, ordering, and orientation.
-  - **📄 PDF to JPG**: Extract high-resolution images from each page of your PDF documents.
-  - **✂️ Split PDF**: Extract specific pages or split multi-page PDF documents.
-  - **🔗 Merge PDF**: Seamlessly combine multiple PDF files into one.
-- **🛡️ Privacy & Security Tools**:
+
+- **🛡️ Privacy & File Utilities**:
   - **🛡️ Scrub EXIF Data**: Strip GPS coordinates, camera serial numbers, and personal metadata before sharing photos online.
   - **🗂️ Metadata Viewer**: Inspect embedded metadata within images and documents.
-  - **🖼️ Image Compress**: Optimize and compress images locally without compromising visual quality.
+  - **📦 Archive ZIP**: Compress and package multiple files into a clean `.zip` archive right in your browser.
+
+> 🗺️ **Looking for upcoming tools?** Check out our detailed roadmap in [**`next-fitur.md`**](./next-fitur.md) for 30+ upcoming tools (Office converter suite, PDF redactor, OCR, AI summarizer, and more).
 
 ## 🔒 Privacy First
 
 We believe your data is yours alone. That's why DataScry is built with a strict **Privacy-First** architecture:
 
-- **Zero Server Uploads**: Every tool runs locally on your device via client-side scripting.
+- **Zero Server Uploads**: Every tool runs locally on your device via client-side scripting and in-memory WebAssembly.
 - **Offline Capable**: Because it runs in the browser, you can use these tools even on a spotty connection once loaded.
 - **Safe & Secure**: Open-source transparency means you can verify exactly what happens to your files.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js](https://nextjs.org/) 15 (App Router)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Core Libraries**:
-  - `browser-image-compression` for images.
-  - `pdf-lib` & `pdfjs-dist` for PDF manipulation.
-  - `exifreader` for metadata extraction.
-  - `jszip` & `idb` for browser storage and zipping.
+  - `@imgly/background-removal` for local AI neural network background segmentation.
+  - `browser-image-compression` for smart image optimization.
+  - `pdf-lib` & `pdfjs-dist` for PDF manipulation, rendering, and encryption.
+  - `exifreader` for metadata inspection and scrubbing.
+  - `docx` & `jszip` for Word document processing and archive generation.
 
 ## 🚀 Getting Started
 
