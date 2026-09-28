@@ -7,14 +7,24 @@ export default function PhilosophySection() {
             sub: "Informasi & Berkas Digital",
             desc: "Representasi digital dari aset paling berharga Anda—mulai dari dokumen kontrak, ijazah, arsip pribadi, hingga foto kenangan. Data adalah identitas dan hak privasi mutlak yang tidak seharusnya diserahkan ke server asing.",
             icon: <Database className="w-6 h-6 text-blue-400" />,
-            badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+            badgeColor: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+            subColor: "text-blue-400",
+            borderHover: "hover:border-blue-500/50",
+            titleHover: "group-hover:text-blue-400",
+            shadowHover: "hover:shadow-blue-500/10",
+            iconBoxHover: "group-hover:border-blue-500/40 group-hover:bg-blue-500/10",
         },
         {
             word: "Scry",
             sub: "Seni Menyingkap yang Tersembunyi",
             desc: "Berasal dari kata kuno 'scrying' (seni menerawang atau melihat tabir tersembunyi melalui cermin jernih). Di dunia digital, ini melambangkan kemampuan menatap langsung ke dalam struktur file untuk melihat metadata tersembunyi, jejak GPS, dan informasi rahasia.",
             icon: <Eye className="w-6 h-6 text-purple-400" />,
-            badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+            badgeColor: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+            subColor: "text-purple-400",
+            borderHover: "hover:border-purple-500/50",
+            titleHover: "group-hover:text-purple-400",
+            shadowHover: "hover:shadow-purple-500/10",
+            iconBoxHover: "group-hover:border-purple-500/40 group-hover:bg-purple-500/10",
         }
     ];
 
@@ -43,10 +53,10 @@ export default function PhilosophySection() {
                     {PILLARS.map((pillar, idx) => (
                         <div
                             key={idx}
-                            className="glass-panel p-8 md:p-10 rounded-3xl border border-border/70 hover:border-primary/40 transition-all duration-300 space-y-5 relative"
+                            className={`group glass-panel p-8 md:p-10 rounded-3xl border border-border/70 ${pillar.borderHover} ${pillar.shadowHover} transition-all duration-300 space-y-5 relative`}
                         >
                             <div className="flex items-center justify-between">
-                                <div className="p-3 rounded-2xl bg-surface border border-border/80 shadow-sm">
+                                <div className={`p-3 rounded-2xl bg-surface border border-border/80 ${pillar.iconBoxHover} shadow-sm group-hover:scale-105 transition-all duration-300`}>
                                     {pillar.icon}
                                 </div>
                                 <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${pillar.badgeColor}`}>
@@ -55,10 +65,10 @@ export default function PhilosophySection() {
                             </div>
 
                             <div>
-                                <h3 className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+                                <h3 className={`text-2xl sm:text-3xl font-black tracking-tight text-foreground ${pillar.titleHover} transition-colors`}>
                                     {pillar.word}
                                 </h3>
-                                <p className="text-sm font-medium text-primary mt-1">
+                                <p className={`text-sm font-medium ${pillar.subColor} mt-1`}>
                                     {pillar.sub}
                                 </p>
                             </div>
