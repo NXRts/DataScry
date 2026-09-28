@@ -13,34 +13,78 @@ import {
 } from "lucide-react";
 
 export default function HeroSection() {
+    const heroColorThemes: Record<
+        string,
+        {
+            borderHover: string;
+            textHover: string;
+            arrowHover: string;
+            iconBoxHover: string;
+            shadowHover: string;
+        }
+    > = {
+        purple: {
+            borderHover: "hover:border-purple-500/50",
+            textHover: "group-hover:text-purple-400",
+            arrowHover: "group-hover:text-purple-400",
+            iconBoxHover: "group-hover:border-purple-500/40 group-hover:bg-purple-500/10",
+            shadowHover: "hover:shadow-purple-500/10",
+        },
+        blue: {
+            borderHover: "hover:border-blue-500/50",
+            textHover: "group-hover:text-blue-400",
+            arrowHover: "group-hover:text-blue-400",
+            iconBoxHover: "group-hover:border-blue-500/40 group-hover:bg-blue-500/10",
+            shadowHover: "hover:shadow-blue-500/10",
+        },
+        cyan: {
+            borderHover: "hover:border-cyan-500/50",
+            textHover: "group-hover:text-cyan-400",
+            arrowHover: "group-hover:text-cyan-400",
+            iconBoxHover: "group-hover:border-cyan-500/40 group-hover:bg-cyan-500/10",
+            shadowHover: "hover:shadow-cyan-500/10",
+        },
+        emerald: {
+            borderHover: "hover:border-emerald-500/50",
+            textHover: "group-hover:text-emerald-400",
+            arrowHover: "group-hover:text-emerald-400",
+            iconBoxHover: "group-hover:border-emerald-500/40 group-hover:bg-emerald-500/10",
+            shadowHover: "hover:shadow-emerald-500/10",
+        },
+    };
+
     const quickFeatures = [
         {
             title: "Gabungkan PDF & Word",
             desc: "Kombinasikan beberapa dokumen tanpa batasan ukuran.",
             icon: <Files className="w-5 h-5 text-purple-400" />,
             href: "/tools/merge-pdf",
-            tag: "Populer"
+            tag: "Populer",
+            color: "purple"
         },
         {
             title: "Konversi PDF ke Word",
             desc: "Ekstrak teks dan ubah format dokumen secara instan.",
             icon: <FileType className="w-5 h-5 text-blue-400" />,
             href: "/tools/pdf-to-word",
-            tag: "Instan"
+            tag: "Instan",
+            color: "blue"
         },
         {
             title: "Kompres PDF & Gambar",
             desc: "Pangkas ukuran file besar tanpa kehilangan kualitas.",
             icon: <Minimize2 className="w-5 h-5 text-cyan-400" />,
             href: "/tools/compress",
-            tag: "Hemat Ruang"
+            tag: "Hemat Ruang",
+            color: "cyan"
         },
         {
             title: "Hapus Metadata EXIF",
             desc: "Bersihkan lokasi GPS & data privasi sebelum dibagikan.",
             icon: <ShieldAlert className="w-5 h-5 text-emerald-400" />,
             href: "/tools/scrub-exif",
-            tag: "Privasi"
+            tag: "Privasi",
+            color: "emerald"
         }
     ];
 
@@ -126,33 +170,36 @@ export default function HeroSection() {
 
                             {/* Quick Tool Links */}
                             <div className="space-y-3">
-                                {quickFeatures.map((tool) => (
-                                    <Link
-                                        key={tool.href}
-                                        href={tool.href}
-                                        className="group p-3.5 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 hover:border-primary/40 flex items-center justify-between gap-3 transition-all duration-200 hover:scale-[1.01]"
-                                    >
-                                        <div className="flex items-center gap-3 min-w-0">
-                                            <div className="p-2.5 rounded-xl bg-surface border border-border shrink-0 group-hover:scale-105 transition-transform">
-                                                {tool.icon}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <div className="flex items-center gap-2">
-                                                    <p className="text-sm font-bold text-foreground truncate group-hover:text-primary transition-colors">
-                                                        {tool.title}
-                                                    </p>
-                                                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-surface font-semibold text-foreground/60 border border-border/50 shrink-0">
-                                                        {tool.tag}
-                                                    </span>
+                                {quickFeatures.map((tool) => {
+                                    const theme = heroColorThemes[tool.color] || heroColorThemes.blue;
+                                    return (
+                                        <Link
+                                            key={tool.href}
+                                            href={tool.href}
+                                            className={`group p-3.5 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 ${theme.borderHover} ${theme.shadowHover} flex items-center justify-between gap-3 transition-all duration-200 hover:scale-[1.01]`}
+                                        >
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className={`p-2.5 rounded-xl bg-surface border border-border shrink-0 ${theme.iconBoxHover} group-hover:scale-105 transition-all`}>
+                                                    {tool.icon}
                                                 </div>
-                                                <p className="text-xs text-foreground/60 truncate">
-                                                    {tool.desc}
-                                                </p>
+                                                <div className="min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <p className={`text-sm font-bold text-foreground truncate ${theme.textHover} transition-colors`}>
+                                                            {tool.title}
+                                                        </p>
+                                                        <span className="text-[10px] px-2 py-0.5 rounded-md bg-surface font-semibold text-foreground/60 border border-border/50 shrink-0">
+                                                            {tool.tag}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-foreground/60 truncate">
+                                                        {tool.desc}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <ArrowRight className="w-4 h-4 text-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
-                                    </Link>
-                                ))}
+                                            <ArrowRight className={`w-4 h-4 text-foreground/40 ${theme.arrowHover} group-hover:translate-x-1 transition-all shrink-0`} />
+                                        </Link>
+                                    );
+                                })}
                             </div>
 
                             {/* Panel Footer Action */}
