@@ -28,61 +28,45 @@ export default function Footer() {
                     <div className="grid grid-cols-2 gap-8 md:col-span-2">
                         {/* Quick Links */}
                         <div className="space-y-4">
-                            <h4 className="text-sm font-bold tracking-wider text-foreground">TOOLS</h4>
-                            <ul className="space-y-3 text-sm text-foreground/60">
+                            <h4 className="text-xs font-bold tracking-wider text-foreground uppercase">ALAT POPULER</h4>
+                            <ul className="space-y-2.5 text-sm text-foreground/70">
                                 <li>
-                                    <Link href="/tools/compress" className="hover:text-primary transition-colors">
-                                        Kompresi File Lokal (PDF & Foto)
+                                    <Link href="/tools/remove-background" className="hover:text-emerald-400 transition-colors block py-0.5">
+                                        Hapus Latar Belakang (AI)
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/tools/archive-zip" className="hover:text-primary transition-colors text-purple-400/80 font-medium">
-                                        Kompres Berkas ke ZIP
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/tools/scrub-exif" className="hover:text-primary transition-colors">
-                                        Pembersih Jejak Metadata
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/tools/jpg-to-pdf" className="hover:text-primary transition-colors">
+                                    <Link href="/tools/jpg-to-pdf" className="hover:text-amber-400 transition-colors block py-0.5">
                                         Ubah JPG ke PDF
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/tools/pdf-to-jpg" className="hover:text-primary transition-colors">
-                                        Ekstrak Halaman (PDF to JPG)
+                                    <Link href="/tools/pdf-to-jpg" className="hover:text-amber-400 transition-colors block py-0.5">
+                                        Ekstrak PDF ke JPG
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/tools/rotate-pdf" className="hover:text-primary transition-colors text-rose-400/80 font-medium">
-                                        Putar Halaman PDF
+                                    <Link href="/tools/merge-pdf" className="hover:text-purple-400 transition-colors block py-0.5">
+                                        Gabungkan PDF
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/tools/watermark-pdf" className="hover:text-primary transition-colors text-rose-400/80 font-medium">
-                                        Watermark & Stempel PDF
+                                    <Link href="/tools/compress" className="hover:text-blue-400 transition-colors block py-0.5">
+                                        Kompres PDF & Foto
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/tools/sign-pdf" className="hover:text-primary transition-colors text-rose-400/80 font-medium">
+                                    <Link href="/tools/sign-pdf" className="hover:text-rose-400 transition-colors block py-0.5">
                                         Tanda Tangan PDF (e-Sign)
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link href="/tools/protect-pdf" className="hover:text-primary transition-colors text-amber-400/80 font-medium">
-                                        Kunci & Proteksi PDF
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/tools/merge-word" className="hover:text-primary transition-colors text-cyan-400/80 font-medium">
-                                        Gabungkan Word (.docx)
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/tools/metadata-viewer" className="hover:text-primary transition-colors text-blue-400/80 font-medium">
-                                        Penampil EXIF / Metadata
+                                <li className="pt-1.5">
+                                    <Link
+                                        href="/#tools"
+                                        className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 transition-colors group"
+                                    >
+                                        <span>Lihat Semua 16 Alat</span>
+                                        <span className="group-hover:translate-x-0.5 transition-transform">→</span>
                                     </Link>
                                 </li>
                             </ul>
