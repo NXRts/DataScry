@@ -1,6 +1,35 @@
 import { Shield, Zap, Infinity } from "lucide-react";
 
 export default function FeaturesSection() {
+    const featureThemes: Record<
+        string,
+        {
+            iconBg: string;
+            borderHover: string;
+            titleHover: string;
+            shadowHover: string;
+        }
+    > = {
+        emerald: {
+            iconBg: "bg-emerald-500/10 group-hover:bg-emerald-500/20 border border-emerald-500/20",
+            borderHover: "hover:border-emerald-500/50",
+            titleHover: "group-hover:text-emerald-400",
+            shadowHover: "hover:shadow-emerald-500/10",
+        },
+        amber: {
+            iconBg: "bg-amber-500/10 group-hover:bg-amber-500/20 border border-amber-500/20",
+            borderHover: "hover:border-amber-500/50",
+            titleHover: "group-hover:text-amber-400",
+            shadowHover: "hover:shadow-amber-500/10",
+        },
+        blue: {
+            iconBg: "bg-blue-500/10 group-hover:bg-blue-500/20 border border-blue-500/20",
+            borderHover: "hover:border-blue-500/50",
+            titleHover: "group-hover:text-blue-400",
+            shadowHover: "hover:shadow-blue-500/10",
+        },
+    };
+
     const FEATURES = [
         {
             title: "Super Privat (Tanpa Server)",
@@ -31,15 +60,25 @@ export default function FeaturesSection() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                    {FEATURES.map((feature, idx) => (
-                        <div key={idx} className="relative z-10 glass-panel p-8 rounded-3xl border border-border/50 hover:border-primary/30 transition-all hover:-translate-y-2 group shadow-xl shadow-black/5">
-                            <div className={`w-16 h-16 rounded-2xl bg-${feature.color}-500/10 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-${feature.color}-500/20 transition-all`}>
-                                {feature.icon}
+                    {FEATURES.map((feature, idx) => {
+                        const theme = featureThemes[feature.color] || featureThemes.blue;
+                        return (
+                            <div
+                                key={idx}
+                                className={`relative z-10 glass-panel p-8 rounded-3xl border border-border/50 ${theme.borderHover} ${theme.shadowHover} transition-all duration-300 hover:-translate-y-2 group shadow-xl shadow-black/5 cursor-default`}
+                            >
+                                <div className={`w-16 h-16 rounded-2xl ${theme.iconBg} flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300`}>
+                                    {feature.icon}
+                                </div>
+                                <h3 className={`text-xl font-bold mb-3 ${theme.titleHover} transition-colors`}>
+                                    {feature.title}
+                                </h3>
+                                <p className="text-foreground/70 leading-relaxed text-sm">
+                                    {feature.description}
+                                </p>
                             </div>
-                            <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                            <p className="text-foreground/70 leading-relaxed text-sm">{feature.description}</p>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         </section>
