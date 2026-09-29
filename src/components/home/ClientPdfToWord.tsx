@@ -30,6 +30,40 @@ interface PageThumbnail {
     aspectRatio: string;
 }
 
+interface ExtractedChunk {
+    str: string;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    fontName: string;
+    isBold: boolean;
+    isItalic: boolean;
+}
+
+interface ExtractedLine {
+    y: number;
+    x: number;
+    width: number;
+    height: number;
+    items: ExtractedChunk[];
+    text: string;
+    isBold: boolean;
+}
+
+interface ExtractedBlock {
+    lines: ExtractedLine[];
+    isCentered: boolean;
+    isBullet: boolean;
+    isHeading: boolean;
+    isMetadata: boolean;
+}
+
+interface PageData {
+    pageNumber: number;
+    blocks: ExtractedBlock[];
+}
+
 export default function ClientPdfToWord() {
     const [pdfFile, setPdfFile] = useState<File | null>(null);
     const [pages, setPages] = useState<PageThumbnail[]>([]);
@@ -233,50 +267,116 @@ export default function ClientPdfToWord() {
         }
     };
 
-    const convertToDocx = async (pageTexts: { pageNumber: number; text: string }[]): Promise<Blob> => {
+    const convertToDocx = async (pagesData: PageData[]): Promise<Blob> => {
         const paragraphs: Paragraph[] = [];
 
-        pageTexts.forEach((item, index) => {
-            // Add page header marker if multiple pages
-            if (pageTexts.length > 1) {
-                paragraphs.push(
-                    new Paragraph({
-                        text: `--- Halaman ${item.pageNumber} ---`,
-                        heading: HeadingLevel.HEADING_3,
-                        alignment: AlignmentType.CENTER,
-                        spacing: { before: index > 0 ? 300 : 0, after: 150 },
-                    })
-                );
-            }
+        pagesData.forEach((pageData, pageIdx) => {
+            let isFirstParagraphOfPage = true;
 
-            const rawParas = item.text.split("\n\n");
-            rawParas.forEach(para => {
-                const trimmed = para.trim();
-                if (!trimmed) {
-                    paragraphs.push(new Paragraph({ text: "" }));
-                    return;
-                }
+            pageData.blocks.forEach((block) => {
+                const fullBlockText = block.lines.map(l => l.text).join(" ").trim();
+                if (!fullBlockText) return;
 
-                // Heading heuristic: short and UPPERCASE
-                if (trimmed.length < 90 && trimmed === trimmed.toUpperCase() && trimmed.length > 3) {
+                // Proper page break before first paragraph of subsequent pages
+                const pageBreakBefore = (pageIdx > 0 && isFirstParagraphOfPage);
+                isFirstParagraphOfPage = false;
+
+                if (block.isBullet) {
+                    // Clean leading bullet symbol
+                    const cleanText = fullBlockText.replace(/^[•\-*]\s*/, "");
+                    const children: TextRun[] = [];
+                    const colonIdx = cleanText.indexOf(":");
+                    if (colonIdx > 0 && colonIdx < 60) {
+                        const label = cleanText.substring(0, colonIdx + 1);
+                        const rest = cleanText.substring(colonIdx + 1);
+                        children.push(new TextRun({ text: label, bold: true, size: 24, font: "Times New Roman" }));
+                        children.push(new TextRun({ text: rest, bold: false, size: 24, font: "Times New Roman" }));
+                    } else {
+                        children.push(new TextRun({ text: cleanText, size: 24, font: "Times New Roman" }));
+                    }
+
                     paragraphs.push(
                         new Paragraph({
-                            text: trimmed,
-                            heading: HeadingLevel.HEADING_2,
-                            alignment: AlignmentType.LEFT,
-                            spacing: { before: 200, after: 100 }
+                            children,
+                            bullet: { level: 0 },
+                            spacing: { after: 120, line: 276 },
+                            pageBreakBefore,
                         })
                     );
-                } else {
+                } else if (block.isCentered) {
+                    // Centered titles / headers
+                    block.lines.forEach((line, li) => {
+                        paragraphs.push(
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: line.text,
+                                        bold: true,
+                                        size: line.height >= 14 ? 28 : 24,
+                                        font: "Times New Roman",
+                                    }),
+                                ],
+                                alignment: AlignmentType.CENTER,
+                                spacing: { before: li === 0 ? 120 : 60, after: 60, line: 276 },
+                                pageBreakBefore: (pageBreakBefore && li === 0),
+                            })
+                        );
+                    });
+                } else if (block.isMetadata) {
+                    // Metadata lines (Nama :, NIM :, Prodi :, Soal :)
+                    block.lines.forEach((line, li) => {
+                        const colonIdx = line.text.indexOf(":");
+                        const children: TextRun[] = [];
+                        if (colonIdx > 0 && colonIdx < 20) {
+                            const label = line.text.substring(0, colonIdx + 1);
+                            const rest = line.text.substring(colonIdx + 1);
+                            children.push(new TextRun({ text: label, bold: true, size: 24, font: "Times New Roman" }));
+                            children.push(new TextRun({ text: rest, size: 24, font: "Times New Roman" }));
+                        } else {
+                            children.push(new TextRun({ text: line.text, size: 24, font: "Times New Roman" }));
+                        }
+
+                        paragraphs.push(
+                            new Paragraph({
+                                children,
+                                alignment: AlignmentType.LEFT,
+                                spacing: { before: 40, after: 40, line: 276 },
+                                pageBreakBefore: (pageBreakBefore && li === 0),
+                            })
+                        );
+                    });
+                } else if (block.isHeading) {
+                    // Section headings (e.g. 1. Pengertian Kernel)
                     paragraphs.push(
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: trimmed,
-                                    size: 24, // 12pt
+                                    text: fullBlockText,
+                                    bold: true,
+                                    size: 24,
+                                    font: "Times New Roman",
                                 }),
                             ],
-                            spacing: { after: 160 },
+                            heading: HeadingLevel.HEADING_2,
+                            alignment: AlignmentType.LEFT,
+                            spacing: { before: 240, after: 120, line: 276 },
+                            pageBreakBefore,
+                        })
+                    );
+                } else {
+                    // Standard body paragraph
+                    paragraphs.push(
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: fullBlockText,
+                                    size: 24,
+                                    font: "Times New Roman",
+                                }),
+                            ],
+                            alignment: AlignmentType.JUSTIFIED,
+                            spacing: { after: 180, line: 276 },
+                            pageBreakBefore,
                         })
                     );
                 }
@@ -285,7 +385,16 @@ export default function ClientPdfToWord() {
 
         const doc = new Document({
             sections: [{
-                properties: {},
+                properties: {
+                    page: {
+                        margin: {
+                            top: 1440,
+                            right: 1440,
+                            bottom: 1440,
+                            left: 1440,
+                        },
+                    },
+                },
                 children: paragraphs.length > 0 ? paragraphs : [new Paragraph({ text: "(Halaman tidak memuat teks)" })],
             }],
         });
@@ -304,27 +413,169 @@ export default function ClientPdfToWord() {
             const arrayBuffer = await pdfFile.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(arrayBuffer) }).promise;
             const targetPageNums = Array.from(selectedPages).sort((a, b) => a - b);
-            const extractedData: { pageNumber: number; text: string }[] = [];
+            const extractedPages: PageData[] = [];
 
             for (let idx = 0; idx < targetPageNums.length; idx++) {
                 const pageNum = targetPageNums[idx];
                 const page = await pdf.getPage(pageNum);
-                const textContent = await page.getTextContent();
-                
-                const pageText = textContent.items
-                    .map((item: any) => item.str)
-                    .join(" ");
+                const viewport = page.getViewport({ scale: 1.0 });
+                const pageWidth = viewport.width;
 
-                extractedData.push({
+                await page.getOperatorList();
+                const textContent = await page.getTextContent();
+
+                // 1. Collect chunks with font properties
+                const chunks: ExtractedChunk[] = [];
+                for (const item of textContent.items) {
+                    if (!("str" in item) || !item.str) continue;
+
+                    const fontObj = page.commonObjs.has(item.fontName) ? page.commonObjs.get(item.fontName) : null;
+                    const fontFullName = (fontObj?.name || item.fontName || "").toLowerCase();
+                    const isBold = fontFullName.includes("bold") || fontFullName.includes("heavy") || fontFullName.includes("black");
+                    const isItalic = fontFullName.includes("italic") || fontFullName.includes("oblique");
+
+                    chunks.push({
+                        str: item.str,
+                        x: item.transform[4],
+                        y: item.transform[5],
+                        width: item.width || 0,
+                        height: item.height || Math.abs(item.transform[0]) || 12,
+                        fontName: item.fontName,
+                        isBold,
+                        isItalic,
+                    });
+                }
+
+                // 2. Group chunks into lines (vertical distance <= 4pt)
+                chunks.sort((a, b) => b.y - a.y || a.x - b.x);
+                const lines: ExtractedLine[] = [];
+
+                for (const chunk of chunks) {
+                    if (!chunk.str.trim()) continue;
+
+                    let line = lines.find(l => Math.abs(l.y - chunk.y) <= 4);
+                    if (!line) {
+                        line = {
+                            y: chunk.y,
+                            x: chunk.x,
+                            width: chunk.width,
+                            height: chunk.height,
+                            items: [chunk],
+                            text: chunk.str,
+                            isBold: chunk.isBold,
+                        };
+                        lines.push(line);
+                    } else {
+                        line.items.push(chunk);
+                        line.items.sort((a, b) => a.x - b.x);
+                        line.x = Math.min(line.x, chunk.x);
+                        line.height = Math.max(line.height, chunk.height);
+                        const first = line.items[0];
+                        const last = line.items[line.items.length - 1];
+                        line.width = (last.x + last.width) - first.x;
+                    }
+                }
+
+                lines.sort((a, b) => b.y - a.y);
+
+                // 3. Assemble full text per line with spacing
+                for (const line of lines) {
+                    let fullText = "";
+                    for (let i = 0; i < line.items.length; i++) {
+                        const cur = line.items[i];
+                        if (i > 0) {
+                            const prev = line.items[i - 1];
+                            const gap = cur.x - (prev.x + prev.width);
+                            if (gap > 1.5 && !fullText.endsWith(" ") && !cur.str.startsWith(" ")) {
+                                fullText += " ";
+                            }
+                        }
+                        fullText += cur.str;
+                    }
+                    line.text = fullText.trim();
+                    line.isBold = line.items.filter(it => it.isBold).length >= Math.ceil(line.items.length / 2);
+                }
+
+                const validLines = lines.filter(l => l.text.length > 0);
+
+                // 4. Group lines into semantic blocks
+                const blocks: ExtractedBlock[] = [];
+                let currentBlock: ExtractedBlock | null = null;
+
+                for (let i = 0; i < validLines.length; i++) {
+                    const curLine = validLines[i];
+                    const prevLine = i > 0 ? validLines[i - 1] : null;
+
+                    const lineCenter: number = curLine.x + curLine.width / 2;
+                    const pageCenter: number = pageWidth / 2;
+                    const isCentered: boolean = Math.abs(lineCenter - pageCenter) <= 25 && curLine.x > 80;
+
+                    const isBulletMarker: boolean = curLine.text.startsWith("•") || curLine.text.startsWith("-");
+                    const isBulletContinuation: boolean = Boolean(
+                        currentBlock &&
+                        currentBlock.isBullet &&
+                        !isBulletMarker &&
+                        curLine.x >= 100 &&
+                        prevLine &&
+                        (prevLine.y - curLine.y) <= 24
+                    );
+                    const isBullet: boolean = isBulletMarker || isBulletContinuation;
+                    const isMetadata: boolean = /^(Nama|NIM|Prodi|Soal|Dosen|Tanggal|Mata Kuliah)\s*:/i.test(curLine.text);
+                    const isNumberedHeading: boolean = /^\d+\.\s+[A-Z]/.test(curLine.text);
+                    const isShortBold: boolean = curLine.isBold && curLine.text.length < 80;
+                    const isHeading: boolean = isNumberedHeading || isShortBold;
+
+                    let startNewBlock: boolean = false;
+                    if (!currentBlock) {
+                        startNewBlock = true;
+                    } else {
+                        const vGap: number = prevLine ? (prevLine.y - curLine.y) : 0;
+                        const prevWasCentered: boolean = Boolean(currentBlock.isCentered);
+                        const prevWasBullet: boolean = Boolean(currentBlock.isBullet);
+                        const prevWasHeading: boolean = Boolean(currentBlock.isHeading);
+                        const prevWasMetadata: boolean = Boolean(currentBlock.isMetadata);
+
+                        if (isBulletContinuation) {
+                            startNewBlock = false;
+                        } else if (vGap > 24) {
+                            startNewBlock = true;
+                        } else if (isCentered !== prevWasCentered) {
+                            startNewBlock = true;
+                        } else if (isBulletMarker) {
+                            startNewBlock = true;
+                        } else if (!isBullet && prevWasBullet) {
+                            startNewBlock = true;
+                        } else if (isHeading || prevWasHeading) {
+                            startNewBlock = true;
+                        } else if (isMetadata || prevWasMetadata) {
+                            startNewBlock = true;
+                        }
+                    }
+
+                    if (startNewBlock || !currentBlock) {
+                        currentBlock = {
+                            lines: [curLine],
+                            isCentered,
+                            isBullet,
+                            isHeading,
+                            isMetadata,
+                        };
+                        blocks.push(currentBlock);
+                    } else {
+                        currentBlock.lines.push(curLine);
+                    }
+                }
+
+                extractedPages.push({
                     pageNumber: pageNum,
-                    text: pageText
+                    blocks,
                 });
 
                 const pct = Math.round(((idx + 1) / targetPageNums.length) * 100);
                 setConvertProgress(pct);
             }
 
-            const docx = await convertToDocx(extractedData);
+            const docx = await convertToDocx(extractedPages);
             setDocxBlob(docx);
             setConvertedPageCount(targetPageNums.length);
         } catch (err: any) {
