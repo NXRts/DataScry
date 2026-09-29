@@ -55,6 +55,7 @@ interface ExtractedBlock {
     lines: ExtractedLine[];
     isCentered: boolean;
     isBullet: boolean;
+    isNumberedList: boolean;
     isHeading: boolean;
     isMetadata: boolean;
 }
@@ -274,7 +275,16 @@ export default function ClientPdfToWord() {
             let isFirstParagraphOfPage = true;
 
             pageData.blocks.forEach((block) => {
-                const fullBlockText = block.lines.map(l => l.text).join(" ").trim();
+                let fullBlockText = "";
+                for (let li = 0; li < block.lines.length; li++) {
+                    const t = block.lines[li].text;
+                    if (li === 0) fullBlockText = t;
+                    else {
+                        if (fullBlockText.endsWith("-")) fullBlockText += t;
+                        else fullBlockText += " " + t;
+                    }
+                }
+                fullBlockText = fullBlockText.trim();
                 if (!fullBlockText) return;
 
                 // Proper page break before first paragraph of subsequent pages
@@ -289,17 +299,43 @@ export default function ClientPdfToWord() {
                     if (colonIdx > 0 && colonIdx < 60) {
                         const label = cleanText.substring(0, colonIdx + 1);
                         const rest = cleanText.substring(colonIdx + 1);
-                        children.push(new TextRun({ text: label, bold: true, size: 24, font: "Times New Roman" }));
-                        children.push(new TextRun({ text: rest, bold: false, size: 24, font: "Times New Roman" }));
+                        children.push(new TextRun({ text: label, bold: true, size: 24, font: "Times New Roman", color: "000000" }));
+                        children.push(new TextRun({ text: rest, bold: false, size: 24, font: "Times New Roman", color: "000000" }));
                     } else {
-                        children.push(new TextRun({ text: cleanText, size: 24, font: "Times New Roman" }));
+                        children.push(new TextRun({ text: cleanText, size: 24, font: "Times New Roman", color: "000000" }));
                     }
 
                     paragraphs.push(
                         new Paragraph({
                             children,
                             bullet: { level: 0 },
-                            spacing: { after: 120, line: 276 },
+                            spacing: { after: 100, line: 276 },
+                            pageBreakBefore,
+                        })
+                    );
+                } else if (block.isNumberedList) {
+                    // Numbered list items (e.g. 1. https://..., 2. https://...)
+                    const match = fullBlockText.match(/^(\d+[\.\)]|[a-zA-Z][\.\)])\s+(.*)/);
+                    const children: TextRun[] = [];
+                    if (match) {
+                        const prefix = match[1];
+                        const content = match[2];
+                        children.push(new TextRun({ text: prefix + " ", bold: false, size: 24, font: "Times New Roman", color: "000000" }));
+                        if (content.startsWith("http://") || content.startsWith("https://")) {
+                            children.push(new TextRun({ text: content, size: 24, font: "Times New Roman", color: "0563C1", underline: {} }));
+                        } else {
+                            children.push(new TextRun({ text: content, size: 24, font: "Times New Roman", color: "000000" }));
+                        }
+                    } else {
+                        children.push(new TextRun({ text: fullBlockText, size: 24, font: "Times New Roman", color: "000000" }));
+                    }
+
+                    paragraphs.push(
+                        new Paragraph({
+                            children,
+                            alignment: AlignmentType.LEFT,
+                            indent: { left: 720, hanging: 360 },
+                            spacing: { before: 40, after: 80, line: 276 },
                             pageBreakBefore,
                         })
                     );
@@ -312,6 +348,7 @@ export default function ClientPdfToWord() {
                                     new TextRun({
                                         text: line.text,
                                         bold: true,
+                                        color: "000000",
                                         size: line.height >= 14 ? 28 : 24,
                                         font: "Times New Roman",
                                     }),
@@ -330,10 +367,10 @@ export default function ClientPdfToWord() {
                         if (colonIdx > 0 && colonIdx < 20) {
                             const label = line.text.substring(0, colonIdx + 1);
                             const rest = line.text.substring(colonIdx + 1);
-                            children.push(new TextRun({ text: label, bold: true, size: 24, font: "Times New Roman" }));
-                            children.push(new TextRun({ text: rest, size: 24, font: "Times New Roman" }));
+                            children.push(new TextRun({ text: label, bold: true, size: 24, font: "Times New Roman", color: "000000" }));
+                            children.push(new TextRun({ text: rest, size: 24, font: "Times New Roman", color: "000000" }));
                         } else {
-                            children.push(new TextRun({ text: line.text, size: 24, font: "Times New Roman" }));
+                            children.push(new TextRun({ text: line.text, size: 24, font: "Times New Roman", color: "000000" }));
                         }
 
                         paragraphs.push(
@@ -346,18 +383,18 @@ export default function ClientPdfToWord() {
                         );
                     });
                 } else if (block.isHeading) {
-                    // Section headings (e.g. 1. Pengertian Kernel)
+                    // Section headings (e.g. 1. Pengertian Kernel, Daftar Referensi)
                     paragraphs.push(
                         new Paragraph({
                             children: [
                                 new TextRun({
                                     text: fullBlockText,
                                     bold: true,
+                                    color: "000000",
                                     size: 24,
                                     font: "Times New Roman",
                                 }),
                             ],
-                            heading: HeadingLevel.HEADING_2,
                             alignment: AlignmentType.LEFT,
                             spacing: { before: 240, after: 120, line: 276 },
                             pageBreakBefore,
@@ -372,10 +409,11 @@ export default function ClientPdfToWord() {
                                     text: fullBlockText,
                                     size: 24,
                                     font: "Times New Roman",
+                                    color: "000000",
                                 }),
                             ],
                             alignment: AlignmentType.JUSTIFIED,
-                            spacing: { after: 180, line: 276 },
+                            spacing: { after: 160, line: 276 },
                             pageBreakBefore,
                         })
                     );
@@ -506,57 +544,64 @@ export default function ClientPdfToWord() {
                     const curLine = validLines[i];
                     const prevLine = i > 0 ? validLines[i - 1] : null;
 
-                    const lineCenter: number = curLine.x + curLine.width / 2;
-                    const pageCenter: number = pageWidth / 2;
-                    const isCentered: boolean = Math.abs(lineCenter - pageCenter) <= 25 && curLine.x > 80;
+                    const leftMargin: number = curLine.x;
+                    const rightMargin: number = pageWidth - (curLine.x + curLine.width);
+                    const isBalanced: boolean = Math.abs(leftMargin - rightMargin) <= 35;
 
-                    const isBulletMarker: boolean = curLine.text.startsWith("•") || curLine.text.startsWith("-");
+                    const isNumberedItem: boolean = /^\d+[\.\)]\s+/.test(curLine.text) || /^[a-zA-Z][\.\)]\s+/.test(curLine.text);
+                    const isBulletMarker: boolean = curLine.text.startsWith("•") || curLine.text.startsWith("-") || curLine.text.startsWith("*");
+                    const isMetadata: boolean = /^(Nama|NIM|Prodi|Soal|Dosen|Tanggal|Mata Kuliah)\s*:/i.test(curLine.text);
+
+                    const isHeading: boolean = curLine.isBold && (isNumberedItem || curLine.text.length < 80);
+                    const isNumberedList: boolean = !curLine.isBold && isNumberedItem;
+
+                    // Centered title: balanced margins, top of page 1, not list/metadata/URL
+                    const isCentered: boolean = isBalanced && leftMargin > 75 && !isNumberedItem && !isBulletMarker && !isMetadata && !curLine.text.startsWith("http") && (pageNum === 1 && curLine.y > 680);
+
                     const isBulletContinuation: boolean = Boolean(
                         currentBlock &&
                         currentBlock.isBullet &&
                         !isBulletMarker &&
-                        curLine.x >= 100 &&
+                        !isNumberedItem &&
+                        !isHeading &&
+                        !isMetadata &&
+                        curLine.x >= 95 &&
                         prevLine &&
-                        (prevLine.y - curLine.y) <= 24
+                        (prevLine.y - curLine.y) <= 28
                     );
-                    const isBullet: boolean = isBulletMarker || isBulletContinuation;
-                    const isMetadata: boolean = /^(Nama|NIM|Prodi|Soal|Dosen|Tanggal|Mata Kuliah)\s*:/i.test(curLine.text);
-                    const isNumberedHeading: boolean = /^\d+\.\s+[A-Z]/.test(curLine.text);
-                    const isShortBold: boolean = curLine.isBold && curLine.text.length < 80;
-                    const isHeading: boolean = isNumberedHeading || isShortBold;
+
+                    const isNumberedContinuation: boolean = Boolean(
+                        currentBlock &&
+                        currentBlock.isNumberedList &&
+                        !isNumberedItem &&
+                        !isBulletMarker &&
+                        !isHeading &&
+                        !isMetadata &&
+                        curLine.x >= 95 &&
+                        prevLine &&
+                        (prevLine.y - curLine.y) <= 28
+                    );
 
                     let startNewBlock: boolean = false;
                     if (!currentBlock) {
                         startNewBlock = true;
+                    } else if (isBulletContinuation || isNumberedContinuation) {
+                        startNewBlock = false;
+                    } else if (isNumberedList || isBulletMarker || isHeading || isMetadata || isCentered) {
+                        startNewBlock = true;
+                    } else if (currentBlock.isNumberedList || currentBlock.isBullet || currentBlock.isHeading || currentBlock.isMetadata || currentBlock.isCentered) {
+                        startNewBlock = true;
                     } else {
                         const vGap: number = prevLine ? (prevLine.y - curLine.y) : 0;
-                        const prevWasCentered: boolean = Boolean(currentBlock.isCentered);
-                        const prevWasBullet: boolean = Boolean(currentBlock.isBullet);
-                        const prevWasHeading: boolean = Boolean(currentBlock.isHeading);
-                        const prevWasMetadata: boolean = Boolean(currentBlock.isMetadata);
-
-                        if (isBulletContinuation) {
-                            startNewBlock = false;
-                        } else if (vGap > 24) {
-                            startNewBlock = true;
-                        } else if (isCentered !== prevWasCentered) {
-                            startNewBlock = true;
-                        } else if (isBulletMarker) {
-                            startNewBlock = true;
-                        } else if (!isBullet && prevWasBullet) {
-                            startNewBlock = true;
-                        } else if (isHeading || prevWasHeading) {
-                            startNewBlock = true;
-                        } else if (isMetadata || prevWasMetadata) {
-                            startNewBlock = true;
-                        }
+                        if (vGap > 24) startNewBlock = true;
                     }
 
                     if (startNewBlock || !currentBlock) {
                         currentBlock = {
                             lines: [curLine],
                             isCentered,
-                            isBullet,
+                            isBullet: isBulletMarker || isBulletContinuation,
+                            isNumberedList: isNumberedList || isNumberedContinuation,
                             isHeading,
                             isMetadata,
                         };
