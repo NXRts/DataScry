@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import * as pdfjsLib from "pdfjs-dist";
 import "pdfjs-dist/build/pdf.worker.mjs";
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, LevelFormat } from "docx";
 import { 
     FileText, 
     RotateCcw, 
@@ -308,7 +308,10 @@ export default function ClientPdfToWord() {
                     paragraphs.push(
                         new Paragraph({
                             children,
-                            bullet: { level: 0 },
+                            numbering: {
+                                reference: "standard-bullet",
+                                level: 0,
+                            },
                             spacing: { after: 100, line: 276 },
                             pageBreakBefore,
                         })
@@ -422,6 +425,30 @@ export default function ClientPdfToWord() {
         });
 
         const doc = new Document({
+            numbering: {
+                config: [
+                    {
+                        reference: "standard-bullet",
+                        levels: [
+                            {
+                                level: 0,
+                                format: LevelFormat.BULLET,
+                                text: "\uF0B7",
+                                alignment: AlignmentType.LEFT,
+                                style: {
+                                    paragraph: {
+                                        indent: { left: 720, hanging: 360 },
+                                    },
+                                    run: {
+                                        font: "Symbol",
+                                        size: 20,
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            },
             sections: [{
                 properties: {
                     page: {
