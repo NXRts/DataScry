@@ -13,6 +13,7 @@
     "@pdfsmaller/pdf-encrypt": "^1.2.0",
     "browser-image-compression": "^2.0.2",
     "docx": "^9.7.1",
+    "docx-preview": "^0.4.1",
     "exifreader": "^4.36.2",
     "html2pdf.js": "^0.14.0",
     "idb": "^8.0.3",
