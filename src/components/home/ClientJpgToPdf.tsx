@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
-import { PDFDocument, PDFName, PDFNumber, PDFBool } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 import { 
     Settings2, 
     Trash2, 
@@ -28,8 +28,8 @@ import {
     X
 } from "lucide-react";
 
-type PageMode = "fit" | "document";
-type PageSizeOption = "fit" | "a4" | "letter";
+type PageMode = "document" | "fit";
+type PageSizeOption = "f4" | "a4" | "letter" | "fit";
 type OrientationOption = "auto" | "portrait" | "landscape";
 type MarginOption = "none" | "small" | "normal";
 type ImageFitOption = "contain" | "cover";
@@ -43,9 +43,10 @@ interface ImageMeta {
 }
 
 const PAGE_DIMENSIONS = {
+    f4: { width: 609.45, height: 935.43, label: "F4 / Folio (Standar Indonesia - 215×330mm)" },
     a4: { width: 595.28, height: 841.89, label: "A4 (Standar Dokumen - 210×297mm)" },
     letter: { width: 612.0, height: 792.0, label: "US Letter (216×279mm)" },
-    fit: { width: 0, height: 0, label: "Sesuai Ukuran Gambar (Otomatis)" },
+    fit: { width: 0, height: 0, label: "Sesuai Ukuran Asli Gambar (Proporsional)" },
 };
 
 const MARGIN_SIZES = {
@@ -150,12 +151,12 @@ export default function ClientJpgToPdf() {
     const [completePdf, setCompletePdf] = useState<Blob | null>(null);
 
     // Primary Layout Mode
-    // "fit" = Seamless borderless matching exact image dimensions (ideal for desktop screenshots & photos)
-    // "document" = Fixed paper size like A4/Letter (for printing & official documents)
-    const [pageMode, setPageMode] = useState<PageMode>("fit");
+    // "document" = Fixed paper size like F4/A4 (for official documents, printing & clean bounds)
+    // "fit" = Seamless proportional matching exact image aspect ratio without oversized dimensions
+    const [pageMode, setPageMode] = useState<PageMode>("document");
 
     // Detailed Settings
-    const [pageSize, setPageSize] = useState<PageSizeOption>("fit");
+    const [pageSize, setPageSize] = useState<PageSizeOption>("f4");
     const [orientation, setOrientation] = useState<OrientationOption>("auto");
     const [margin, setMargin] = useState<MarginOption>("none");
     const [imageFit, setImageFit] = useState<ImageFitOption>("contain");
@@ -375,17 +376,6 @@ export default function ClientJpgToPdf() {
         }
 
         setImages(prev => [...prev, ...loadedMetas]);
-
-        // Auto-switch to "fit" (Borderless) if screenshot or landscape image is detected
-        if (hasScreenshot) {
-            setPageMode("fit");
-            setPageSize("fit");
-            setMargin("none");
-            setOrientation("auto");
-            setAutoDetectNotice(
-                "💡 Terdeteksi tangkapan layar (screenshot): Mode 'Pas Ukuran Asli Gambar (Tanpa Border)' dipilih otomatis agar gambar tidak mengecil dan bebas dari border putih."
-            );
-        }
     };
 
     const moveImage = (index: number, direction: "left" | "right") => {
@@ -417,8 +407,8 @@ export default function ClientJpgToPdf() {
             setMargin("none");
             setOrientation("auto");
         } else {
-            setPageSize("a4");
-            setMargin("small");
+            setPageSize("f4");
+            setMargin("none");
             setOrientation("auto");
             setImageFit("contain");
         }
@@ -512,20 +502,33 @@ export default function ClientJpgToPdf() {
                 let y: number;
 
                 if (pageMode === "fit" || pageSize === "fit") {
-                    // MODE PAS UKURAN ASLI (1:1 NATIVE SCREEN RESOLUTION & BORDERLESS)
-                    // 1 piksel gambar = 1 pt PDF (misal screenshot 1920x1080 -> halaman PDF 1920x1080 pt).
-                    // Saat dibuka di Google Drive pada zoom bawaan 100%, halaman tampil 100% BESAR & PENUH
-                    // (1920px lebar layar). Baris kode VS Code dan terminal tajam maksimal tanpa mengecil!
-                    pageW = imgWidth + (marginSize * 2);
-                    pageH = imgHeight + (marginSize * 2);
+                    // MODE PAS UKURAN ASLI GAMBAR (PROPORSIONAL DOKUMEN / BORDERLESS)
+                    // Jika 1px dijadikan 1pt langsung tanpa batas, foto kamera/screenshot resolusi tinggi
+                    // (misal 4000x3000px) menghasilkan halaman PDF fisik berukuran 1.4 meter x 1 meter (sangat besar).
+                    // Kita batasi dimensi halaman fisik agar proporsional dalam batas dokumen standar (maksimal bounded setara F4/Folio: 609.45 x 935.43 pt).
+                    // Gambar tetap di-embed utuh dengan resolusi asli gambar penuh (100% tajam tanpa kompresi),
+                    // sehingga saat dibuka atau dicetak, ukuran fisik halaman normal dan ketajaman gambar sempurna!
+                    const maxBoundW = 609.45;
+                    const maxBoundH = 935.43;
+                    const isImgLandscape = imgWidth > imgHeight;
 
-                    drawW = imgWidth;
-                    drawH = imgHeight;
+                    const limitW = isImgLandscape ? Math.max(maxBoundW, maxBoundH) : Math.min(maxBoundW, maxBoundH);
+                    const limitH = isImgLandscape ? Math.min(maxBoundW, maxBoundH) : Math.max(maxBoundW, maxBoundH);
+
+                    const scaleFactor = Math.min(limitW / imgWidth, limitH / imgHeight, 1);
+                    const boundedW = imgWidth * scaleFactor;
+                    const boundedH = imgHeight * scaleFactor;
+
+                    pageW = boundedW + (marginSize * 2);
+                    pageH = boundedH + (marginSize * 2);
+
+                    drawW = boundedW;
+                    drawH = boundedH;
                     x = marginSize;
                     y = marginSize;
                 } else {
-                    // MODE STANDAR DOKUMEN (A4 / Letter)
-                    const base = PAGE_DIMENSIONS[pageSize as "a4" | "letter"] || PAGE_DIMENSIONS.a4;
+                    // MODE STANDAR DOKUMEN (F4 / A4 / Letter)
+                    const base = PAGE_DIMENSIONS[pageSize as "f4" | "a4" | "letter"] || PAGE_DIMENSIONS.f4;
                     const isImgLandscape = imgWidth > imgHeight;
 
                     let isPageLandscape = false;
@@ -571,25 +574,6 @@ export default function ClientJpgToPdf() {
                     width: drawW,
                     height: drawH,
                 });
-            }
-
-            // Set OpenAction ke FitH (Fit to Width / Melebar Penuh)
-            // Ini memerintahkan penampil PDF (Google Drive, Chrome, Acrobat) untuk otomatis
-            // melebarkan dokumen 100% dari tepi kiri ke kanan layar, sehingga tulisan kodingan besar
-            // dan dokumen bisa di-scroll ke bawah layaknya dokumen biasa.
-            try {
-                const firstPage = pdfDoc.getPage(0);
-                if (firstPage) {
-                    const pageHeight = firstPage.getHeight();
-                    const openAction = pdfDoc.context.obj([
-                        firstPage.ref,
-                        PDFName.of('FitH'),
-                        PDFNumber.of(pageHeight)
-                    ]);
-                    pdfDoc.catalog.set(PDFName.of('OpenAction'), openAction);
-                }
-            } catch (prefErr) {
-                console.warn("Gagal menyetel open action FitH:", prefErr);
             }
 
             setProcessingProgress("Menyusun dan merender berkas PDF...");
@@ -716,25 +700,25 @@ export default function ClientJpgToPdf() {
                                                     </div>
                                                 </div>
 
-                                                <span className="hidden sm:inline-flex text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30 shrink-0">
-                                                    Rekomendasi Layar
+                                                <span className="hidden sm:inline-flex text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-surface border border-border/80 text-foreground/60 font-medium shrink-0">
+                                                    Proporsional Asli
                                                 </span>
                                             </div>
 
                                             {/* Badge versi mobile yang rapi tanpa mendesak judul */}
                                             <div className="sm:hidden flex items-center gap-1.5">
-                                                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30">
-                                                    ★ Rekomendasi Layar & Google Drive
+                                                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-surface border border-border/80 text-foreground/60 font-medium">
+                                                    Proporsional Asli
                                                 </span>
                                             </div>
 
                                             <p className="text-xs text-foreground/60 leading-relaxed">
-                                                Ukuran halaman PDF persis 1:1 mengikuti resolusi monitor Anda (misal 1920×1080 pt). <strong>Tampil besar penuh di Google Drive</strong>, tulisan kodingan tajam maksimal, dan <strong>tanpa border putih</strong>.
+                                                Ukuran halaman PDF proporsional mengikuti rasio asli gambar tanpa bingkai putih (borderless), dengan batas dimensi dokumen wajar dan resolusi tajam asli.
                                             </p>
                                         </div>
 
                                         <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                                            <span className="text-foreground/50 text-[11px] sm:text-xs">Cocok untuk: Screenshot koding, tugas di G-Drive, foto HD</span>
+                                            <span className="text-foreground/50 text-[11px] sm:text-xs">Cocok untuk: Foto HD, screenshot tanpa border putih</span>
                                             {pageMode === "fit" && (
                                                 <span className="inline-flex items-center gap-1 text-amber-400 font-semibold shrink-0 ml-2">
                                                     <Check className="w-3.5 h-3.5" />
@@ -764,23 +748,30 @@ export default function ClientJpgToPdf() {
                                                             Kertas Standar Dokumen
                                                         </span>
                                                         <span className="text-[11px] sm:text-xs text-foreground/50 font-medium block mt-0.5">
-                                                            Format Cetak Fisik
+                                                            Format Cetak Fisik & Administrasi
                                                         </span>
                                                     </div>
                                                 </div>
 
-                                                <span className="text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-surface border border-border/80 text-foreground/60 font-medium shrink-0">
-                                                    A4 / Letter
+                                                <span className="hidden sm:inline-flex text-[11px] whitespace-nowrap px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30 shrink-0">
+                                                    ★ Rekomendasi (F4 / A4)
+                                                </span>
+                                            </div>
+
+                                            {/* Badge versi mobile */}
+                                            <div className="sm:hidden flex items-center gap-1.5">
+                                                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-semibold border border-emerald-500/30">
+                                                    ★ Rekomendasi (F4 / A4)
                                                 </span>
                                             </div>
 
                                             <p className="text-xs text-foreground/60 leading-relaxed">
-                                                Menempatkan gambar pada ukuran kertas fisik standar (A4 / Letter) untuk dicetak ke mesin printer fisik atau arsip administrasi resmi.
+                                                Membungkus gambar ke ukuran kertas fisik standar (<strong>F4 Folio</strong> atau <strong>A4</strong>) untuk dicetak ke printer fisik atau arsip administrasi resmi.
                                             </p>
                                         </div>
 
                                         <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between text-xs">
-                                            <span className="text-foreground/50 text-[11px] sm:text-xs">Cocok untuk: Cetak printer kertas nyata, berkas kantor</span>
+                                            <span className="text-foreground/50 text-[11px] sm:text-xs">Cocok untuk: Cetak printer kertas nyata, berkas kantor & kampus</span>
                                             {pageMode === "document" && (
                                                 <span className="inline-flex items-center gap-1 text-amber-400 font-semibold shrink-0 ml-2">
                                                     <Check className="w-3.5 h-3.5" />
@@ -805,7 +796,8 @@ export default function ClientJpgToPdf() {
                                                 icon={<FileText className="w-3.5 h-3.5 text-amber-500" />}
                                                 value={pageSize}
                                                 options={[
-                                                    { value: "a4", label: "A4 (210 × 297 mm)", description: "Standar Dokumen & Surat" },
+                                                    { value: "f4", label: "F4 / Folio (215 × 330 mm)", description: "Standar Dokumen Indonesia & HVS" },
+                                                    { value: "a4", label: "A4 (210 × 297 mm)", description: "Standar Dokumen & Surat Internasional" },
                                                     { value: "letter", label: "US Letter (216 × 279 mm)", description: "Standar Internasional AS" },
                                                 ]}
                                                 onChange={(val) => setPageSize(val as PageSizeOption)}
@@ -864,7 +856,7 @@ export default function ClientJpgToPdf() {
                                         <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-300 flex items-start gap-2.5">
                                             <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
                                             <div className="leading-relaxed">
-                                                <span className="font-semibold text-blue-200">Tips Google Drive & Layar:</span> Ukuran kertas A4 fisik (21×29,7 cm) secara alami tampak lebih kecil di layar monitor saat dibuka di Google Drive (zoom bawaan 100%). Jika berkas ditujukan untuk dibaca dosen/rekan di laptop via Google Drive, disarankan menggunakan mode <strong>Pas Ukuran Asli Gambar</strong> agar dokumen langsung besar memenuhi jendela preview tanpa dosen harus memperbesar zoom.
+                                                <span className="font-semibold text-blue-200">Format Kertas F4 (Folio):</span> Ukuran F4 (21,5 × 33 cm) adalah standar kertas dokumen resmi, fotokopi, dan lembar kerja di Indonesia. Gambar Anda akan dibungkus pas ke ukuran halaman F4 dengan resolusi tinggi yang jernih saat dicetak.
                                             </div>
                                         </div>
                                     </div>
