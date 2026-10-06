@@ -20,6 +20,7 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 | **Tanda Tangan PDF (Sign PDF)** | Tanda Tangan | `/tools/sign-pdf` | Canvas sentuh interaktif, impor stempel PNG transparan, multi-halaman |
 | **Cap Air PDF (Watermark PDF)** | Keamanan | `/tools/watermark-pdf` | Teks & gambar, kustomisasi opasitas, rotasi sudut, tata letak grid/pusat |
 | **Kunci PDF (Protect PDF)** | Keamanan | `/tools/protect-pdf` | Enkripsi kata sandi dokumen berbasis WebAssembly |
+| **Buka Kunci PDF (PDF Unlock)** | Keamanan | `/tools/unlock-pdf` | Hapus proteksi password permanen, dekripsi AES-256 & RC4 client-side |
 | **Word ke PDF (Word to PDF)** | Konversi | `/tools/word-to-pdf` | Rendering docx lokal langsung menjadi PDF |
 | **PDF ke Word (PDF to Word)** | Konversi | `/tools/pdf-to-word` | Ekstraksi teks & struktur menjadi berkas `.docx` |
 | **Gabung Word (Merge Word)** | Dokumen | `/tools/merge-word` | Penggabungan multi-file `.docx` secara client-side |
@@ -34,7 +35,7 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 | No | Modul Fitur Baru | Kategori | Prioritas | Estimasi Teknologi |
 | :-: | :--- | :--- | :---: | :--- |
 | **1** | **Sensor / Redaksi Data Sensitif (PDF Redactor)** | Keamanan PDF | Prioritas 1 | `pdf-lib` + Canvas Rasterization Burn-in |
-| **2** | **Buka Kunci PDF (PDF Unlock)** | Keamanan PDF | Prioritas 2 | `pdf-lib` Password Decryptor |
+| **2** | **Buka Kunci PDF (PDF Unlock)** | Keamanan PDF | ✅ Selesai | `@pdfsmaller/pdf-decrypt` Web Crypto Engine |
 | **3** | **Tingkatkan Resolusi Foto (AI Image Upscaler)** | Gambar & AI | Prioritas 3 | On-device Super-Resolution (WebGL / Bicubic Sharp) |
 | **4** | **Sensor & Blur Wajah / Plat Nomor (Blur Face)** | Privasi Gambar | Prioritas 4 | BlazeFace / MediaPipe Local + Canvas Gaussian Blur |
 | **5** | **Ubah Ukuran Gambar (Resize IMAGE)** | Gambar | Prioritas 5 | HTML5 Canvas / OffscreenCanvas (Persen & Piksel) |
