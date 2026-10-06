@@ -20,7 +20,6 @@ export default function HeroSection() {
             textHover: string;
             arrowHover: string;
             iconBoxHover: string;
-            shadowHover: string;
         }
     > = {
         purple: {
@@ -28,28 +27,24 @@ export default function HeroSection() {
             textHover: "group-hover:text-purple-400",
             arrowHover: "group-hover:text-purple-400",
             iconBoxHover: "group-hover:border-purple-500/40 group-hover:bg-purple-500/10",
-            shadowHover: "hover:shadow-purple-500/10",
         },
         blue: {
             borderHover: "hover:border-blue-500/50",
             textHover: "group-hover:text-blue-400",
             arrowHover: "group-hover:text-blue-400",
             iconBoxHover: "group-hover:border-blue-500/40 group-hover:bg-blue-500/10",
-            shadowHover: "hover:shadow-blue-500/10",
         },
         cyan: {
             borderHover: "hover:border-cyan-500/50",
             textHover: "group-hover:text-cyan-400",
             arrowHover: "group-hover:text-cyan-400",
             iconBoxHover: "group-hover:border-cyan-500/40 group-hover:bg-cyan-500/10",
-            shadowHover: "hover:shadow-cyan-500/10",
         },
         emerald: {
             borderHover: "hover:border-emerald-500/50",
             textHover: "group-hover:text-emerald-400",
             arrowHover: "group-hover:text-emerald-400",
             iconBoxHover: "group-hover:border-emerald-500/40 group-hover:bg-emerald-500/10",
-            shadowHover: "hover:shadow-emerald-500/10",
         },
     };
 
@@ -117,7 +112,7 @@ export default function HeroSection() {
                         <div className="flex flex-wrap items-center gap-4 pt-2">
                             <Link
                                 href="/tools/merge-pdf"
-                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95"
+                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all hover:-translate-y-0.5 active:scale-95"
                             >
                                 Mulai Gabung PDF
                                 <ArrowRight className="w-5 h-5" />
@@ -176,7 +171,7 @@ export default function HeroSection() {
                                         <Link
                                             key={tool.href}
                                             href={tool.href}
-                                            className={`group p-3.5 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 ${theme.borderHover} ${theme.shadowHover} flex items-center justify-between gap-3 transition-all duration-200 hover:scale-[1.01]`}
+                                            className={`group p-3.5 rounded-2xl bg-surface/60 hover:bg-surface border border-border/60 ${theme.borderHover} flex items-center justify-between gap-3 transition-all duration-200 hover:scale-[1.01]`}
                                         >
                                             <div className="flex items-center gap-3 min-w-0">
                                                 <div className={`p-2.5 rounded-xl bg-surface border border-border shrink-0 ${theme.iconBoxHover} group-hover:scale-105 transition-all`}>

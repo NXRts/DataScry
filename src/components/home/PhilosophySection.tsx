@@ -11,7 +11,6 @@ export default function PhilosophySection() {
             subColor: "text-blue-400",
             borderHover: "hover:border-blue-500/50",
             titleHover: "group-hover:text-blue-400",
-            shadowHover: "hover:shadow-blue-500/10",
             iconBoxHover: "group-hover:border-blue-500/40 group-hover:bg-blue-500/10",
         },
         {
@@ -23,7 +22,6 @@ export default function PhilosophySection() {
             subColor: "text-purple-400",
             borderHover: "hover:border-purple-500/50",
             titleHover: "group-hover:text-purple-400",
-            shadowHover: "hover:shadow-purple-500/10",
             iconBoxHover: "group-hover:border-purple-500/40 group-hover:bg-purple-500/10",
         }
     ];
@@ -53,7 +51,7 @@ export default function PhilosophySection() {
                     {PILLARS.map((pillar, idx) => (
                         <div
                             key={idx}
-                            className={`group glass-panel p-8 md:p-10 rounded-3xl border border-border/70 ${pillar.borderHover} ${pillar.shadowHover} transition-all duration-300 space-y-5 relative`}
+                            className={`group glass-panel p-8 md:p-10 rounded-3xl border border-border/70 ${pillar.borderHover} transition-all duration-300 space-y-5 relative`}
                         >
                             <div className="flex items-center justify-between">
                                 <div className={`p-3 rounded-2xl bg-surface border border-border/80 ${pillar.iconBoxHover} shadow-sm group-hover:scale-105 transition-all duration-300`}>
