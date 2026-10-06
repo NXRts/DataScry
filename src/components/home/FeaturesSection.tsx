@@ -7,26 +7,22 @@ export default function FeaturesSection() {
             iconBg: string;
             borderHover: string;
             titleHover: string;
-            shadowHover: string;
         }
     > = {
         emerald: {
             iconBg: "bg-emerald-500/10 group-hover:bg-emerald-500/20 border border-emerald-500/20",
             borderHover: "hover:border-emerald-500/50",
             titleHover: "group-hover:text-emerald-400",
-            shadowHover: "hover:shadow-emerald-500/10",
         },
         amber: {
             iconBg: "bg-amber-500/10 group-hover:bg-amber-500/20 border border-amber-500/20",
             borderHover: "hover:border-amber-500/50",
             titleHover: "group-hover:text-amber-400",
-            shadowHover: "hover:shadow-amber-500/10",
         },
         blue: {
             iconBg: "bg-blue-500/10 group-hover:bg-blue-500/20 border border-blue-500/20",
             borderHover: "hover:border-blue-500/50",
             titleHover: "group-hover:text-blue-400",
-            shadowHover: "hover:shadow-blue-500/10",
         },
     };
 
@@ -65,7 +61,7 @@ export default function FeaturesSection() {
                         return (
                             <div
                                 key={idx}
-                                className={`relative z-10 glass-panel p-8 rounded-3xl border border-border/50 ${theme.borderHover} ${theme.shadowHover} transition-all duration-300 hover:-translate-y-2 group shadow-xl shadow-black/5 cursor-default`}
+                                className={`relative z-10 glass-panel p-8 rounded-3xl border border-border/50 ${theme.borderHover} transition-all duration-300 hover:-translate-y-2 group cursor-default`}
                             >
                                 <div className={`w-16 h-16 rounded-2xl ${theme.iconBg} flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300`}>
                                     {feature.icon}

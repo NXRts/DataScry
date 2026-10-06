@@ -148,7 +148,6 @@ export default function HomeGrid() {
             badge: string;
             borderHover: string;
             titleHover: string;
-            shadowHover: string;
             iconBgHover: string;
         }
     > = {
@@ -156,49 +155,42 @@ export default function HomeGrid() {
             badge: "bg-amber-500/10 text-amber-500 border border-amber-500/20",
             borderHover: "hover:border-amber-500/50",
             titleHover: "group-hover:text-amber-400",
-            shadowHover: "hover:shadow-amber-500/10",
             iconBgHover: "group-hover:bg-amber-500/20 group-hover:border-amber-500/40",
         },
         purple: {
             badge: "bg-purple-500/10 text-purple-400 border border-purple-500/20",
             borderHover: "hover:border-purple-500/50",
             titleHover: "group-hover:text-purple-400",
-            shadowHover: "hover:shadow-purple-500/10",
             iconBgHover: "group-hover:bg-purple-500/20 group-hover:border-purple-500/40",
         },
         rose: {
             badge: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
             borderHover: "hover:border-rose-500/50",
             titleHover: "group-hover:text-rose-400",
-            shadowHover: "hover:shadow-rose-500/10",
             iconBgHover: "group-hover:bg-rose-500/20 group-hover:border-rose-500/40",
         },
         blue: {
             badge: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
             borderHover: "hover:border-blue-500/50",
             titleHover: "group-hover:text-blue-400",
-            shadowHover: "hover:shadow-blue-500/10",
             iconBgHover: "group-hover:bg-blue-500/20 group-hover:border-blue-500/40",
         },
         emerald: {
             badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
             borderHover: "hover:border-emerald-500/50",
             titleHover: "group-hover:text-emerald-400",
-            shadowHover: "hover:shadow-emerald-500/10",
             iconBgHover: "group-hover:bg-emerald-500/20 group-hover:border-emerald-500/40",
         },
         indigo: {
             badge: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
             borderHover: "hover:border-indigo-500/50",
             titleHover: "group-hover:text-indigo-400",
-            shadowHover: "hover:shadow-indigo-500/10",
             iconBgHover: "group-hover:bg-indigo-500/20 group-hover:border-indigo-500/40",
         },
         cyan: {
             badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
             borderHover: "hover:border-cyan-500/50",
             titleHover: "group-hover:text-cyan-400",
-            shadowHover: "hover:shadow-cyan-500/10",
             iconBgHover: "group-hover:bg-cyan-500/20 group-hover:border-cyan-500/40",
         },
     };
@@ -213,7 +205,7 @@ export default function HomeGrid() {
                         href={tool.href}
                         className="group block h-full"
                     >
-                        <div className={`h-full glass-panel p-5 md:p-6 rounded-2xl flex flex-col gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent ${theme.borderHover} ${theme.shadowHover} hover:shadow-xl cursor-pointer`}>
+                        <div className={`h-full glass-panel p-5 md:p-6 rounded-2xl flex flex-col gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent ${theme.borderHover} cursor-pointer`}>
                             <div className="flex items-center gap-3 md:gap-4">
                                 <div className={`p-2.5 md:p-3 rounded-xl transition-all duration-300 group-hover:scale-105 ${theme.badge} ${theme.iconBgHover}`}>
                                     {tool.icon}

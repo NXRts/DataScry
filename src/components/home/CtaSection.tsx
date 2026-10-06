@@ -22,7 +22,7 @@ export default function CtaSection() {
 
                         <Link
                             href="#tools"
-                            className="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all shadow-xl shadow-primary/25 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95"
+                            className="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all hover:-translate-y-0.5 active:scale-95"
                         >
                             Mulai Olah Dokumen
                         </Link>
