@@ -15,6 +15,7 @@ import {
     Stamp,
     PenTool,
     Lock,
+    Unlock,
     Eraser
 } from "lucide-react";
 
@@ -81,6 +82,13 @@ const TOOLS = [
         icon: <Lock size={32} className="text-amber-500" />,
         href: "/tools/protect-pdf",
         color: "amber"
+    },
+    {
+        title: "Buka Kunci PDF",
+        description: "Hapus proteksi kata sandi dari dokumen PDF Anda secara permanen dan 100% luring.",
+        icon: <Unlock size={32} className="text-emerald-500" />,
+        href: "/tools/unlock-pdf",
+        color: "emerald"
     },
     {
         title: "Kompres PDF & Gambar",
