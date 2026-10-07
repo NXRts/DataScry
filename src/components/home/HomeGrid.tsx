@@ -16,7 +16,8 @@ import {
     PenTool,
     Lock,
     Unlock,
-    Eraser
+    Eraser,
+    ShieldAlert
 } from "lucide-react";
 
 const TOOLS = [
@@ -89,6 +90,13 @@ const TOOLS = [
         icon: <Unlock size={32} className="text-emerald-500" />,
         href: "/tools/unlock-pdf",
         color: "emerald"
+    },
+    {
+        title: "Sensor Data PDF (Redact)",
+        description: "Sensor NIK, gaji, nomor rekening, atau tanda tangan secara permanen dan bebas intip.",
+        icon: <ShieldAlert size={32} className="text-rose-500" />,
+        href: "/tools/redact-pdf",
+        color: "rose"
     },
     {
         title: "Kompres PDF & Gambar",
