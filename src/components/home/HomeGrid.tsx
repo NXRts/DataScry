@@ -17,7 +17,8 @@ import {
     Lock,
     Unlock,
     Eraser,
-    ShieldAlert
+    ShieldAlert,
+    Crop
 } from "lucide-react";
 
 const TOOLS = [
@@ -40,6 +41,13 @@ const TOOLS = [
         description: "Potong background foto secara otomatis dan bersih dengan resolusi tajam HD.",
         icon: <Eraser size={32} className="text-emerald-400" />,
         href: "/tools/remove-background",
+        color: "emerald"
+    },
+    {
+        title: "Potong & Pas Foto (Crop)",
+        description: "Potong pas foto resmi 2x3, 3x4, 4x6 cm atau ubah ukuran gambar dengan presisi pixel.",
+        icon: <Crop size={32} className="text-emerald-500" />,
+        href: "/tools/crop-image",
         color: "emerald"
     },
     {
