@@ -6,7 +6,7 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 
 ## 📊 Matriks Status Fitur DataScry
 
-### 1. Fitur yang Sudah Aktif & Siap Digunakan (✅ Selesai)
+### 1. Fitur yang Sudah Aktif & Siap Digunakan (✅ Selesai - 18 Alat)
 
 | Modul Fitur | Kategori | Rute Halaman | Keterangan Standar Fitur |
 | :--- | :--- | :--- | :--- |
@@ -21,6 +21,7 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 | **Cap Air PDF (Watermark PDF)** | Keamanan | `/tools/watermark-pdf` | Teks & gambar, kustomisasi opasitas, rotasi sudut, tata letak grid/pusat |
 | **Kunci PDF (Protect PDF)** | Keamanan | `/tools/protect-pdf` | Enkripsi kata sandi dokumen berbasis WebAssembly |
 | **Buka Kunci PDF (PDF Unlock)** | Keamanan | `/tools/unlock-pdf` | Hapus proteksi password permanen, dekripsi AES-256 & RC4 client-side |
+| **Sensor Data Sensitif PDF (PDF Redactor)** | Keamanan & Privasi | `/tools/redact-pdf` | *True Redaction*: Burn-in pixel bitmap, musnahkan aliran teks sensitif (NIK, Rekening, Gaji), 3 gaya sensor |
 | **Word ke PDF (Word to PDF)** | Konversi | `/tools/word-to-pdf` | Rendering docx lokal langsung menjadi PDF |
 | **PDF ke Word (PDF to Word)** | Konversi | `/tools/pdf-to-word` | Ekstraksi teks & struktur menjadi berkas `.docx` |
 | **Gabung Word (Merge Word)** | Dokumen | `/tools/merge-word` | Penggabungan multi-file `.docx` secara client-side |
@@ -32,41 +33,39 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 
 ### 2. Peta Jalan Fitur Baru Mendatang (⏳ Rencana Pengembangan)
 
-| No | Modul Fitur Baru | Kategori | Prioritas | Estimasi Teknologi |
-| :-: | :--- | :--- | :---: | :--- |
-| **1** | **Sensor / Redaksi Data Sensitif (PDF Redactor)** | Keamanan PDF | Prioritas 1 | `pdf-lib` + Canvas Rasterization Burn-in |
-| **2** | **Buka Kunci PDF (PDF Unlock)** | Keamanan PDF | ✅ Selesai | `@pdfsmaller/pdf-decrypt` Web Crypto Engine |
-| **3** | **Tingkatkan Resolusi Foto (AI Image Upscaler)** | Gambar & AI | Prioritas 3 | On-device Super-Resolution (WebGL / Bicubic Sharp) |
-| **4** | **Sensor & Blur Wajah / Plat Nomor (Blur Face)** | Privasi Gambar | Prioritas 4 | BlazeFace / MediaPipe Local + Canvas Gaussian Blur |
-| **5** | **Ubah Ukuran Gambar (Resize IMAGE)** | Gambar | Prioritas 5 | HTML5 Canvas / OffscreenCanvas (Persen & Piksel) |
-| **6** | **Potong Gambar Presisi (Crop IMAGE)** | Gambar | Prioritas 6 | Interactive Visual Cropper (Rasio 1:1, 16:9, 4:3, Kustom) |
-| **7** | **Ekstrak & Intip Isi ZIP (ZIP Viewer)** | Utilitas Berkas | Prioritas 7 | `jszip` (sudah terpasang di dependensi) |
-| **8** | **Cap Air Gambar (Watermark IMAGE)** | Gambar & Hak Cipta | Prioritas 8 | Canvas 2D Stamp & Text Renderer |
-| **9** | **Konverter Format Gambar Universal** | Gambar | Prioritas 9 | Canvas API (WebP ⇄ JPG ⇄ PNG ⇄ AVIF ⇄ GIF) |
-| **10** | **Putar Gambar Massal (Rotate IMAGE)** | Gambar | Prioritas 10 | Batch Canvas Rotator (Deteksi Portrait/Landscape) |
-| **11** | **Penomoran Halaman Otomatis (Page Numbering)** | Format PDF | Prioritas 11 | `pdf-lib` Bate Stamping ("Halaman X dari Y") |
-| **12** | **Atur & Kelola Halaman PDF (Organize PDF)** | Manajemen PDF | Prioritas 12 | Visual Drag-and-Drop Page Grid & Delete (`pdf-lib`) |
-| **13** | **Potong / Trim Margin PDF (Crop PDF)** | Format PDF | Prioritas 13 | Bounding Box Crop & MediaBox Resizing (`pdf-lib`) |
-| **14** | **Edit PDF (Anotasi, Teks, & Bentuk)** | Interaktif PDF | Prioritas 14 | Canvas PDF Annotation Layer (Text, Shapes, Freehand) |
-| **15** | **PDF ke Markdown (PDF to Markdown untuk AI/LLM)** | AI & Teks | Prioritas 15 | `pdfjs-dist` Layout Parser to GFM Markdown |
-| **16** | **Editor Foto Ringan (Photo Editor)** | Gambar | Prioritas 16 | Filter CSS / Canvas (Brightness, Contrast, Text, Frame) |
-| **17** | **Pembuat Meme Kustom (Meme Generator)** | Kreatif | Prioritas 17 | Meme Template Canvas Generator (Font Impact + Outline) |
-| **18** | **OCR Ekstrak Teks Dokumen (Offline OCR)** | AI & Teks | Prioritas 18 | `tesseract.js` WebAssembly Worker |
-| **19** | **PDF ke Excel (PDF to Excel)** | Konversi Office | Prioritas 19 | Table Structure Recognition to SheetJS (`xlsx`) |
-| **20** | **Excel ke PDF (Excel to PDF)** | Konversi Office | Prioritas 20 | SheetJS (`xlsx`) Renderer to `pdf-lib` |
-| **21** | **PDF ke PowerPoint (PDF to PPTX)** | Konversi Office | Prioritas 21 | Vector/Raster Slide Extractor to `pptxgenjs` |
-| **22** | **PowerPoint ke PDF (PPTX to PDF)** | Konversi Office | Prioritas 22 | Client-side OpenXML Presentation Parser to PDF |
-| **23** | **Formulir PDF Interaktif (PDF Forms & Filler)** | Interaktif PDF | Prioritas 23 | AcroForms Reader & Field Filler via `pdf-lib` |
-| **24** | **Bandingkan Dokumen PDF (Compare PDF Difference)** | Analisis PDF | Prioritas 24 | Side-by-side Visual Diff & Pixel-Level Inspection |
-| **25** | **Pindai Dokumen ke PDF (Scan to PDF via Kamera)** | Utilitas Mobile | Prioritas 25 | WebRTC Camera Capture + Perspective Crop + PDF Export |
-| **26** | **Perbaiki PDF Rusak (Repair Corrupt PDF)** | Utilitas PDF | Prioritas 26 | Byte-stream Scanner, Header Reconstruction & Xref Rebuild |
-| **27** | **Konversi PDF ke PDF/A (Arsip Standar ISO)** | Kepatuhan PDF | Prioritas 27 | PDF/A-1b Metadata & Color Profile Embedding (`pdf-lib`) |
-| **28** | **Ringkasan Dokumen AI (AI PDF Summarizer)** | AI & Teks | Prioritas 28 | On-Device LLM (WebLLM / Wasm Transformers) |
-| **29** | **Terjemahan Dokumen PDF (Translate PDF)** | AI & Teks | Prioritas 29 | Local Translation Worker with Layout Preservation |
-| **30** | **Konversi HTML ke PDF (HTML to PDF)** | Konversi Web | Prioritas 30 | Print CSS Media Engine + `html2pdf.js` / Canvas |
-| **31** | **Konversi HTML ke Gambar (HTML to IMAGE)** | Konversi Web | Prioritas 31 | SVG ForeignObject / html2canvas lokal |
-| **32** | **Pembuat Pas Foto Cetak Siap Pakai** | Gambar & Cetak | Prioritas 32 | Canvas Face Alignment + PDF Print Layout 4R/A4 |
-| **33** | **Alur Kerja Otomatis (Create a Workflow)** | Otomasi | Prioritas 33 | Pipeline Chaining Engine (Contoh: Kompres -> Watermark -> Enkripsi) |
+| No | Modul Fitur Baru | Kategori | Prioritas | Rute Target | Estimasi Teknologi |
+| :-: | :--- | :--- | :--- | :---: | :--- |
+| **1** | **Potong & Ubah Ukuran Gambar (Crop & Resize)** | Gambar | 🥇 Prioritas 1 (Rekomendasi Utama) | `/tools/crop-image` | HTML5 Canvas / OffscreenCanvas (Rasio & Pas Foto) |
+| **2** | **Atur & Kelola Halaman PDF (Organize PDF)** | Manajemen PDF | 🥈 Prioritas 2 (Rekomendasi #2) | `/tools/organize-pdf` | Visual Drag-and-Drop Page Grid & Delete (`pdf-lib`) |
+| **3** | **Sensor & Blur Wajah / Plat Nomor (Blur Face)** | Privasi Gambar | 🥉 Prioritas 3 (Rekomendasi #3) | `/tools/blur-face` | BlazeFace / MediaPipe Local + Canvas Gaussian Blur |
+| **4** | **Tingkatkan Resolusi Foto (AI Image Upscaler)** | Gambar & AI | Prioritas 4 | `/tools/upscale-image` | On-device Super-Resolution (WebGL / Bicubic Sharp) |
+| **5** | **Ubah Ukuran Gambar (Resize IMAGE)** | Gambar | Prioritas 5 | `/tools/resize-image` | Canvas API (Persen & Dimensi Piksel) |
+| **6** | **Ekstrak & Intip Isi ZIP (ZIP Viewer)** | Utilitas Berkas | Prioritas 6 | `/tools/unzip` | `jszip` (sudah terpasang di dependensi) |
+| **7** | **Cap Air Gambar (Watermark IMAGE)** | Gambar & Hak Cipta | Prioritas 7 | `/tools/watermark-image` | Canvas 2D Stamp & Text Renderer |
+| **8** | **Konverter Format Gambar Universal** | Gambar | Prioritas 8 | `/tools/convert-image` | Canvas API (WebP ⇄ JPG ⇄ PNG ⇄ AVIF ⇄ GIF) |
+| **9** | **Putar Gambar Massal (Rotate IMAGE)** | Gambar | Prioritas 9 | `/tools/rotate-image` | Batch Canvas Rotator (Deteksi Portrait/Landscape) |
+| **10** | **Penomoran Halaman Otomatis (Page Numbering)** | Format PDF | Prioritas 10 | `/tools/number-pdf` | `pdf-lib` Bate Stamping ("Halaman X dari Y") |
+| **11** | **Potong / Trim Margin PDF (Crop PDF)** | Format PDF | Prioritas 11 | Bounding Box Crop & MediaBox Resizing (`pdf-lib`) |
+| **12** | **Edit PDF (Anotasi, Teks, & Bentuk)** | Interaktif PDF | Prioritas 12 | Canvas PDF Annotation Layer (Text, Shapes, Freehand) |
+| **13** | **PDF ke Markdown (PDF to Markdown untuk AI/LLM)** | AI & Teks | Prioritas 13 | `pdfjs-dist` Layout Parser to GFM Markdown |
+| **14** | **Editor Foto Ringan (Photo Editor)** | Gambar | Prioritas 14 | Filter CSS / Canvas (Brightness, Contrast, Text, Frame) |
+| **15** | **Pembuat Meme Kustom (Meme Generator)** | Kreatif | Prioritas 15 | Meme Template Canvas Generator (Font Impact + Outline) |
+| **16** | **OCR Ekstrak Teks Dokumen (Offline OCR)** | AI & Teks | Prioritas 16 | `tesseract.js` WebAssembly Worker |
+| **17** | **PDF ke Excel (PDF to Excel)** | Konversi Office | Prioritas 17 | Table Structure Recognition to SheetJS (`xlsx`) |
+| **18** | **Excel ke PDF (Excel to PDF)** | Konversi Office | Prioritas 18 | SheetJS (`xlsx`) Renderer to `pdf-lib` |
+| **19** | **PDF ke PowerPoint (PDF to PPTX)** | Konversi Office | Prioritas 19 | Vector/Raster Slide Extractor to `pptxgenjs` |
+| **20** | **PowerPoint ke PDF (PPTX to PDF)** | Konversi Office | Prioritas 20 | Client-side OpenXML Presentation Parser to PDF |
+| **21** | **Formulir PDF Interaktif (PDF Forms & Filler)** | Interaktif PDF | Prioritas 21 | AcroForms Reader & Field Filler via `pdf-lib` |
+| **22** | **Bandingkan Dokumen PDF (Compare PDF Difference)** | Analisis PDF | Prioritas 22 | Side-by-side Visual Diff & Pixel-Level Inspection |
+| **23** | **Pindai Dokumen ke PDF (Scan to PDF via Kamera)** | Utilitas Mobile | Prioritas 23 | WebRTC Camera Capture + Perspective Crop + PDF Export |
+| **24** | **Perbaiki PDF Rusak (Repair Corrupt PDF)** | Utilitas PDF | Prioritas 24 | Byte-stream Scanner, Header Reconstruction & Xref Rebuild |
+| **25** | **Konversi PDF ke PDF/A (Arsip Standar ISO)** | Kepatuhan PDF | Prioritas 25 | PDF/A-1b Metadata & Color Profile Embedding (`pdf-lib`) |
+| **26** | **Ringkasan Dokumen AI (AI PDF Summarizer)** | AI & Teks | Prioritas 26 | On-Device LLM (WebLLM / Wasm Transformers) |
+| **27** | **Terjemahan Dokumen PDF (Translate PDF)** | AI & Teks | Prioritas 27 | Local Translation Worker with Layout Preservation |
+| **28** | **Konversi HTML ke PDF (HTML to PDF)** | Konversi Web | Prioritas 28 | Print CSS Media Engine + `html2pdf.js` / Canvas |
+| **29** | **Konversi HTML ke Gambar (HTML to IMAGE)** | Konversi Web | Prioritas 29 | SVG ForeignObject / html2canvas lokal |
+| **30** | **Pembuat Pas Foto Cetak Siap Pakai** | Gambar & Cetak | Prioritas 30 | Canvas Face Alignment + PDF Print Layout 4R/A4 |
+| **31** | **Alur Kerja Otomatis (Create a Workflow)** | Otomasi | Prioritas 31 | Pipeline Chaining Engine (Contoh: Kompres -> Watermark -> Enkripsi) |
 
 ---
 
@@ -99,11 +98,13 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
   - Pilihan kualitas resampling (Lanczos/Bicubic smooth) agar gambar hasil resize tidak bergerigi.
   - Pemrosesan batch multi-gambar sekaligus dengan hasil unduhan ZIP.
 
-#### 4. ✂️ Potong Gambar Presisi (Crop IMAGE)
-- **Deskripsi**: Memotong area gambar yang tidak diinginkan dengan kotak seleksi visual interaktif.
+#### 4. ✂️ Potong & Ubah Ukuran Gambar Presisi (Crop & Resize IMAGE)
+- **Status**: ⏳ 🥇 Prioritas 1 (Rekomendasi Utama Berikutnya)
+- **Rute Target**: `/tools/crop-image`
+- **Deskripsi**: Memotong dan mengubah dimensi gambar/pas foto secara presisi dengan kotak seleksi visual interaktif.
 - **Fitur Utama**:
-  - Preset rasio populer: Persegi (1:1), Cerita/Reels (9:16), Standar Layar (16:9), Foto (4:3), Profil Lingkaran/Avatar.
-  - Input ukuran piksel manual untuk hasil potongan presisi.
+  - Preset rasio resmi: Pas Foto Indonesia (2×3, 3×4, 4×6 cm), Persegi (1:1), Cerita/Reels (9:16), Standar Layar (16:9), Foto (4:3), Profil Lingkaran.
+  - Input ukuran piksel manual untuk hasil potongan presisi pendaftaran CPNS/BUMN.
   - Rotasi bebas dan grid pembantu *Rule of Thirds*.
 
 #### 5. 💧 Cap Air Gambar (Watermark IMAGE)
@@ -145,13 +146,14 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 ### B. 🛡️ Kategori Keamanan & Privasi Dokumen (Document Security)
 
 #### 10. ⬛ Sensor / Redaksi Data Sensitif Permanen (PDF Redactor)
-- **Status**: ⏳ Prioritas 1
+- **Status**: ✅ Selesai (Aktif di `/tools/redact-pdf`)
+- **Rute Target**: `/tools/redact-pdf`
 - **Deskripsi**: Menutup data pribadi (NIK, nomor KK, nomor rekening bank, alamat, tanda tangan) dengan kotak sensor permanen.
-- **Keunggulan**: Teks dan gambar di bawah kotak sensor **dihapus secara permanen dari stream dokumen PDF**, bukan sekadar stiker visual yang masih bisa disalin teksnya.
+- **Keunggulan**: Teks dan gambar di bawah kotak sensor **dihapus secara permanen dari stream dokumen PDF**, bukan sekadar stiker visual yang masih bisa disalin teksnya. Dilengkapi 3 gaya sensor (Blackout, Whiteout, Badge DISENSOR).
 
 #### 11. 🔓 Buka Kunci PDF (PDF Unlock & Password Remover)
-- **Status**: ⏳ Prioritas 2
-- **Deskripsi**: Menghapus proteksi kata sandi dari dokumen PDF yang sudah diketahui password-nya, agar berkas dapat diarsipkan dan dibuka bebas tanpa meminta password berulang kali.
+- **Status**: ✅ Selesai (Aktif di `/tools/unlock-pdf`)
+- **Deskripsi**: Menghapus proteksi kata sandi dari dokumen PDF yang sudah diketahui password-nya secara permanen dan 100% luring via Web Crypto API.
 
 ---
 
@@ -175,6 +177,8 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 ### D. 🛠️ Kategori Penyuntingan & Penataan PDF (PDF Editing & Organization)
 
 #### 16. 🗂️ Atur & Kelola Halaman PDF (Organize PDF)
+- **Status**: ⏳ 🥉 Prioritas 12 (Rekomendasi #3 Berikutnya)
+- **Rute Target**: `/tools/organize-pdf`
 - **Deskripsi**: Mengatur tata letak halaman PDF dalam tampilan grid visual: memindahkan urutan (*drag and drop reorder*), menduplikasi halaman, menghapus halaman tertentu, atau menyisipkan halaman kosong/PDF lain di posisi spesifik.
 
 #### 17. ✂️ Potong & Trim Margin PDF (Crop PDF)
