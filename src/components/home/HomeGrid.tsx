@@ -18,7 +18,8 @@ import {
     Unlock,
     Eraser,
     ShieldAlert,
-    Crop
+    Crop,
+    FileStack
 } from "lucide-react";
 
 const TOOLS = [
@@ -63,6 +64,13 @@ const TOOLS = [
         icon: <Scissors size={32} className="text-rose-500" />,
         href: "/tools/split-pdf",
         color: "rose"
+    },
+    {
+        title: "Atur & Kelola Halaman PDF",
+        description: "Urutkan ulang (drag & drop), hapus halaman, atau putar halaman dalam kisi visual.",
+        icon: <FileStack size={32} className="text-purple-500" />,
+        href: "/tools/organize-pdf",
+        color: "purple"
     },
     {
         title: "Putar Halaman PDF",

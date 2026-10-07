@@ -65,7 +65,7 @@ export default function Footer() {
                                         href="/#tools"
                                         className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 transition-colors group"
                                     >
-                                        <span>Lihat Semua 19 Alat</span>
+                                        <span>Lihat Semua 20 Alat</span>
                                         <span className="group-hover:translate-x-0.5 transition-transform">→</span>
                                     </Link>
                                 </li>
