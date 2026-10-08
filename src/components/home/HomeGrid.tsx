@@ -33,9 +33,9 @@ const TOOLS = [
     {
         title: "PDF ke JPG",
         description: "Ekstrak setiap halaman dari PDF menjadi gambar berkualitas tinggi.",
-        icon: <FileImage size={32} className="text-amber-500" />,
+        icon: <FileImage size={32} className="text-orange-500" />,
         href: "/tools/pdf-to-jpg",
-        color: "amber"
+        color: "orange"
     },
     {
         title: "Hapus Latar Belakang",
@@ -47,9 +47,9 @@ const TOOLS = [
     {
         title: "Potong & Pas Foto (Crop)",
         description: "Potong pas foto resmi 2x3, 3x4, 4x6 cm atau ubah ukuran gambar dengan presisi pixel.",
-        icon: <Crop size={32} className="text-emerald-500" />,
+        icon: <Crop size={32} className="text-teal-400" />,
         href: "/tools/crop-image",
-        color: "emerald"
+        color: "teal"
     },
     {
         title: "Gabungkan PDF",
@@ -68,30 +68,30 @@ const TOOLS = [
     {
         title: "Atur & Kelola Halaman PDF",
         description: "Urutkan ulang (drag & drop), hapus halaman, atau putar halaman dalam kisi visual.",
-        icon: <FileStack size={32} className="text-purple-500" />,
+        icon: <FileStack size={32} className="text-indigo-400" />,
         href: "/tools/organize-pdf",
-        color: "purple"
+        color: "indigo"
     },
     {
         title: "Putar Halaman PDF",
         description: "Perbaiki orientasi halaman PDF yang miring atau terbalik dengan pratinjau visual instan.",
-        icon: <RotateCw size={32} className="text-rose-400" />,
+        icon: <RotateCw size={32} className="text-sky-400" />,
         href: "/tools/rotate-pdf",
-        color: "rose"
+        color: "sky"
     },
     {
         title: "Watermark PDF",
         description: "Beri cap pengaman teks diagonal (CASN, Bank, Rahasia) untuk melindungi berkas penting.",
-        icon: <Stamp size={32} className="text-rose-500" />,
+        icon: <Stamp size={32} className="text-fuchsia-400" />,
         href: "/tools/watermark-pdf",
-        color: "rose"
+        color: "fuchsia"
     },
     {
         title: "Tanda Tangan PDF",
         description: "Bubuhi tanda tangan, paraf transparan, atau ketik nama langsung di atas dokumen PDF Anda.",
-        icon: <PenTool size={32} className="text-rose-500" />,
+        icon: <PenTool size={32} className="text-pink-400" />,
         href: "/tools/sign-pdf",
-        color: "rose"
+        color: "pink"
     },
     {
         title: "Kunci & Proteksi PDF",
@@ -103,16 +103,16 @@ const TOOLS = [
     {
         title: "Buka Kunci PDF",
         description: "Hapus proteksi kata sandi dari dokumen PDF Anda secara permanen dan 100% luring.",
-        icon: <Unlock size={32} className="text-emerald-500" />,
+        icon: <Unlock size={32} className="text-emerald-400" />,
         href: "/tools/unlock-pdf",
         color: "emerald"
     },
     {
         title: "Sensor Data PDF (Redact)",
         description: "Sensor NIK, gaji, nomor rekening, atau tanda tangan secara permanen dan bebas intip.",
-        icon: <ShieldAlert size={32} className="text-rose-500" />,
+        icon: <ShieldAlert size={32} className="text-red-500" />,
         href: "/tools/redact-pdf",
-        color: "rose"
+        color: "red"
     },
     {
         title: "Kompres PDF & Gambar",
@@ -124,42 +124,42 @@ const TOOLS = [
     {
         title: "Kompres Berkas ke ZIP",
         description: "Padatkan dan bungkus banyak file apa saja menjadi arsip .ZIP terkompresi.",
-        icon: <FolderArchive size={32} className="text-purple-500" />,
+        icon: <FolderArchive size={32} className="text-violet-400" />,
         href: "/tools/archive-zip",
-        color: "purple"
+        color: "violet"
     },
     {
         title: "Scrub EXIF Jejak Digital",
         description: "Hapus metadata dan lokasi tersembunyi pada foto sebelum diunggah ke internet.",
-        icon: <ShieldCheck size={32} className="text-emerald-500" />,
+        icon: <ShieldCheck size={32} className="text-lime-400" />,
         href: "/tools/scrub-exif",
-        color: "emerald"
+        color: "lime"
     },
     {
         title: "Penampil Metadata",
         description: "Intip informasi EXIF rahasia (kamera, GPS, tanggal asli) di balik foto atau dokumen PDF Anda.",
-        icon: <FileSearch size={32} className="text-blue-400" />,
+        icon: <FileSearch size={32} className="text-cyan-400" />,
         href: "/tools/metadata-viewer",
-        color: "blue"
+        color: "cyan"
     },
     {
         title: "Gabungkan Word",
         description: "Kombinasikan beberapa dokumen Word (.docx) menjadi satu file utuh.",
-        icon: <FileText size={32} className="text-cyan-500" />,
+        icon: <FileText size={32} className="text-blue-500" />,
         href: "/tools/merge-word",
-        color: "cyan"
+        color: "blue"
     },
     {
         title: "PDF ke Word",
         description: "Ubah dokumen PDF menjadi file Word (.docx) yang dapat diedit dengan mudah.",
-        icon: <FileText size={32} className="text-blue-500" />,
+        icon: <FileText size={32} className="text-teal-400" />,
         href: "/tools/pdf-to-word",
-        color: "blue"
+        color: "teal"
     },
     {
         title: "Word ke PDF",
         description: "Konversi dokumen Word (.docx) menjadi format PDF yang universal dan aman.",
-        icon: <FileType size={32} className="text-indigo-500" />,
+        icon: <FileType size={32} className="text-indigo-400" />,
         href: "/tools/word-to-pdf",
         color: "indigo"
     }
@@ -181,11 +181,35 @@ export default function HomeGrid() {
             titleHover: "group-hover:text-amber-400",
             iconBgHover: "group-hover:bg-amber-500/20 group-hover:border-amber-500/40",
         },
+        orange: {
+            badge: "bg-orange-500/10 text-orange-400 border border-orange-500/20",
+            borderHover: "hover:border-orange-500/50",
+            titleHover: "group-hover:text-orange-400",
+            iconBgHover: "group-hover:bg-orange-500/20 group-hover:border-orange-500/40",
+        },
         purple: {
             badge: "bg-purple-500/10 text-purple-400 border border-purple-500/20",
             borderHover: "hover:border-purple-500/50",
             titleHover: "group-hover:text-purple-400",
             iconBgHover: "group-hover:bg-purple-500/20 group-hover:border-purple-500/40",
+        },
+        violet: {
+            badge: "bg-violet-500/10 text-violet-400 border border-violet-500/20",
+            borderHover: "hover:border-violet-500/50",
+            titleHover: "group-hover:text-violet-400",
+            iconBgHover: "group-hover:bg-violet-500/20 group-hover:border-violet-500/40",
+        },
+        fuchsia: {
+            badge: "bg-fuchsia-500/10 text-fuchsia-400 border border-fuchsia-500/20",
+            borderHover: "hover:border-fuchsia-500/50",
+            titleHover: "group-hover:text-fuchsia-400",
+            iconBgHover: "group-hover:bg-fuchsia-500/20 group-hover:border-fuchsia-500/40",
+        },
+        pink: {
+            badge: "bg-pink-500/10 text-pink-400 border border-pink-500/20",
+            borderHover: "hover:border-pink-500/50",
+            titleHover: "group-hover:text-pink-400",
+            iconBgHover: "group-hover:bg-pink-500/20 group-hover:border-pink-500/40",
         },
         rose: {
             badge: "bg-rose-500/10 text-rose-400 border border-rose-500/20",
@@ -193,11 +217,35 @@ export default function HomeGrid() {
             titleHover: "group-hover:text-rose-400",
             iconBgHover: "group-hover:bg-rose-500/20 group-hover:border-rose-500/40",
         },
+        red: {
+            badge: "bg-red-500/10 text-red-400 border border-red-500/20",
+            borderHover: "hover:border-red-500/50",
+            titleHover: "group-hover:text-red-400",
+            iconBgHover: "group-hover:bg-red-500/20 group-hover:border-red-500/40",
+        },
         blue: {
             badge: "bg-blue-500/10 text-blue-400 border border-blue-500/20",
             borderHover: "hover:border-blue-500/50",
             titleHover: "group-hover:text-blue-400",
             iconBgHover: "group-hover:bg-blue-500/20 group-hover:border-blue-500/40",
+        },
+        sky: {
+            badge: "bg-sky-500/10 text-sky-400 border border-sky-500/20",
+            borderHover: "hover:border-sky-500/50",
+            titleHover: "group-hover:text-sky-400",
+            iconBgHover: "group-hover:bg-sky-500/20 group-hover:border-sky-500/40",
+        },
+        cyan: {
+            badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
+            borderHover: "hover:border-cyan-500/50",
+            titleHover: "group-hover:text-cyan-400",
+            iconBgHover: "group-hover:bg-cyan-500/20 group-hover:border-cyan-500/40",
+        },
+        teal: {
+            badge: "bg-teal-500/10 text-teal-400 border border-teal-500/20",
+            borderHover: "hover:border-teal-500/50",
+            titleHover: "group-hover:text-teal-400",
+            iconBgHover: "group-hover:bg-teal-500/20 group-hover:border-teal-500/40",
         },
         emerald: {
             badge: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
@@ -205,17 +253,17 @@ export default function HomeGrid() {
             titleHover: "group-hover:text-emerald-400",
             iconBgHover: "group-hover:bg-emerald-500/20 group-hover:border-emerald-500/40",
         },
+        lime: {
+            badge: "bg-lime-500/10 text-lime-400 border border-lime-500/20",
+            borderHover: "hover:border-lime-500/50",
+            titleHover: "group-hover:text-lime-400",
+            iconBgHover: "group-hover:bg-lime-500/20 group-hover:border-lime-500/40",
+        },
         indigo: {
             badge: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
             borderHover: "hover:border-indigo-500/50",
             titleHover: "group-hover:text-indigo-400",
             iconBgHover: "group-hover:bg-indigo-500/20 group-hover:border-indigo-500/40",
-        },
-        cyan: {
-            badge: "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20",
-            borderHover: "hover:border-cyan-500/50",
-            titleHover: "group-hover:text-cyan-400",
-            iconBgHover: "group-hover:bg-cyan-500/20 group-hover:border-cyan-500/40",
         },
     };
 
