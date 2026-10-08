@@ -241,6 +241,7 @@ export default function ClientBlurFace() {
     };
 
     // Render Canvas Pipeline (Digunakan untuk preview interaktif dan ekspor 100% resolusi penuh)
+    // Sensor bertumpuk secara kumulatif (stackable): setiap efek sensor memproses kondisi canvas terakhir
     const renderPrivacyCanvas = useCallback(
         (targetCanvas: HTMLCanvasElement, targetScale: number = 1.0, peekOriginal: boolean = false) => {
             const img = imageRef.current;
@@ -254,13 +255,20 @@ export default function ClientBlurFace() {
             const ctx = targetCanvas.getContext("2d", { willReadFrequently: true });
             if (!ctx) return;
 
-            // 1. Gambar foto dasar
+            // 1. Gambar foto dasar awal
             ctx.drawImage(img, 0, 0, cw, ch);
 
             // Jika sedang intip gambar asli, lewati efek sensor
-            if (peekOriginal) return;
+            if (peekOriginal || regions.length === 0) return;
 
-            // 2. Terapkan setiap region sensor
+            // Buat canvas pembantu (scratch canvas) untuk mengambil snapshot kondisi terkini kanvas
+            const scratchCanvas = document.createElement("canvas");
+            scratchCanvas.width = cw;
+            scratchCanvas.height = ch;
+            const scratchCtx = scratchCanvas.getContext("2d", { willReadFrequently: true });
+            if (!scratchCtx) return;
+
+            // 2. Terapkan setiap region sensor secara BERTAHAP / BERTUMPUK (CUMULATIVE STACKING)
             regions.forEach((r) => {
                 const rx = Math.round(r.x * cw);
                 const ry = Math.round(r.y * ch);
@@ -295,7 +303,11 @@ export default function ClientBlurFace() {
                     return;
                 }
 
-                // --- MODE 2: GAUSSIAN BLUR ---
+                // Ambil snapshot kondisi canvas TERAKHIR (termasuk semua sensor yang sudah digambar sebelumnya)
+                scratchCtx.clearRect(0, 0, cw, ch);
+                scratchCtx.drawImage(targetCanvas, 0, 0);
+
+                // --- MODE 2: GAUSSIAN BLUR (BERTUMPUK DARI KONDISI TERAKHIR) ---
                 if (r.effect === "blur") {
                     const scaledBlur = Math.max(2, Math.round(r.intensity * targetScale));
 
@@ -305,7 +317,8 @@ export default function ClientBlurFace() {
                         ctx.rect(rx, ry, rw, rh);
                         ctx.clip();
                         ctx.filter = `blur(${scaledBlur}px)`;
-                        ctx.drawImage(img, 0, 0, cw, ch);
+                        // Menggambar dari scratchCanvas (kondisi canvas terakhir), BUKAN dari img mentah!
+                        ctx.drawImage(scratchCanvas, 0, 0);
                         ctx.restore();
                     } else if (r.tool === "brush" && r.points && r.points.length > 0) {
                         const mask = document.createElement("canvas");
@@ -338,7 +351,7 @@ export default function ClientBlurFace() {
                             const bCtx = blurCanvas.getContext("2d");
                             if (bCtx) {
                                 bCtx.filter = `blur(${scaledBlur}px)`;
-                                bCtx.drawImage(img, 0, 0, cw, ch);
+                                bCtx.drawImage(scratchCanvas, 0, 0);
                                 bCtx.globalCompositeOperation = "destination-in";
                                 bCtx.drawImage(mask, 0, 0);
                                 ctx.drawImage(blurCanvas, 0, 0);
@@ -348,11 +361,10 @@ export default function ClientBlurFace() {
                     return;
                 }
 
-                // --- MODE 3: PIXELATE / MOSAIK ---
+                // --- MODE 3: PIXELATE / MOSAIK (BERTUMPUK DARI KONDISI TERAKHIR) ---
                 if (r.effect === "pixelate") {
                     const blockSize = Math.max(3, Math.round(r.intensity * targetScale));
 
-                    // Buat layer pikselasi offscreen
                     const pixelCanvas = document.createElement("canvas");
                     pixelCanvas.width = cw;
                     pixelCanvas.height = ch;
@@ -365,7 +377,8 @@ export default function ClientBlurFace() {
                         tiny.height = tinyH;
                         const tCtx = tiny.getContext("2d");
                         if (tCtx) {
-                            tCtx.drawImage(img, 0, 0, tinyW, tinyH);
+                            // Downsample dari scratchCanvas (kondisi canvas terakhir), BUKAN dari img mentah!
+                            tCtx.drawImage(scratchCanvas, 0, 0, tinyW, tinyH);
                             pCtx.imageSmoothingEnabled = false;
                             pCtx.drawImage(tiny, 0, 0, cw, ch);
                         }
@@ -1030,42 +1043,67 @@ export default function ClientBlurFace() {
                                 {/* Overlay Badge Penanda Region Tersimpan */}
                                 {!isDrawing &&
                                     regions.map((r, idx) => {
-                                        if (r.tool !== "box") return null;
                                         const isSelected = selectedRegionId === r.id;
-                                        return (
-                                            <div
-                                                key={r.id}
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    setSelectedRegionId(r.id);
-                                                }}
-                                                className={`absolute border rounded-sm transition-all group pointer-events-auto cursor-pointer ${
-                                                    isSelected
-                                                        ? "border-rose-400 bg-rose-500/10 ring-2 ring-rose-400/50"
-                                                        : "border-white/20 hover:border-rose-400 hover:bg-rose-500/10"
-                                                }`}
-                                                style={{
-                                                    left: `${r.x * 100}%`,
-                                                    top: `${r.y * 100}%`,
-                                                    width: `${r.w * 100}%`,
-                                                    height: `${r.h * 100}%`
-                                                }}
-                                            >
-                                                <div className="absolute -top-2.5 -left-1 flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
-                                                    <span className="px-1.5 py-0.5 rounded bg-black/80 text-[9px] font-mono font-bold text-white shadow">
-                                                        #{idx + 1} {r.effect}
-                                                    </span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => handleDeleteRegion(r.id, e)}
-                                                        className="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center hover:bg-rose-700 shadow"
-                                                        title="Hapus sensor ini"
-                                                    >
-                                                        <X className="w-2.5 h-2.5" />
-                                                    </button>
+                                        if (r.tool === "box") {
+                                            return (
+                                                <div
+                                                    key={r.id}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setSelectedRegionId(r.id);
+                                                    }}
+                                                    className={`absolute border rounded-sm transition-all group pointer-events-auto cursor-pointer ${
+                                                        isSelected
+                                                            ? "border-rose-400 bg-rose-500/10 ring-2 ring-rose-400/50"
+                                                            : "border-white/20 hover:border-rose-400 hover:bg-rose-500/10"
+                                                    }`}
+                                                    style={{
+                                                        left: `${r.x * 100}%`,
+                                                        top: `${r.y * 100}%`,
+                                                        width: `${r.w * 100}%`,
+                                                        height: `${r.h * 100}%`
+                                                    }}
+                                                >
+                                                    <div className="absolute -top-2.5 -left-1 flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                                        <span className="px-1.5 py-0.5 rounded bg-black/80 text-[9px] font-mono font-bold text-white shadow">
+                                                            #{idx + 1} {r.effect}
+                                                        </span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => handleDeleteRegion(r.id, e)}
+                                                            className="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center hover:bg-rose-700 shadow"
+                                                            title="Hapus sensor ini"
+                                                        >
+                                                            <X className="w-2.5 h-2.5" />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        );
+                                            );
+                                        }
+
+                                        // Highlight sapuan kuas jika dipilih
+                                        if (r.tool === "brush" && isSelected && r.points && r.points.length > 0) {
+                                            return (
+                                                <svg key={r.id} className="absolute inset-0 w-full h-full pointer-events-none">
+                                                    <path
+                                                        d={r.points.reduce(
+                                                            (acc, pt, i) =>
+                                                                i === 0
+                                                                    ? `M ${pt.x * 100}% ${pt.y * 100}%`
+                                                                    : `${acc} L ${pt.x * 100}% ${pt.y * 100}%`,
+                                                            ""
+                                                        )}
+                                                        fill="none"
+                                                        stroke="rgba(244, 63, 94, 0.8)"
+                                                        strokeDasharray="6 4"
+                                                        strokeWidth={Math.max(4, (r.brushSizeRatio || 0.03) * 100) + "%"}
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    />
+                                                </svg>
+                                            );
+                                        }
+                                        return null;
                                     })}
                             </div>
                         </div>
