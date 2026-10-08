@@ -19,7 +19,8 @@ import {
     Eraser,
     ShieldAlert,
     Crop,
-    FileStack
+    FileStack,
+    EyeOff
 } from "lucide-react";
 
 const TOOLS = [
@@ -52,6 +53,13 @@ const TOOLS = [
         color: "teal"
     },
     {
+        title: "Sensor & Blur Foto",
+        description: "Buramkan wajah, plat nomor kendaraan, atau data sensitif pada foto secara instan.",
+        icon: <EyeOff size={32} className="text-rose-500" />,
+        href: "/tools/blur-face",
+        color: "rose"
+    },
+    {
         title: "Gabungkan PDF",
         description: "Kombinasikan beberapa dokumen PDF menjadi satu file dalam satu klik.",
         icon: <FilesIcon size={32} className="text-purple-500" />,
@@ -61,9 +69,9 @@ const TOOLS = [
     {
         title: "Pisahkan PDF",
         description: "Ekstrak satu atau beberapa halaman spesifik dari dokumen PDF besar.",
-        icon: <Scissors size={32} className="text-rose-500" />,
+        icon: <Scissors size={32} className="text-pink-500" />,
         href: "/tools/split-pdf",
-        color: "rose"
+        color: "pink"
     },
     {
         title: "Atur & Kelola Halaman PDF",
