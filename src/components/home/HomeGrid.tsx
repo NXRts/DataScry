@@ -11,6 +11,7 @@ import {
     FileText,
     FileType,
     FolderArchive,
+    FolderOpen,
     RotateCw,
     Stamp,
     PenTool,
@@ -135,6 +136,13 @@ const TOOLS = [
         icon: <FolderArchive size={32} className="text-violet-400" />,
         href: "/tools/archive-zip",
         color: "violet"
+    },
+    {
+        title: "Ekstrak & Intip ZIP",
+        description: "Buka, intip isi berkas, dan ekstrak file arsip .ZIP langsung tanpa aplikasi luar.",
+        icon: <FolderOpen size={32} className="text-fuchsia-400" />,
+        href: "/tools/unzip",
+        color: "fuchsia"
     },
     {
         title: "Scrub EXIF Jejak Digital",

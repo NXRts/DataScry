@@ -204,7 +204,7 @@ export default function HeroSection() {
                             >
                                 <span className="inline-flex items-center gap-1.5">
                                     <Sparkles className="w-3.5 h-3.5 text-primary" />
-                                    Lihat Semua 10+ Alat Gratis
+                                    Lihat Semua 22 Alat Gratis
                                 </span>
                             </Link>
                         </div>

@@ -31,6 +31,16 @@ export default function Footer() {
                             <h4 className="text-xs font-bold tracking-wider text-foreground uppercase">ALAT POPULER</h4>
                             <ul className="space-y-2.5 text-sm text-foreground/70">
                                 <li>
+                                    <Link href="/tools/unzip" className="hover:text-fuchsia-400 transition-colors block py-0.5">
+                                        Ekstrak & Intip ZIP
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link href="/tools/blur-face" className="hover:text-rose-400 transition-colors block py-0.5">
+                                        Sensor & Blur Foto
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/tools/remove-background" className="hover:text-emerald-400 transition-colors block py-0.5">
                                         Hapus Latar Belakang (AI)
                                     </Link>
@@ -38,11 +48,6 @@ export default function Footer() {
                                 <li>
                                     <Link href="/tools/jpg-to-pdf" className="hover:text-amber-400 transition-colors block py-0.5">
                                         Ubah JPG ke PDF
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link href="/tools/pdf-to-jpg" className="hover:text-amber-400 transition-colors block py-0.5">
-                                        Ekstrak PDF ke JPG
                                     </Link>
                                 </li>
                                 <li>
@@ -56,8 +61,8 @@ export default function Footer() {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link href="/tools/sign-pdf" className="hover:text-rose-400 transition-colors block py-0.5">
-                                        Tanda Tangan PDF (e-Sign)
+                                    <Link href="/tools/archive-zip" className="hover:text-violet-400 transition-colors block py-0.5">
+                                        Kompres Berkas ke ZIP
                                     </Link>
                                 </li>
                                 <li className="pt-1.5">
@@ -65,7 +70,7 @@ export default function Footer() {
                                         href="/#tools"
                                         className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 transition-colors group"
                                     >
-                                        <span>Lihat Semua 20 Alat</span>
+                                        <span>Lihat Semua 22 Alat</span>
                                         <span className="group-hover:translate-x-0.5 transition-transform">→</span>
                                     </Link>
                                 </li>
