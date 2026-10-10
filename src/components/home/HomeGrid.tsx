@@ -1,6 +1,8 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import {
-    FileUp,
     FileImage,
     Image as ImageIcon,
     Files as FilesIcon,
@@ -22,174 +24,44 @@ import {
     Crop,
     FileStack,
     EyeOff,
-    ArrowLeftRight
+    ArrowLeftRight,
+    Search,
+    X,
+    Sparkles
 } from "lucide-react";
-
-const TOOLS = [
-    {
-        title: "JPG ke PDF",
-        description: "Ubah foto JPG, PNG, atau WebP menjadi dokumen PDF dengan cepat.",
-        icon: <ImageIcon size={32} className="text-amber-500" />,
-        href: "/tools/jpg-to-pdf",
-        color: "amber"
-    },
-    {
-        title: "PDF ke JPG",
-        description: "Ekstrak setiap halaman dari PDF menjadi gambar berkualitas tinggi.",
-        icon: <FileImage size={32} className="text-orange-500" />,
-        href: "/tools/pdf-to-jpg",
-        color: "orange"
-    },
-    {
-        title: "Hapus Latar Belakang",
-        description: "Potong background foto secara otomatis dan bersih dengan resolusi tajam HD.",
-        icon: <Eraser size={32} className="text-emerald-400" />,
-        href: "/tools/remove-background",
-        color: "emerald"
-    },
-    {
-        title: "Konverter Format Gambar",
-        description: "Ubah format WebP ke JPG, PNG, atau sebaliknya secara cepat, massal, dan bebas server.",
-        icon: <ArrowLeftRight size={32} className="text-amber-500" />,
-        href: "/tools/convert-image",
-        color: "amber"
-    },
-    {
-        title: "Potong & Pas Foto (Crop)",
-        description: "Potong pas foto resmi 2x3, 3x4, 4x6 cm atau ubah ukuran gambar dengan presisi pixel.",
-        icon: <Crop size={32} className="text-teal-400" />,
-        href: "/tools/crop-image",
-        color: "teal"
-    },
-    {
-        title: "Sensor & Blur Foto",
-        description: "Buramkan wajah, plat nomor kendaraan, atau data sensitif pada foto secara instan.",
-        icon: <EyeOff size={32} className="text-rose-500" />,
-        href: "/tools/blur-face",
-        color: "rose"
-    },
-    {
-        title: "Gabungkan PDF",
-        description: "Kombinasikan beberapa dokumen PDF menjadi satu file dalam satu klik.",
-        icon: <FilesIcon size={32} className="text-purple-500" />,
-        href: "/tools/merge-pdf",
-        color: "purple"
-    },
-    {
-        title: "Pisahkan PDF",
-        description: "Ekstrak satu atau beberapa halaman spesifik dari dokumen PDF besar.",
-        icon: <Scissors size={32} className="text-pink-500" />,
-        href: "/tools/split-pdf",
-        color: "pink"
-    },
-    {
-        title: "Atur & Kelola Halaman PDF",
-        description: "Urutkan ulang (drag & drop), hapus halaman, atau putar halaman dalam kisi visual.",
-        icon: <FileStack size={32} className="text-indigo-400" />,
-        href: "/tools/organize-pdf",
-        color: "indigo"
-    },
-    {
-        title: "Putar Halaman PDF",
-        description: "Perbaiki orientasi halaman PDF yang miring atau terbalik dengan pratinjau visual instan.",
-        icon: <RotateCw size={32} className="text-sky-400" />,
-        href: "/tools/rotate-pdf",
-        color: "sky"
-    },
-    {
-        title: "Watermark PDF",
-        description: "Beri cap pengaman teks diagonal (CASN, Bank, Rahasia) untuk melindungi berkas penting.",
-        icon: <Stamp size={32} className="text-fuchsia-400" />,
-        href: "/tools/watermark-pdf",
-        color: "fuchsia"
-    },
-    {
-        title: "Tanda Tangan PDF",
-        description: "Bubuhi tanda tangan, paraf transparan, atau ketik nama langsung di atas dokumen PDF Anda.",
-        icon: <PenTool size={32} className="text-pink-400" />,
-        href: "/tools/sign-pdf",
-        color: "pink"
-    },
-    {
-        title: "Kunci & Proteksi PDF",
-        description: "Kunci dokumen PDF dengan kata sandi rahasia dan enkripsi standar militer AES-256.",
-        icon: <Lock size={32} className="text-amber-500" />,
-        href: "/tools/protect-pdf",
-        color: "amber"
-    },
-    {
-        title: "Buka Kunci PDF",
-        description: "Hapus proteksi kata sandi dari dokumen PDF Anda secara permanen dan 100% luring.",
-        icon: <Unlock size={32} className="text-emerald-400" />,
-        href: "/tools/unlock-pdf",
-        color: "emerald"
-    },
-    {
-        title: "Sensor Data PDF (Redact)",
-        description: "Sensor NIK, gaji, nomor rekening, atau tanda tangan secara permanen dan bebas intip.",
-        icon: <ShieldAlert size={32} className="text-red-500" />,
-        href: "/tools/redact-pdf",
-        color: "red"
-    },
-    {
-        title: "Kompres PDF & Gambar",
-        description: "Kurangi ukuran file dokumen atau foto Anda untuk menghemat ruang.",
-        icon: <Minimize2 size={32} className="text-blue-500" />,
-        href: "/tools/compress",
-        color: "blue"
-    },
-    {
-        title: "Kompres Berkas ke ZIP",
-        description: "Padatkan dan bungkus banyak file apa saja menjadi arsip .ZIP terkompresi.",
-        icon: <FolderArchive size={32} className="text-violet-400" />,
-        href: "/tools/archive-zip",
-        color: "violet"
-    },
-    {
-        title: "Ekstrak & Intip ZIP",
-        description: "Buka, intip isi berkas, dan ekstrak file arsip .ZIP langsung tanpa aplikasi luar.",
-        icon: <FolderOpen size={32} className="text-fuchsia-400" />,
-        href: "/tools/unzip",
-        color: "fuchsia"
-    },
-    {
-        title: "Scrub EXIF Jejak Digital",
-        description: "Hapus metadata dan lokasi tersembunyi pada foto sebelum diunggah ke internet.",
-        icon: <ShieldCheck size={32} className="text-lime-400" />,
-        href: "/tools/scrub-exif",
-        color: "lime"
-    },
-    {
-        title: "Penampil Metadata",
-        description: "Intip informasi EXIF rahasia (kamera, GPS, tanggal asli) di balik foto atau dokumen PDF Anda.",
-        icon: <FileSearch size={32} className="text-cyan-400" />,
-        href: "/tools/metadata-viewer",
-        color: "cyan"
-    },
-    {
-        title: "Gabungkan Word",
-        description: "Kombinasikan beberapa dokumen Word (.docx) menjadi satu file utuh.",
-        icon: <FileText size={32} className="text-blue-500" />,
-        href: "/tools/merge-word",
-        color: "blue"
-    },
-    {
-        title: "PDF ke Word",
-        description: "Ubah dokumen PDF menjadi file Word (.docx) yang dapat diedit dengan mudah.",
-        icon: <FileText size={32} className="text-teal-400" />,
-        href: "/tools/pdf-to-word",
-        color: "teal"
-    },
-    {
-        title: "Word ke PDF",
-        description: "Konversi dokumen Word (.docx) menjadi format PDF yang universal dan aman.",
-        icon: <FileType size={32} className="text-indigo-400" />,
-        href: "/tools/word-to-pdf",
-        color: "indigo"
-    }
-];
+import { ALL_TOOLS, TOOL_CATEGORIES, ToolCategory, ToolItem } from "@/lib/toolsData";
 
 export default function HomeGrid() {
+    const [selectedCategory, setSelectedCategory] = useState<ToolCategory>("all");
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const renderToolIcon = (iconName: string, size = 30) => {
+        switch (iconName) {
+            case "ImageIcon": return <ImageIcon size={size} className="text-amber-500" />;
+            case "FileImage": return <FileImage size={size} className="text-orange-500" />;
+            case "Eraser": return <Eraser size={size} className="text-emerald-400" />;
+            case "ArrowLeftRight": return <ArrowLeftRight size={size} className="text-amber-500" />;
+            case "Crop": return <Crop size={size} className="text-teal-400" />;
+            case "EyeOff": return <EyeOff size={size} className="text-rose-500" />;
+            case "FilesIcon": return <FilesIcon size={size} className="text-purple-500" />;
+            case "Scissors": return <Scissors size={size} className="text-pink-500" />;
+            case "FileStack": return <FileStack size={size} className="text-indigo-400" />;
+            case "RotateCw": return <RotateCw size={size} className="text-sky-400" />;
+            case "Stamp": return <Stamp size={size} className="text-fuchsia-400" />;
+            case "PenTool": return <PenTool size={size} className="text-pink-400" />;
+            case "Lock": return <Lock size={size} className="text-amber-500" />;
+            case "Unlock": return <Unlock size={size} className="text-emerald-400" />;
+            case "ShieldAlert": return <ShieldAlert size={size} className="text-red-500" />;
+            case "Minimize2": return <Minimize2 size={size} className="text-blue-500" />;
+            case "FolderArchive": return <FolderArchive size={size} className="text-violet-400" />;
+            case "FolderOpen": return <FolderOpen size={size} className="text-fuchsia-400" />;
+            case "ShieldCheck": return <ShieldCheck size={size} className="text-lime-400" />;
+            case "FileSearch": return <FileSearch size={size} className="text-cyan-400" />;
+            case "FileType": return <FileType size={size} className="text-indigo-400" />;
+            default: return <FileText size={size} className="text-blue-500" />;
+        }
+    };
+
     const colorThemes: Record<
         string,
         {
@@ -291,32 +163,127 @@ export default function HomeGrid() {
         },
     };
 
+    const filteredTools = useMemo(() => {
+        return ALL_TOOLS.filter((tool: ToolItem) => {
+            const matchesCategory = selectedCategory === "all" || tool.category === selectedCategory;
+            const q = searchQuery.toLowerCase().trim();
+            const matchesQuery =
+                !q ||
+                tool.title.toLowerCase().includes(q) ||
+                tool.description.toLowerCase().includes(q);
+            return matchesCategory && matchesQuery;
+        });
+    }, [selectedCategory, searchQuery]);
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {TOOLS.map((tool) => {
-                const theme = colorThemes[tool.color] || colorThemes.blue;
-                return (
-                    <Link
-                        key={tool.href}
-                        href={tool.href}
-                        className="group block h-full"
+        <div className="space-y-6">
+            {/* Filter Tabs & Quick Search Bar */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
+                {/* Horizontal Scrollable Category Chips for Mobile */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+                    {TOOL_CATEGORIES.map((cat) => {
+                        const isSelected = selectedCategory === cat.id;
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => setSelectedCategory(cat.id)}
+                                className={`shrink-0 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+                                    isSelected
+                                        ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
+                                        : "bg-surface/60 hover:bg-surface border border-border/70 text-foreground/70 hover:text-foreground"
+                                }`}
+                            >
+                                <span>{cat.label}</span>
+                                <span className={`ml-1.5 text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-surface border border-border/60 text-foreground/50"}`}>
+                                    {cat.count}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* Instant Live Search Input */}
+                <div className="relative sm:w-64 shrink-0">
+                    <Search className="w-4 h-4 text-foreground/40 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Cari alat (misal: jpg, crop)..."
+                        className="w-full pl-9 pr-8 py-2 text-xs rounded-xl bg-surface/70 border border-border/80 focus:border-primary/60 focus:outline-hidden text-foreground placeholder:text-foreground/40 transition-colors"
+                    />
+                    {searchQuery && (
+                        <button
+                            onClick={() => setSearchQuery("")}
+                            className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 text-foreground/40 hover:text-foreground text-xs cursor-pointer"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Tools Grid */}
+            {filteredTools.length === 0 ? (
+                <div className="glass-panel p-12 rounded-3xl text-center space-y-3 border border-border/70">
+                    <Search className="w-10 h-10 text-foreground/30 mx-auto" />
+                    <h3 className="text-base font-bold text-foreground">Alat Tidak Ditemukan</h3>
+                    <p className="text-xs text-foreground/60 max-w-sm mx-auto">
+                        Tidak ada alat yang cocok dengan kata kunci &quot;{searchQuery}&quot;. Silakan coba istilah lain atau reset pencarian.
+                    </p>
+                    <button
+                        onClick={() => {
+                            setSearchQuery("");
+                            setSelectedCategory("all");
+                        }}
+                        className="px-4 py-2 rounded-xl bg-surface border border-border/80 hover:bg-surface/80 text-xs font-bold text-primary transition-colors cursor-pointer"
                     >
-                        <div className={`h-full glass-panel p-5 md:p-6 rounded-2xl flex flex-col gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent ${theme.borderHover} cursor-pointer`}>
-                            <div className="flex items-center gap-3 md:gap-4">
-                                <div className={`p-2.5 md:p-3 rounded-xl transition-all duration-300 group-hover:scale-105 ${theme.badge} ${theme.iconBgHover}`}>
-                                    {tool.icon}
+                        Tampilkan Semua 23 Alat
+                    </button>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {filteredTools.map((tool) => {
+                        const theme = colorThemes[tool.color] || colorThemes.blue;
+                        return (
+                            <Link
+                                key={tool.href}
+                                href={tool.href}
+                                className="group block h-full"
+                            >
+                                <div className={`h-full glass-panel p-5 md:p-6 rounded-2xl flex flex-col justify-between gap-3 md:gap-4 transition-all duration-300 hover:scale-[1.02] hover:bg-surface/60 border-2 border-transparent ${theme.borderHover} cursor-pointer`}>
+                                    <div className="space-y-3">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="flex items-center gap-3 md:gap-4">
+                                                <div className={`p-2.5 md:p-3 rounded-xl transition-all duration-300 group-hover:scale-105 ${theme.badge} ${theme.iconBgHover}`}>
+                                                    {renderToolIcon(tool.iconName)}
+                                                </div>
+                                                <h3 className={`text-base md:text-lg font-bold tracking-tight ${theme.titleHover} transition-colors line-clamp-1`}>
+                                                    {tool.title}
+                                                </h3>
+                                            </div>
+                                            {tool.badge && (
+                                                <span className="text-[10px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 font-bold border border-amber-500/20 shrink-0">
+                                                    {tool.badge}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className="text-foreground/70 text-xs md:text-sm leading-relaxed line-clamp-2">
+                                            {tool.description}
+                                        </p>
+                                    </div>
+
+                                    {/* Action footer link kecil */}
+                                    <div className="pt-2 border-t border-border/40 flex items-center justify-between text-[11px] text-foreground/50 group-hover:text-foreground/80 transition-colors">
+                                        <span className="font-semibold">Mulai Gunakan</span>
+                                        <span className="group-hover:translate-x-1 transition-transform">→</span>
+                                    </div>
                                 </div>
-                                <h3 className={`text-lg md:text-xl font-bold tracking-tight ${theme.titleHover} transition-colors`}>
-                                    {tool.title}
-                                </h3>
-                            </div>
-                            <p className="text-foreground/70 text-sm leading-relaxed">
-                                {tool.description}
-                            </p>
-                        </div>
-                    </Link>
-                );
-            })}
+                            </Link>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

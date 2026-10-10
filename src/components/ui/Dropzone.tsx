@@ -83,13 +83,19 @@ export default function Dropzone({
                     <UploadCloud className="w-10 h-10" />
                 </div>
 
-                <div className="space-y-2">
-                    <h3 className="text-xl md:text-2xl font-bold tracking-tight px-2">
-                        {title}
+                <div className="space-y-1.5 sm:space-y-2">
+                    <h3 className="text-lg sm:text-2xl font-bold tracking-tight px-2">
+                        <span className="sm:hidden">Ketuk untuk Memilih Berkas</span>
+                        <span className="hidden sm:inline">{title}</span>
                     </h3>
-                    <p className="text-foreground/60 max-w-sm mx-auto text-sm md:text-base px-2">
+                    <p className="text-foreground/60 max-w-sm mx-auto text-xs sm:text-sm px-2 leading-relaxed">
                         {description}
                     </p>
+                    <div className="pt-1 sm:hidden">
+                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20">
+                            Pilih dari Galeri / Berkas
+                        </span>
+                    </div>
                 </div>
 
                 {icons ? (

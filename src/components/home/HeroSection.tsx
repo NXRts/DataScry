@@ -96,7 +96,7 @@ export default function HeroSection() {
                         </div>
 
                         {/* Main Headline */}
-                        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-balance">
+                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.18] text-balance">
                             Kelola File Anda secara{" "}
                             <span className="text-primary">
                                 Privat dan Instan
@@ -104,41 +104,41 @@ export default function HeroSection() {
                         </h1>
 
                         {/* Subtitle */}
-                        <p className="text-base sm:text-lg md:text-xl text-foreground/70 max-w-2xl leading-relaxed">
+                        <p className="text-sm sm:text-lg md:text-xl text-foreground/70 max-w-2xl leading-relaxed">
                             Setiap detik dokumen Anda diproses <strong className="font-semibold text-foreground">sepenuhnya di peramban Anda</strong>. Kompres, ubah, gabung PDF/Word, hingga hapus jejak foto tanpa mengunggahnya ke server mana pun. Keamanan mutlak gratis.
                         </p>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-wrap items-center gap-4 pt-2">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 pt-2">
                             <Link
                                 href="/tools/merge-pdf"
-                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all hover:-translate-y-0.5 active:scale-95"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm sm:text-base font-bold text-white bg-primary hover:bg-primary-focus rounded-2xl transition-all hover:-translate-y-0.5 active:scale-95 shadow-lg shadow-primary/20"
                             >
                                 Mulai Gabung PDF
-                                <ArrowRight className="w-5 h-5" />
+                                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                             </Link>
                             <Link
                                 href="#tools"
-                                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 text-base font-bold text-foreground bg-surface hover:bg-surface/80 border border-border rounded-2xl transition-all hover:border-primary/40 active:scale-95"
+                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm sm:text-base font-bold text-foreground bg-surface hover:bg-surface/80 border border-border rounded-2xl transition-all hover:border-primary/40 active:scale-95"
                             >
-                                <Zap className="w-5 h-5 text-amber-500" />
-                                Jelajahi Semua Alat
+                                <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
+                                Jelajahi Semua 23 Alat
                             </Link>
                         </div>
 
                         {/* Key Metrics / Trust Signals */}
-                        <div className="pt-6 border-t border-border/60 grid grid-cols-3 gap-4 max-w-lg">
-                            <div>
-                                <p className="text-xs font-medium text-foreground/50">Pemrosesan</p>
-                                <p className="text-sm sm:text-base font-bold text-foreground">100% Lokal</p>
+                        <div className="pt-5 border-t border-border/60 grid grid-cols-3 gap-2 sm:gap-4 max-w-lg">
+                            <div className="p-2 sm:p-0 rounded-xl bg-surface/30 sm:bg-transparent">
+                                <p className="text-[10px] sm:text-xs font-medium text-foreground/50">Pemrosesan</p>
+                                <p className="text-xs sm:text-base font-bold text-foreground">100% Lokal</p>
                             </div>
-                            <div>
-                                <p className="text-xs font-medium text-foreground/50">Keamanan</p>
-                                <p className="text-sm sm:text-base font-bold text-emerald-400">Zero Cloud Upload</p>
+                            <div className="p-2 sm:p-0 rounded-xl bg-surface/30 sm:bg-transparent">
+                                <p className="text-[10px] sm:text-xs font-medium text-foreground/50">Keamanan</p>
+                                <p className="text-xs sm:text-base font-bold text-emerald-400">Zero Upload</p>
                             </div>
-                            <div>
-                                <p className="text-xs font-medium text-foreground/50">Akses</p>
-                                <p className="text-sm sm:text-base font-bold text-foreground">Gratis Tanpa Kuota</p>
+                            <div className="p-2 sm:p-0 rounded-xl bg-surface/30 sm:bg-transparent">
+                                <p className="text-[10px] sm:text-xs font-medium text-foreground/50">Akses</p>
+                                <p className="text-xs sm:text-base font-bold text-foreground">Bebas Kuota</p>
                             </div>
                         </div>
                     </div>
