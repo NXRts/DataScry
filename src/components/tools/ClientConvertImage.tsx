@@ -621,7 +621,7 @@ export default function ClientConvertImage() {
                             <label className="text-xs font-bold uppercase tracking-wider text-foreground/50">
                                 Preset Cepat Instan
                             </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-2.5">
                                 {PRESETS.map((p) => {
                                     const isSelected = activePreset === p.id;
                                     const isPresetDisabled = isFormatDisabled(p.format);
@@ -984,7 +984,7 @@ export default function ClientConvertImage() {
                                 return (
                                     <div
                                         key={item.id}
-                                        className={`glass-panel p-4 rounded-2xl border transition-all duration-200 flex gap-4 items-center ${
+                                        className={`glass-panel p-3.5 sm:p-4 rounded-2xl border transition-all duration-200 flex gap-3 sm:gap-4 items-center ${
                                             isSuccess
                                                 ? "border-emerald-500/30 bg-surface/70"
                                                 : isError
@@ -998,7 +998,7 @@ export default function ClientConvertImage() {
                                     >
                                         {/* Thumbnail with Lightbox Button */}
                                         <div
-                                            className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-border/60 bg-black/20 group cursor-pointer"
+                                            className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 border border-border/60 bg-black/20 group cursor-pointer"
                                             onClick={() => handleOpenLightbox(item)}
                                             title="Klik untuk pratinjau besar HD"
                                         >
