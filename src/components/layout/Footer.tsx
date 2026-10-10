@@ -31,6 +31,11 @@ export default function Footer() {
                             <h4 className="text-xs font-bold tracking-wider text-foreground uppercase">ALAT POPULER</h4>
                             <ul className="space-y-2.5 text-sm text-foreground/70">
                                 <li>
+                                    <Link href="/tools/convert-image" className="hover:text-amber-400 transition-colors block py-0.5">
+                                        Konverter Format Gambar
+                                    </Link>
+                                </li>
+                                <li>
                                     <Link href="/tools/unzip" className="hover:text-fuchsia-400 transition-colors block py-0.5">
                                         Ekstrak & Intip ZIP
                                     </Link>
@@ -70,7 +75,7 @@ export default function Footer() {
                                         href="/#tools"
                                         className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1 transition-colors group"
                                     >
-                                        <span>Lihat Semua 22 Alat</span>
+                                        <span>Lihat Semua 23 Alat</span>
                                         <span className="group-hover:translate-x-0.5 transition-transform">→</span>
                                     </Link>
                                 </li>
