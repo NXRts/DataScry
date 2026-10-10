@@ -21,7 +21,8 @@ import {
     ShieldAlert,
     Crop,
     FileStack,
-    EyeOff
+    EyeOff,
+    ArrowLeftRight
 } from "lucide-react";
 
 const TOOLS = [
@@ -45,6 +46,13 @@ const TOOLS = [
         icon: <Eraser size={32} className="text-emerald-400" />,
         href: "/tools/remove-background",
         color: "emerald"
+    },
+    {
+        title: "Konverter Format Gambar",
+        description: "Ubah format WebP ke JPG, PNG, atau sebaliknya secara cepat, massal, dan bebas server.",
+        icon: <ArrowLeftRight size={32} className="text-amber-500" />,
+        href: "/tools/convert-image",
+        color: "amber"
     },
     {
         title: "Potong & Pas Foto (Crop)",
