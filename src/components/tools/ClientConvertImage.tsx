@@ -146,6 +146,50 @@ export default function ClientConvertImage() {
         return ext ? ext.toUpperCase() : "IMG";
     };
 
+    // Cek apakah format asal sama dengan target format
+    const isSameFormat = useCallback((originalFormat: string, target: TargetFormat): boolean => {
+        const orig = (originalFormat || "").trim().toLowerCase();
+        if (target === "jpeg") {
+            return orig === "jpg" || orig === "jpeg";
+        }
+        if (target === "png") {
+            return orig === "png";
+        }
+        if (target === "webp") {
+            return orig === "webp";
+        }
+        if (target === "avif") {
+            return orig === "avif";
+        }
+        return false;
+    }, []);
+
+    // Cek apakah SEMUA gambar dalam antrean sudah berformat target tertentu
+    const isFormatDisabled = useCallback(
+        (target: TargetFormat): boolean => {
+            if (images.length === 0) return false;
+            return images.every((img) => isSameFormat(img.originalFormat, target));
+        },
+        [images, isSameFormat]
+    );
+
+    // Auto-switch target format jika semua gambar di antrean sudah berformat targetFormat saat ini
+    useEffect(() => {
+        if (images.length === 0) return;
+        const allSame = images.every((img) => isSameFormat(img.originalFormat, targetFormat));
+        if (allSame) {
+            const candidates: TargetFormat[] = ["webp", "jpeg", "png", "avif"];
+            const available = candidates.find((fmt) => {
+                if (fmt === "avif" && !avifSupported) return false;
+                return !images.every((img) => isSameFormat(img.originalFormat, fmt));
+            });
+            if (available) {
+                setTargetFormat(available);
+                setActivePreset("");
+            }
+        }
+    }, [images, targetFormat, avifSupported, isSameFormat]);
+
     // Baca metadata gambar (dimensi)
     const readImageMetadata = (file: File): Promise<{ width: number; height: number }> => {
         return new Promise((resolve) => {
@@ -285,17 +329,27 @@ export default function ClientConvertImage() {
         });
     };
 
-    // Konversi semua gambar
+    // Konversi semua gambar (hanya memproses gambar yang formatnya berbeda dengan target)
     const handleConvertAll = async () => {
         if (images.length === 0 || isProcessingBatch) return;
+
+        const convertibleIndices: number[] = [];
+        images.forEach((img, idx) => {
+            if (!isSameFormat(img.originalFormat, targetFormat)) {
+                convertibleIndices.push(idx);
+            }
+        });
+
+        if (convertibleIndices.length === 0) return;
 
         setIsProcessingBatch(true);
         setBatchProgress(0);
 
-        const total = images.length;
+        const total = convertibleIndices.length;
         const updatedImages = [...images];
 
-        for (let i = 0; i < total; i++) {
+        for (let step = 0; step < total; step++) {
+            const i = convertibleIndices[step];
             // Tandai sedang diproses
             updatedImages[i] = { ...updatedImages[i], status: "processing" };
             setImages([...updatedImages]);
@@ -321,7 +375,7 @@ export default function ClientConvertImage() {
             };
 
             setImages([...updatedImages]);
-            setBatchProgress(Math.round(((i + 1) / total) * 100));
+            setBatchProgress(Math.round(((step + 1) / total) * 100));
         }
 
         setIsProcessingBatch(false);
@@ -332,11 +386,14 @@ export default function ClientConvertImage() {
         const index = images.findIndex((img) => img.id === id);
         if (index === -1) return;
 
+        const targetItem = images[index];
+        // Cegah jika berkas sudah berformat sama persis dengan target
+        if (isSameFormat(targetItem.originalFormat, targetFormat)) return;
+
         setImages((prev) =>
             prev.map((item, i) => (i === index ? { ...item, status: "processing" } : item))
         );
 
-        const targetItem = images[index];
         const result = await convertImageProcess(targetItem, targetFormat, quality, scale, fillBg, bgColor);
 
         if (targetItem.outputUrl) {
@@ -475,6 +532,11 @@ export default function ClientConvertImage() {
         };
     }, [images]);
 
+    // Jumlah gambar yang format aslinya berbeda dari targetFormat (dapat dikonversi)
+    const convertibleCount = useMemo(() => {
+        return images.filter((img) => !isSameFormat(img.originalFormat, targetFormat)).length;
+    }, [images, targetFormat, isSameFormat]);
+
     return (
         <div className="space-y-8">
             {/* Input State: Dropzone */}
@@ -562,19 +624,29 @@ export default function ClientConvertImage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
                                 {PRESETS.map((p) => {
                                     const isSelected = activePreset === p.id;
+                                    const isPresetDisabled = isFormatDisabled(p.format);
                                     return (
                                         <button
                                             key={p.id}
-                                            onClick={() => applyPreset(p.id)}
-                                            className={`p-3 rounded-2xl text-left border transition-all cursor-pointer ${
-                                                isSelected
-                                                    ? "bg-amber-500/15 border-amber-500/60 shadow-md shadow-amber-500/10"
-                                                    : "bg-surface/50 border-border/60 hover:bg-surface hover:border-border"
+                                            onClick={() => !isPresetDisabled && applyPreset(p.id)}
+                                            disabled={isPresetDisabled}
+                                            className={`p-3 rounded-2xl text-left border transition-all ${
+                                                isPresetDisabled
+                                                    ? "opacity-40 cursor-not-allowed bg-surface/30 border-border/40 text-foreground/40"
+                                                    : isSelected
+                                                    ? "bg-amber-500/15 border-amber-500/60 shadow-md shadow-amber-500/10 cursor-pointer"
+                                                    : "bg-surface/50 border-border/60 hover:bg-surface hover:border-border cursor-pointer"
                                             }`}
+                                            title={isPresetDisabled ? `Semua berkas sudah berformat .${p.format === "jpeg" ? "jpg" : p.format}` : p.name}
                                         >
                                             <div className="flex items-center justify-between">
                                                 <p className="text-xs font-bold text-foreground">{p.name}</p>
-                                                {isSelected && <Check className="w-3.5 h-3.5 text-amber-400" />}
+                                                {isSelected && !isPresetDisabled && <Check className="w-3.5 h-3.5 text-amber-400" />}
+                                                {isPresetDisabled && (
+                                                    <span className="text-[9px] px-1.5 py-0.2 rounded bg-surface border border-border text-foreground/50 font-medium">
+                                                        Sudah .{p.format === "jpeg" ? "jpg" : p.format}
+                                                    </span>
+                                                )}
                                             </div>
                                             <p className="text-[11px] text-foreground/60 mt-1 leading-snug">{p.desc}</p>
                                         </button>
@@ -596,61 +668,85 @@ export default function ClientConvertImage() {
                                 <div className="grid grid-cols-2 gap-2">
                                     <button
                                         onClick={() => {
-                                            setTargetFormat("jpeg");
-                                            setActivePreset("");
+                                            if (!isFormatDisabled("jpeg")) {
+                                                setTargetFormat("jpeg");
+                                                setActivePreset("");
+                                            }
                                         }}
-                                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                                            targetFormat === "jpeg"
-                                                ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20"
-                                                : "bg-surface/60 border-border/60 hover:bg-surface text-foreground"
+                                        disabled={isFormatDisabled("jpeg")}
+                                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
+                                            isFormatDisabled("jpeg")
+                                                ? "opacity-40 cursor-not-allowed bg-surface/30 border-border/30 text-foreground/40"
+                                                : targetFormat === "jpeg"
+                                                ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20 cursor-pointer"
+                                                : "bg-surface/60 border-border/60 hover:bg-surface text-foreground cursor-pointer"
                                         }`}
+                                        title={isFormatDisabled("jpeg") ? "Semua berkas sudah berformat JPG" : "Ubah ke format JPG"}
                                     >
-                                        JPG (JPEG)
+                                        JPG (JPEG) {isFormatDisabled("jpeg") && <span className="block text-[9px] font-normal opacity-80">(Sudah JPG)</span>}
                                     </button>
                                     <button
                                         onClick={() => {
-                                            setTargetFormat("png");
-                                            setActivePreset("");
+                                            if (!isFormatDisabled("png")) {
+                                                setTargetFormat("png");
+                                                setActivePreset("");
+                                            }
                                         }}
-                                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                                            targetFormat === "png"
-                                                ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20"
-                                                : "bg-surface/60 border-border/60 hover:bg-surface text-foreground"
+                                        disabled={isFormatDisabled("png")}
+                                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
+                                            isFormatDisabled("png")
+                                                ? "opacity-40 cursor-not-allowed bg-surface/30 border-border/30 text-foreground/40"
+                                                : targetFormat === "png"
+                                                ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20 cursor-pointer"
+                                                : "bg-surface/60 border-border/60 hover:bg-surface text-foreground cursor-pointer"
                                         }`}
+                                        title={isFormatDisabled("png") ? "Semua berkas sudah berformat PNG" : "Ubah ke format PNG"}
                                     >
-                                        PNG (Lossless)
+                                        PNG (Lossless) {isFormatDisabled("png") && <span className="block text-[9px] font-normal opacity-80">(Sudah PNG)</span>}
                                     </button>
                                     <button
                                         onClick={() => {
-                                            setTargetFormat("webp");
-                                            setActivePreset("");
+                                            if (!isFormatDisabled("webp")) {
+                                                setTargetFormat("webp");
+                                                setActivePreset("");
+                                            }
                                         }}
-                                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                                            targetFormat === "webp"
-                                                ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20"
-                                                : "bg-surface/60 border-border/60 hover:bg-surface text-foreground"
+                                        disabled={isFormatDisabled("webp")}
+                                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
+                                            isFormatDisabled("webp")
+                                                ? "opacity-40 cursor-not-allowed bg-surface/30 border-border/30 text-foreground/40"
+                                                : targetFormat === "webp"
+                                                ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20 cursor-pointer"
+                                                : "bg-surface/60 border-border/60 hover:bg-surface text-foreground cursor-pointer"
                                         }`}
+                                        title={isFormatDisabled("webp") ? "Semua berkas sudah berformat WebP" : "Ubah ke format WebP"}
                                     >
-                                        WEBP (Modern)
+                                        WEBP (Modern) {isFormatDisabled("webp") && <span className="block text-[9px] font-normal opacity-80">(Sudah WebP)</span>}
                                     </button>
                                     <button
                                         onClick={() => {
-                                            if (avifSupported) {
+                                            if (avifSupported && !isFormatDisabled("avif")) {
                                                 setTargetFormat("avif");
                                                 setActivePreset("");
                                             }
                                         }}
-                                        disabled={!avifSupported}
+                                        disabled={!avifSupported || isFormatDisabled("avif")}
                                         className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
-                                            !avifSupported
+                                            !avifSupported || isFormatDisabled("avif")
                                                 ? "opacity-40 cursor-not-allowed bg-surface/30 border-border/30 text-foreground/40"
                                                 : targetFormat === "avif"
                                                 ? "bg-amber-500 text-black border-amber-400 shadow-md shadow-amber-500/20 cursor-pointer"
                                                 : "bg-surface/60 border-border/60 hover:bg-surface text-foreground cursor-pointer"
                                         }`}
-                                        title={avifSupported ? "Format AVIF didukung" : "Browser Anda belum mendukung ekspor AVIF"}
+                                        title={
+                                            !avifSupported
+                                                ? "Browser Anda belum mendukung ekspor AVIF"
+                                                : isFormatDisabled("avif")
+                                                ? "Semua berkas sudah berformat AVIF"
+                                                : "Ubah ke format AVIF"
+                                        }
                                     >
-                                        AVIF {avifSupported ? "" : "(!)"}
+                                        AVIF {!avifSupported ? "(!)" : isFormatDisabled("avif") ? <span className="block text-[9px] font-normal opacity-80">(Sudah AVIF)</span> : ""}
                                     </button>
                                 </div>
                             </div>
@@ -771,24 +867,39 @@ export default function ClientConvertImage() {
                         {/* Action Converter Big Buttons & Progress */}
                         <div className="pt-2 border-t border-border/60 flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="text-xs text-foreground/60">
-                                💡 Klik &quot;Konversi Semua&quot; untuk memproses seluruh antrean sekaligus.
+                                {convertibleCount === 0 ? (
+                                    <span className="text-amber-400 font-medium">
+                                        ✨ Seluruh gambar pada antrean sudah berformat .{targetFormat === "jpeg" ? "jpg" : targetFormat}. Pilih format target lain untuk mengubahnya.
+                                    </span>
+                                ) : (
+                                    <span>
+                                        💡 Klik &quot;Konversi {convertibleCount === images.length ? "Semua" : "Gambar"}&quot; untuk memproses berkas yang belum berformat .{targetFormat === "jpeg" ? "jpg" : targetFormat}.
+                                    </span>
+                                )}
                             </div>
 
                             <div className="flex items-center gap-3 w-full sm:w-auto">
                                 <button
                                     onClick={handleConvertAll}
-                                    disabled={isProcessingBatch}
-                                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-50 cursor-pointer active:scale-98"
+                                    disabled={isProcessingBatch || convertibleCount === 0}
+                                    className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer active:scale-98"
                                 >
                                     {isProcessingBatch ? (
                                         <>
                                             <Loader2 className="w-4 h-4 animate-spin" />
                                             <span>Memproses ({batchProgress}%)...</span>
                                         </>
+                                    ) : convertibleCount === 0 ? (
+                                        <>
+                                            <CheckCircle2 className="w-4 h-4" />
+                                            <span>Sudah Format .{targetFormat === "jpeg" ? "jpg" : targetFormat}</span>
+                                        </>
                                     ) : (
                                         <>
                                             <Sparkles className="w-4 h-4" />
-                                            <span>Konversi Semua ({images.length})</span>
+                                            <span>
+                                                Konversi {convertibleCount === images.length ? `Semua (${images.length})` : `${convertibleCount} Gambar`}
+                                            </span>
                                         </>
                                     )}
                                 </button>
@@ -864,10 +975,11 @@ export default function ClientConvertImage() {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {images.map((item, idx) => {
+                            {images.map((item) => {
                                 const isSuccess = item.status === "success";
                                 const isError = item.status === "error";
                                 const isConverting = item.status === "processing";
+                                const isSame = isSameFormat(item.originalFormat, targetFormat);
 
                                 return (
                                     <div
@@ -879,6 +991,8 @@ export default function ClientConvertImage() {
                                                 ? "border-rose-500/30 bg-rose-500/5"
                                                 : isConverting
                                                 ? "border-amber-500/40 bg-amber-500/5"
+                                                : isSame
+                                                ? "border-amber-500/20 bg-amber-500/2"
                                                 : "border-border/70 hover:border-border"
                                         }`}
                                     >
@@ -915,6 +1029,16 @@ export default function ClientConvertImage() {
                                                 )}
                                             </div>
 
+                                            {/* Penanda bahwa format asal sudah sama persis dengan target */}
+                                            {isSame && !isSuccess && (
+                                                <div className="pt-0.5">
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400">
+                                                        <CheckCircle2 className="w-3 h-3 text-amber-400" />
+                                                        Sudah berformat .{item.originalFormat.toLowerCase()} (Tidak perlu dikonversi)
+                                                    </span>
+                                                </div>
+                                            )}
+
                                             {/* Result details */}
                                             {isSuccess && item.outputSize && (
                                                 <div className="flex items-center gap-2 pt-0.5 text-xs font-semibold">
@@ -949,6 +1073,14 @@ export default function ClientConvertImage() {
                                                     title="Unduh berkas hasil konversi"
                                                 >
                                                     <Download className="w-4 h-4" />
+                                                </button>
+                                            ) : isSame ? (
+                                                <button
+                                                    disabled
+                                                    className="p-2 rounded-xl bg-surface/40 border border-border/40 text-foreground/30 cursor-not-allowed text-xs font-semibold"
+                                                    title={`Berkas ini sudah berformat .${item.originalFormat.toLowerCase()}, tidak dapat dikonversi ke format yang sama`}
+                                                >
+                                                    <ArrowLeftRight className="w-4 h-4 text-foreground/30" />
                                                 </button>
                                             ) : (
                                                 <button
