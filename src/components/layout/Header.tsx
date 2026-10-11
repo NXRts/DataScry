@@ -45,15 +45,19 @@ export default function Header() {
               <span className="sm:hidden text-[11px]">100% Luring</span>
             </div>
 
-            {/* Tombol Hamburger Mobile Menu Drawer */}
+            {/* Tombol Hamburger Mobile Menu Drawer Modern Pill */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden flex items-center gap-1.5 p-2 rounded-xl bg-surface border border-border/80 hover:bg-surface/80 text-foreground transition-colors cursor-pointer"
+              className="md:hidden flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface/90 hover:bg-surface border border-border/80 hover:border-primary/50 text-foreground transition-all duration-200 active:scale-95 cursor-pointer shadow-sm group"
               aria-label="Buka Menu 23 Alat"
-              title="Daftar Alat"
+              title="Daftar 23 Alat"
             >
-              <Menu size={18} />
-              <span className="text-xs font-bold text-primary">Menu</span>
+              <div className="flex flex-col justify-center items-center w-3.5 h-3.5 gap-1">
+                <span className="w-3.5 h-0.5 bg-primary rounded-full transition-all group-hover:scale-x-110"></span>
+                <span className="w-2.5 h-0.5 bg-foreground/80 rounded-full transition-all self-start group-hover:w-3.5"></span>
+                <span className="w-3.5 h-0.5 bg-primary rounded-full transition-all group-hover:scale-x-110"></span>
+              </div>
+              <span className="text-xs font-bold text-foreground group-hover:text-primary transition-colors">Menu</span>
             </button>
           </div>
         </div>
