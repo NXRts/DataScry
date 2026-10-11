@@ -208,22 +208,28 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
                         )}
                     </div>
 
-                    {/* Filter Category Chips Full-Width Swipeable */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+                    {/* Filter Category Grid: 2x2 on mobile, 4-col on tablet/desktop (no cut-off, no scrollbar, no glow) */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                         {TOOL_CATEGORIES.map((cat) => {
                             const isSelected = selectedCategory === cat.id;
                             return (
                                 <button
                                     key={cat.id}
                                     onClick={() => setSelectedCategory(cat.id)}
-                                    className={`shrink-0 px-3 py-1.5 rounded-xl font-bold text-[11px] transition-all cursor-pointer ${
+                                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-semibold text-[11px] sm:text-xs transition-colors cursor-pointer ${
                                         isSelected
-                                            ? "bg-primary text-white shadow-md shadow-primary/25 scale-[1.02]"
-                                            : "bg-surface/70 border border-border/60 text-foreground/60 hover:text-foreground hover:bg-surface"
+                                            ? "bg-primary text-white"
+                                            : "bg-surface/70 border border-border/60 text-foreground/70 hover:text-foreground hover:bg-surface"
                                     }`}
                                 >
-                                    <span>{cat.label}</span>
-                                    <span className={`ml-1.5 text-[9px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-surface border border-border/50 text-foreground/50"}`}>
+                                    <span className="truncate mr-1">{cat.label}</span>
+                                    <span
+                                        className={`shrink-0 text-[9px] px-1.5 py-0.5 rounded-full font-bold ${
+                                            isSelected
+                                                ? "bg-white/20 text-white"
+                                                : "bg-surface border border-border/50 text-foreground/50"
+                                        }`}
+                                    >
                                         {cat.count}
                                     </span>
                                 </button>

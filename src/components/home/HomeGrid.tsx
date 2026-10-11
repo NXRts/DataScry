@@ -179,22 +179,22 @@ export default function HomeGrid() {
         <div className="space-y-6">
             {/* Filter Tabs & Quick Search Bar */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2">
-                {/* Horizontal Scrollable Category Chips for Mobile */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+                {/* Category Grid: 2x2 on mobile, flex on desktop (no cut-off, no scrollbar, no glow) */}
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-1.5">
                     {TOOL_CATEGORIES.map((cat) => {
                         const isSelected = selectedCategory === cat.id;
                         return (
                             <button
                                 key={cat.id}
                                 onClick={() => setSelectedCategory(cat.id)}
-                                className={`shrink-0 px-3 py-1.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+                                className={`flex sm:inline-flex items-center justify-between sm:justify-start px-3 py-2 sm:py-1.5 rounded-xl font-semibold text-xs transition-colors cursor-pointer ${
                                     isSelected
-                                        ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
+                                        ? "bg-primary text-white"
                                         : "bg-surface/60 hover:bg-surface border border-border/70 text-foreground/70 hover:text-foreground"
                                 }`}
                             >
-                                <span>{cat.label}</span>
-                                <span className={`ml-1.5 text-[10px] px-1.5 py-0.2 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-surface border border-border/60 text-foreground/50"}`}>
+                                <span className="truncate mr-1 sm:mr-0">{cat.label}</span>
+                                <span className={`ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full font-bold ${isSelected ? "bg-white/20 text-white" : "bg-surface border border-border/60 text-foreground/50"}`}>
                                     {cat.count}
                                 </span>
                             </button>
