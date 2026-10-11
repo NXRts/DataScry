@@ -25,6 +25,7 @@ import {
     ExternalLink,
     ZoomIn,
     ZoomOut,
+    PenLine,
     X
 } from "lucide-react";
 
@@ -149,6 +150,13 @@ export default function ClientJpgToPdf() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [processingProgress, setProcessingProgress] = useState<string>("");
     const [completePdf, setCompletePdf] = useState<Blob | null>(null);
+    const [customFileName, setCustomFileName] = useState<string>("datascry-dokumen");
+
+    const getFinalFileName = () => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "datascry-dokumen";
+        return baseName.endsWith(".pdf") ? baseName : `${baseName}.pdf`;
+    };
 
     // Primary Layout Mode
     // "document" = Fixed paper size like F4/A4 (for official documents, printing & clean bounds)
@@ -375,6 +383,15 @@ export default function ClientJpgToPdf() {
             }
         }
 
+        // Auto set initial file name from first uploaded image
+        if ((!customFileName || customFileName === "datascry-dokumen") && imgFiles.length > 0) {
+            const rawName = imgFiles[0].name.replace(/\.[^/.]+$/, "");
+            const cleanName = rawName.replace(/[/\\?%*:|"<>]/g, "").trim();
+            if (cleanName) {
+                setCustomFileName(cleanName);
+            }
+        }
+
         setImages(prev => [...prev, ...loadedMetas]);
     };
 
@@ -580,6 +597,12 @@ export default function ClientJpgToPdf() {
             const pdfBytes = await pdfDoc.save();
             const blob = new Blob([new Uint8Array(pdfBytes)], { type: "application/pdf" });
             setCompletePdf(blob);
+
+            if (previewPdfUrl) {
+                URL.revokeObjectURL(previewPdfUrl);
+            }
+            const previewUrl = URL.createObjectURL(blob);
+            setPreviewPdfUrl(previewUrl);
         } catch (e) {
             console.error("Gagal membuat PDF:", e);
         } finally {
@@ -593,7 +616,7 @@ export default function ClientJpgToPdf() {
         const url = URL.createObjectURL(completePdf);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `datascry-dokumen-${Date.now()}.pdf`;
+        a.download = getFinalFileName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -604,8 +627,13 @@ export default function ClientJpgToPdf() {
         images.forEach(item => {
             if (item.previewUrl) URL.revokeObjectURL(item.previewUrl);
         });
+        if (previewPdfUrl) {
+            URL.revokeObjectURL(previewPdfUrl);
+            setPreviewPdfUrl(null);
+        }
         setImages([]);
         setCompletePdf(null);
+        setCustomFileName("datascry-dokumen");
         setIsProcessing(false);
         setProcessingProgress("");
         setAutoDetectNotice(null);
@@ -861,6 +889,31 @@ export default function ClientJpgToPdf() {
                                         </div>
                                     </div>
                                 )}
+
+                                {/* Pengaturan Nama Berkas Hasil PDF */}
+                                <div className="pt-4 border-t border-border/40 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                            <PenLine className="w-3.5 h-3.5 text-amber-500" />
+                                            <span>Nama File Hasil PDF</span>
+                                        </label>
+                                        <span className="text-[11px] text-foreground/50 hidden sm:inline">
+                                            Tentukan nama berkas sesuai kebutuhan Anda
+                                        </span>
+                                    </div>
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="text"
+                                            value={customFileName}
+                                            onChange={(e) => setCustomFileName(e.target.value)}
+                                            placeholder="datascry-dokumen"
+                                            className="w-full px-3.5 py-2.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface/80 border border-border/80 focus:border-amber-500/80 focus:bg-surface focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                        />
+                                        <span className="absolute right-3.5 text-xs font-bold text-amber-400/90 pointer-events-none select-none">
+                                            .pdf
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Header List Gambar & Tombol Proses */}
@@ -1025,6 +1078,33 @@ export default function ClientJpgToPdf() {
                             </p>
                         </div>
 
+                        {/* Kartu Informasi & Edit Nama File Hasil */}
+                        <div className="max-w-md mx-auto p-4 rounded-2xl bg-surface/80 border border-border/80 space-y-2.5 text-left shadow-lg">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-bold text-foreground/80 flex items-center gap-1.5">
+                                    <PenLine className="w-3.5 h-3.5 text-amber-500" />
+                                    <span>Nama Berkas PDF:</span>
+                                </label>
+                                <span className="text-[10px] text-foreground/50 font-medium">Bisa diubah sebelum unduh</span>
+                            </div>
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    value={customFileName}
+                                    onChange={(e) => setCustomFileName(e.target.value)}
+                                    placeholder="datascry-dokumen"
+                                    className="w-full px-3.5 py-2.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-amber-500/80 focus:outline-hidden text-foreground font-semibold transition-all shadow-inner"
+                                />
+                                <span className="absolute right-3.5 text-xs font-bold text-amber-400 select-none pointer-events-none">
+                                    .pdf
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[11px] text-foreground/60 pt-0.5">
+                                <span>📄 {images.length} Halaman Dokumen</span>
+                                <span>💾 {(completePdf.size / 1024 / 1024).toFixed(2)} MB</span>
+                            </div>
+                        </div>
+
                         <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 w-full">
                             <button
                                 onClick={handleDownload}
@@ -1056,13 +1136,13 @@ export default function ClientJpgToPdf() {
                     {previewPdfUrl && (
                         <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-border/80 space-y-4 shadow-2xl animate-fade-in">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/40 pb-4">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400">
+                                <div className="flex items-center gap-2.5 min-w-0">
+                                    <div className="p-2 rounded-xl bg-amber-500/20 text-amber-400 shrink-0">
                                         <FileText className="w-5 h-5" />
                                     </div>
-                                    <div>
-                                        <h3 className="font-bold text-foreground text-base sm:text-lg">
-                                            Pratinjau Dokumen PDF
+                                    <div className="min-w-0">
+                                        <h3 className="font-bold text-foreground text-base sm:text-lg truncate max-w-xs sm:max-w-md">
+                                            Pratinjau: {getFinalFileName()}
                                         </h3>
                                         <p className="text-xs text-foreground/60">
                                             Total {images.length} Halaman • {(completePdf.size / 1024 / 1024).toFixed(2)} MB
@@ -1268,9 +1348,9 @@ export default function ClientJpgToPdf() {
                                 <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
                                     <FileText className="w-4 h-4" />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-foreground text-sm sm:text-base">
-                                        Pratinjau Dokumen PDF
+                                <div className="min-w-0">
+                                    <h4 className="font-bold text-foreground text-sm sm:text-base truncate max-w-xs sm:max-w-md">
+                                        {getFinalFileName()}
                                     </h4>
                                     <p className="text-[11px] text-foreground/50">
                                         {images.length} Halaman • {completePdf ? (completePdf.size / 1024 / 1024).toFixed(2) : 0} MB
