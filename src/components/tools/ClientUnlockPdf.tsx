@@ -20,7 +20,8 @@ import {
     RotateCcw,
     ZoomIn,
     Sparkles,
-    FileCheck2
+    FileCheck2,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 
@@ -56,6 +57,13 @@ export default function ClientUnlockPdf() {
     const [pageCount, setPageCount] = useState<number>(0);
     const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
     const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
+    const [customFileName, setCustomFileName] = useState<string>("dokumen-terbuka");
+
+    const getFinalFileName = () => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "dokumen-terbuka";
+        return baseName.endsWith(".pdf") ? baseName : `${baseName}.pdf`;
+    };
 
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
@@ -86,6 +94,7 @@ export default function ClientUnlockPdf() {
         setPageCount(0);
         setThumbnailUrl(null);
         setLightboxItem(null);
+        setCustomFileName("dokumen-terbuka");
     };
 
     // Handle initial file selection & encryption detection
@@ -95,6 +104,9 @@ export default function ClientUnlockPdf() {
 
         handleReset();
         setFile(selectedFile);
+        const originalName = selectedFile.name.replace(/\.pdf$/i, "");
+        const clean = originalName.replace(/[/\\?%*:|"<>]/g, "").trim();
+        setCustomFileName(clean ? `${clean}-unlocked` : "dokumen-terbuka");
         setIsAnalyzing(true);
         setErrorMsg(null);
 
@@ -178,8 +190,8 @@ export default function ClientUnlockPdf() {
             const blob = new Blob([decryptedBytes as unknown as BlobPart], { type: "application/pdf" });
             const url = URL.createObjectURL(blob);
 
-            const originalName = file.name.replace(/\.pdf$/i, "");
-            setResultFileName(`${originalName}-unlocked.pdf`);
+            const finalName = getFinalFileName();
+            setResultFileName(finalName);
             setResultSize(blob.size);
             setResultBlobUrl(url);
 
@@ -270,8 +282,8 @@ export default function ClientUnlockPdf() {
                         )}
 
                         <div className="min-w-0 flex-1 space-y-1">
-                            <div className="text-sm font-bold text-foreground truncate" title={resultFileName}>
-                                {resultFileName}
+                            <div className="text-sm font-bold text-foreground truncate" title={resultFileName || getFinalFileName()}>
+                                {resultFileName || getFinalFileName()}
                             </div>
                             <div className="text-xs text-foreground/50 flex flex-wrap gap-x-3 gap-y-0.5">
                                 <span>Ukuran: <strong className="text-foreground/80">{formatBytes(resultSize)}</strong></span>
@@ -286,11 +298,36 @@ export default function ClientUnlockPdf() {
                         </div>
                     </div>
 
+                    {/* Bar Ubah Nama File sebelum unduh */}
+                    <div className="max-w-md mx-auto p-3.5 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left shadow-sm">
+                        <div className="flex items-center gap-2">
+                            <PenLine className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span className="text-xs font-bold text-foreground">Nama Berkas Unduhan:</span>
+                        </div>
+                        <div className="relative flex items-center flex-1">
+                            <input
+                                type="text"
+                                value={customFileName}
+                                onChange={(e) => {
+                                    setCustomFileName(e.target.value);
+                                    const clean = e.target.value.trim().replace(/[/\\?%*:|"<>]/g, "");
+                                    const baseName = clean || "dokumen-terbuka";
+                                    setResultFileName(baseName.endsWith(".pdf") ? baseName : `${baseName}.pdf`);
+                                }}
+                                placeholder="dokumen-terbuka"
+                                className="w-full px-3 py-1.5 pr-12 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground font-semibold"
+                            />
+                            <span className="absolute right-3 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                .pdf
+                            </span>
+                        </div>
+                    </div>
+
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto pt-2">
                         <a
                             href={resultBlobUrl}
-                            download={resultFileName}
+                            download={resultFileName || getFinalFileName()}
                             className="w-full sm:flex-1 py-3.5 px-6 rounded-2xl bg-linear-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-sm shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
                         >
                             <Download className="w-4 h-4" />
@@ -407,6 +444,31 @@ export default function ClientUnlockPdf() {
                             <p className="text-[12px] text-foreground/50 leading-relaxed pt-1">
                                 Masukkan kata sandi pembuka PDF (misalnya tanggal lahir, NIK, atau password yang diberikan oleh bank/institusi penerbit).
                             </p>
+                        </div>
+
+                        {/* Kustomisasi Nama File Hasil PDF */}
+                        <div className="space-y-2 pt-2 border-t border-border/40">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                    <PenLine className="w-3.5 h-3.5 text-emerald-400" />
+                                    <span>Nama File Hasil PDF Terbuka</span>
+                                </label>
+                                <span className="text-[11px] text-foreground/50 hidden sm:inline">
+                                    Tentukan nama berkas sesuai kebutuhan Anda
+                                </span>
+                            </div>
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    value={customFileName}
+                                    onChange={(e) => setCustomFileName(e.target.value)}
+                                    placeholder="dokumen-terbuka"
+                                    className="w-full px-3.5 py-2.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                />
+                                <span className="absolute right-3.5 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                    .pdf
+                                </span>
+                            </div>
                         </div>
 
                         {/* Submit Button */}
