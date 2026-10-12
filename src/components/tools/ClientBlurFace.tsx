@@ -27,7 +27,8 @@ import {
     AlertCircle,
     X,
     Check,
-    ArrowRight
+    ArrowRight,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 
@@ -134,6 +135,14 @@ export default function ClientBlurFace() {
     const [exportedBlob, setExportedBlob] = useState<Blob | null>(null);
     const [exportedUrl, setExportedUrl] = useState<string | null>(null);
     const [exportedSize, setExportedSize] = useState<number>(0);
+    const [customFileName, setCustomFileName] = useState<string>("foto-sensor-privasi");
+
+    const getFinalFileName = () => {
+        const ext = exportFormat === "image/png" ? "png" : exportFormat === "image/webp" ? "webp" : "jpg";
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "foto-sensor-privasi";
+        return baseName.toLowerCase().endsWith(`.${ext}`) ? baseName : `${baseName}.${ext}`;
+    };
     const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
 
     // Refs
@@ -169,6 +178,9 @@ export default function ClientBlurFace() {
             imageRef.current = img;
             setImageSrc(objectUrl);
             setFile(selected);
+            const originalName = selected.name.replace(/\.[^/.]+$/, "");
+            const clean = originalName.replace(/[/\\?%*:|"<>]/g, "").trim();
+            setCustomFileName(clean ? `${clean}-sensor-privasi` : "foto-sensor-privasi");
 
             // Reset state
             setRegions([]);
@@ -195,6 +207,7 @@ export default function ClientBlurFace() {
         setSelectedRegionId(null);
         setExportedBlob(null);
         setExportedUrl(null);
+        setCustomFileName("foto-sensor-privasi");
         imageRef.current = null;
     };
 
@@ -549,9 +562,7 @@ export default function ClientBlurFace() {
                     setIsExporting(false);
 
                     // Buat file name
-                    const baseName = file?.name.replace(/\.[^/.]+$/, "") || "foto";
-                    const ext = exportFormat === "image/png" ? "png" : exportFormat === "image/webp" ? "webp" : "jpg";
-                    const fileName = `${baseName}-sensor-privasi.${ext}`;
+                    const fileName = getFinalFileName();
 
                     // Trigger unduh otomatis
                     const a = document.createElement("a");
@@ -1255,6 +1266,31 @@ export default function ClientBlurFace() {
                                         <span>Format PNG diekspor Lossless (tanpa penurunan ketajaman).</span>
                                     </div>
                                 )}
+                            </div>
+
+                            {/* Kustomisasi Nama File Hasil Sensor */}
+                            <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                        <PenLine className="w-3.5 h-3.5 text-rose-500" />
+                                        <span>Nama File Hasil Foto Sensor</span>
+                                    </label>
+                                    <span className="text-[10px] text-foreground/50">
+                                        Kustomisasi nama berkas
+                                    </span>
+                                </div>
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="text"
+                                        value={customFileName}
+                                        onChange={(e) => setCustomFileName(e.target.value)}
+                                        placeholder="foto-sensor-privasi"
+                                        className="w-full px-3 py-2 pr-14 text-xs rounded-xl bg-surface border border-border/80 focus:border-rose-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                    />
+                                    <span className="absolute right-3 text-xs font-bold text-rose-500 pointer-events-none select-none">
+                                        .{exportFormat === "image/png" ? "png" : exportFormat === "image/webp" ? "webp" : "jpg"}
+                                    </span>
+                                </div>
                             </div>
 
                             {/* Tombol Ekspor Utama */}

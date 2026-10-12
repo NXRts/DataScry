@@ -27,7 +27,8 @@ import {
     Maximize2,
     Info,
     Layers,
-    X
+    X,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
@@ -76,6 +77,13 @@ export default function ClientRedactPdf() {
     const [resultFileName, setResultFileName] = useState<string>("");
     const [resultSize, setResultSize] = useState<number>(0);
     const [resultThumbnailUrl, setResultThumbnailUrl] = useState<string | null>(null);
+    const [customFileName, setCustomFileName] = useState<string>("dokumen-redacted");
+
+    const getFinalFileName = () => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "dokumen-redacted";
+        return baseName.endsWith(".pdf") ? baseName : `${baseName}.pdf`;
+    };
     const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -134,6 +142,10 @@ export default function ClientRedactPdf() {
 
         try {
             setFile(selected);
+            const originalName = selected.name.replace(/\.pdf$/i, "");
+            const clean = originalName.replace(/[/\\?%*:|"<>]/g, "").trim();
+            setCustomFileName(clean ? `${clean}-redacted` : "dokumen-redacted");
+
             setResultBlob(null);
             setErrorMessage(null);
             setRedactions([]);
@@ -338,8 +350,7 @@ export default function ClientRedactPdf() {
             const finalBytes = await newPdfDoc.save();
             const outBlob = new Blob([finalBytes.buffer as ArrayBuffer], { type: "application/pdf" });
 
-            const baseName = file.name.replace(/\.pdf$/i, "");
-            const finalName = `${baseName}-redacted.pdf`;
+            const finalName = getFinalFileName();
 
             setResultBlob(outBlob);
             setResultFileName(finalName);
@@ -378,7 +389,7 @@ export default function ClientRedactPdf() {
         const url = URL.createObjectURL(resultBlob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = resultFileName || "dokumen-redacted.pdf";
+        a.download = resultFileName || getFinalFileName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -397,6 +408,7 @@ export default function ClientRedactPdf() {
         setResultThumbnailUrl(null);
         setErrorMessage(null);
         setIsProcessing(false);
+        setCustomFileName("dokumen-redacted");
     };
 
     // Calculate temporary drag box for visual feedback
@@ -730,6 +742,26 @@ export default function ClientRedactPdf() {
                             </p>
                         </div>
 
+                        {/* Kustomisasi Nama File Hasil PDF */}
+                        <div className="w-full sm:max-w-xs space-y-1.5 text-left">
+                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                <PenLine className="w-3.5 h-3.5 text-rose-400" />
+                                <span>Nama Berkas Hasil</span>
+                            </label>
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    value={customFileName}
+                                    onChange={(e) => setCustomFileName(e.target.value)}
+                                    placeholder="dokumen-redacted"
+                                    className="w-full px-3 py-2 pr-12 text-xs rounded-xl bg-surface border border-border/80 focus:border-rose-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                />
+                                <span className="absolute right-3 text-xs font-bold text-rose-400 pointer-events-none select-none">
+                                    .pdf
+                                </span>
+                            </div>
+                        </div>
+
                         <button
                             onClick={applyPermanentRedaction}
                             disabled={totalRedactionCount === 0 || isProcessing}
@@ -815,6 +847,31 @@ export default function ClientRedactPdf() {
                                 >
                                     <RotateCcw className="w-5 h-5" />
                                 </button>
+                            </div>
+                        </div>
+
+                        {/* Bar Ubah Nama File sebelum unduh */}
+                        <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left shadow-sm">
+                            <div className="flex items-center gap-2">
+                                <PenLine className="w-4 h-4 text-rose-400 shrink-0" />
+                                <span className="text-xs font-bold text-foreground">Nama Berkas Unduhan:</span>
+                            </div>
+                            <div className="relative flex items-center flex-1 max-w-sm">
+                                <input
+                                    type="text"
+                                    value={customFileName}
+                                    onChange={(e) => {
+                                        setCustomFileName(e.target.value);
+                                        const clean = e.target.value.trim().replace(/[/\\?%*:|"<>]/g, "");
+                                        const baseName = clean || "dokumen-redacted";
+                                        setResultFileName(baseName.endsWith(".pdf") ? baseName : `${baseName}.pdf`);
+                                    }}
+                                    placeholder="dokumen-redacted"
+                                    className="w-full px-3 py-1.5 pr-12 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-rose-500/80 focus:outline-hidden text-foreground font-semibold"
+                                />
+                                <span className="absolute right-3 text-xs font-bold text-rose-400 pointer-events-none select-none">
+                                    .pdf
+                                </span>
                             </div>
                         </div>
 

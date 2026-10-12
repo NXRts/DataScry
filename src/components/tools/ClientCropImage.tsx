@@ -24,7 +24,8 @@ import {
     RotateCcw as ResetIcon,
     AlertCircle,
     Maximize2,
-    Grid3X3
+    Grid3X3,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 
@@ -123,6 +124,14 @@ export default function ClientCropImage() {
     const [resultUrl, setResultUrl] = useState<string | null>(null);
     const [resultFileName, setResultFileName] = useState<string>("");
     const [resultDimensions, setResultDimensions] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
+    const [customFileName, setCustomFileName] = useState<string>("foto-cropped");
+
+    const getFinalFileName = () => {
+        const ext = outputFormat === "image/png" ? "png" : outputFormat === "image/webp" ? "webp" : "jpg";
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "foto-cropped";
+        return baseName.toLowerCase().endsWith(`.${ext}`) ? baseName : `${baseName}.${ext}`;
+    };
     const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -183,6 +192,10 @@ export default function ClientCropImage() {
         }
 
         setFile(selected);
+        const originalName = selected.name.replace(/\.[^/.]+$/, "");
+        const clean = originalName.replace(/[/\\?%*:|"<>]/g, "").trim();
+        setCustomFileName(clean ? `${clean}-cropped` : "foto-cropped");
+
         setErrorMessage(null);
         setResultBlob(null);
         setResultUrl(null);
@@ -421,13 +434,11 @@ export default function ClientCropImage() {
             });
 
             const blobUrl = URL.createObjectURL(blob);
-            const ext = outputFormat === "image/png" ? "png" : outputFormat === "image/webp" ? "webp" : "jpg";
-            const baseName = file ? file.name.replace(/\.[^/.]+$/, "") : "foto";
-            const newName = `${baseName}-cropped.${ext}`;
+            const finalName = getFinalFileName();
 
             setResultBlob(blob);
             setResultUrl(blobUrl);
-            setResultFileName(newName);
+            setResultFileName(finalName);
             setResultDimensions({ width: outCanvasW, height: outCanvasH });
         } catch (err: unknown) {
             console.error("Gagal melakukan crop foto:", err);
@@ -442,7 +453,7 @@ export default function ClientCropImage() {
         if (!resultBlob || !resultUrl) return;
         const a = document.createElement("a");
         a.href = resultUrl;
-        a.download = resultFileName || "foto-cropped.jpg";
+        a.download = resultFileName || getFinalFileName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -462,6 +473,7 @@ export default function ClientCropImage() {
         setFlipH(false);
         setFlipV(false);
         setIsCustomResize(false);
+        setCustomFileName("foto-cropped");
     };
 
     return (
@@ -923,6 +935,31 @@ export default function ClientCropImage() {
                             )}
                         </div>
 
+                        {/* Kustomisasi Nama File Hasil Crop */}
+                        <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                    <PenLine className="w-3.5 h-3.5 text-emerald-400" />
+                                    <span>Nama File Hasil Foto</span>
+                                </label>
+                                <span className="text-[10px] text-foreground/50">
+                                    Kustomisasi nama berkas
+                                </span>
+                            </div>
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    value={customFileName}
+                                    onChange={(e) => setCustomFileName(e.target.value)}
+                                    placeholder="foto-cropped"
+                                    className="w-full px-3 py-2 pr-14 text-xs rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                />
+                                <span className="absolute right-3 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                    .{outputFormat === "image/png" ? "png" : outputFormat === "image/webp" ? "webp" : "jpg"}
+                                </span>
+                            </div>
+                        </div>
+
                         {/* Crop Button */}
                         <button
                             onClick={executeCropAndResize}
@@ -982,6 +1019,32 @@ export default function ClientCropImage() {
                             >
                                 <ResetIcon className="w-5 h-5" />
                             </button>
+                        </div>
+                    </div>
+
+                    {/* Bar Ubah Nama File sebelum unduh */}
+                    <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left shadow-sm">
+                        <div className="flex items-center gap-2">
+                            <PenLine className="w-4 h-4 text-emerald-400 shrink-0" />
+                            <span className="text-xs font-bold text-foreground">Nama Berkas Unduhan:</span>
+                        </div>
+                        <div className="relative flex items-center flex-1 max-w-sm">
+                            <input
+                                type="text"
+                                value={customFileName}
+                                onChange={(e) => {
+                                    setCustomFileName(e.target.value);
+                                    const ext = outputFormat === "image/png" ? "png" : outputFormat === "image/webp" ? "webp" : "jpg";
+                                    const clean = e.target.value.trim().replace(/[/\\?%*:|"<>]/g, "");
+                                    const baseName = clean || "foto-cropped";
+                                    setResultFileName(baseName.toLowerCase().endsWith(`.${ext}`) ? baseName : `${baseName}.${ext}`);
+                                }}
+                                placeholder="foto-cropped"
+                                className="w-full px-3 py-1.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground font-semibold"
+                            />
+                            <span className="absolute right-3 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                .{outputFormat === "image/png" ? "png" : outputFormat === "image/webp" ? "webp" : "jpg"}
+                            </span>
                         </div>
                     </div>
 

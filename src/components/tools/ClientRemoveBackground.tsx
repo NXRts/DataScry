@@ -19,7 +19,8 @@ import {
     Layers,
     Palette,
     Check,
-    Loader2
+    Loader2,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 import RemoveBgComparisonSlider from "@/components/tools/RemoveBgComparisonSlider";
@@ -28,6 +29,7 @@ interface ImageItem {
     id: string;
     file: File;
     name: string;
+    customFileName?: string;
     size: number;
     originalUrl: string;
     width: number;
@@ -154,10 +156,12 @@ export default function ClientRemoveBackground() {
         const newItems: ImageItem[] = [];
         for (const file of imageFiles) {
             const { width, height, previewUrl } = await getImageData(file);
+            const rawBase = file.name.replace(/\.[^/.]+$/, "").replace(/[/\\?%*:|"<>]/g, "").trim();
             newItems.push({
                 id: `${file.name}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
                 file,
                 name: file.name,
+                customFileName: rawBase ? `${rawBase}-cutout` : "gambar-cutout",
                 size: file.size,
                 originalUrl: previewUrl,
                 width,
@@ -436,17 +440,23 @@ export default function ClientRemoveBackground() {
 
     const activeImage = images[activeIndex] || null;
 
+    const getFinalFileName = (item: ImageItem, isBackdrop = false) => {
+        const raw = item.customFileName || item.name.replace(/\.[^/.]+$/, "");
+        const clean = raw.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const fallback = isBackdrop ? "gambar-backdrop" : "gambar-cutout";
+        const baseName = clean || fallback;
+        return baseName.toLowerCase().endsWith(".png") ? baseName : `${baseName}.png`;
+    };
+
     // Download single image with current backdrop selection
     const handleDownloadSingle = async (item: ImageItem) => {
         if (!item.resultUrl || !item.resultBlob) return;
-
-        const baseName = item.name.replace(/\.[^/.]+$/, "");
 
         // If transparent, download original PNG lossless
         if (selectedBackdrop === "transparent") {
             const a = document.createElement("a");
             a.href = item.resultUrl;
-            a.download = `${baseName}-cutout-datascry.png`;
+            a.download = getFinalFileName(item, false);
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -479,7 +489,7 @@ export default function ClientRemoveBackground() {
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = `${baseName}-backdrop-datascry.png`;
+                a.download = getFinalFileName(item, true);
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -498,10 +508,8 @@ export default function ClientRemoveBackground() {
         const zip = new JSZip();
 
         for (const item of completedImages) {
-            const baseName = item.name.replace(/\.[^/.]+$/, "");
-
             if (selectedBackdrop === "transparent") {
-                zip.file(`${baseName}-cutout-datascry.png`, item.resultBlob!);
+                zip.file(getFinalFileName(item, false), item.resultBlob!);
             } else {
                 // Render with backdrop color
                 const canvas = document.createElement("canvas");
@@ -524,7 +532,7 @@ export default function ClientRemoveBackground() {
                         canvas.toBlob((b) => res(b), "image/png", 1.0)
                     );
                     if (coloredBlob) {
-                        zip.file(`${baseName}-backdrop-datascry.png`, coloredBlob);
+                        zip.file(getFinalFileName(item, true), coloredBlob);
                     }
                 }
             }
@@ -883,6 +891,38 @@ export default function ClientRemoveBackground() {
                                         <p className="text-foreground/60">
                                             Piksel asli tidak di-downscale. Format ekspor PNG mempertahankan ketajaman 100%.
                                         </p>
+                                    </div>
+                                </div>
+
+                                {/* Kustomisasi Nama File Hasil Cutout */}
+                                <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                            <PenLine className="w-3.5 h-3.5 text-emerald-400" />
+                                            <span>Nama File Hasil Cutout</span>
+                                        </label>
+                                        <span className="text-[10px] text-foreground/50">
+                                            Kustomisasi nama berkas
+                                        </span>
+                                    </div>
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="text"
+                                            value={activeImage.customFileName ?? activeImage.name.replace(/\.[^/.]+$/, "")}
+                                            onChange={(e) => {
+                                                const val = e.target.value;
+                                                setImages((prev) =>
+                                                    prev.map((img, idx) =>
+                                                        idx === activeIndex ? { ...img, customFileName: val } : img
+                                                    )
+                                                );
+                                            }}
+                                            placeholder="gambar-cutout"
+                                            className="w-full px-3 py-2 pr-14 text-xs rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                        />
+                                        <span className="absolute right-3 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                            .png
+                                        </span>
                                     </div>
                                 </div>
 
