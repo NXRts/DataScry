@@ -13,7 +13,8 @@ import {
     CheckCircle2, 
     Loader2, 
     AlertCircle,
-    Layers
+    Layers,
+    PenLine
 } from "lucide-react";
 import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
 
@@ -26,6 +27,13 @@ export default function ClientWordToPdf() {
     const [pageCount, setPageCount] = useState<number>(0);
     const [pdfBlob, setPdfBlob] = useState<Blob | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [customFileName, setCustomFileName] = useState<string>("dokumen");
+
+    const getFinalFileName = () => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "dokumen";
+        return baseName.endsWith(".pdf") ? baseName : `${baseName}.pdf`;
+    };
 
     const previewContainerRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -69,6 +77,9 @@ export default function ClientWordToPdf() {
         if (docx.length === 0) return;
 
         setDocxFiles([docx[0]]);
+        const rawName = docx[0].name.replace(/\.[^/.]+$/, "");
+        const clean = rawName.replace(/[/\\?%*:|"<>]/g, "").trim();
+        setCustomFileName(clean || "dokumen");
         setPdfBlob(null);
         setErrorMessage(null);
         setConvertProgress(0);
@@ -169,6 +180,7 @@ export default function ClientWordToPdf() {
     const resetState = () => {
         setDocxFiles([]);
         setPdfBlob(null);
+        setCustomFileName("dokumen");
         setPageCount(0);
         setErrorMessage(null);
         setIsProcessing(false);
@@ -313,6 +325,31 @@ export default function ClientWordToPdf() {
                                 </div>
                             </div>
 
+                            {/* Kustomisasi Nama File Hasil PDF */}
+                            <div className="p-4 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
+                                <div className="flex items-center justify-between">
+                                    <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                        <PenLine className="w-3.5 h-3.5 text-blue-400" />
+                                        <span>Nama File Hasil PDF</span>
+                                    </label>
+                                    <span className="text-[11px] text-foreground/50 hidden sm:inline">
+                                        Tentukan nama berkas sesuai kebutuhan Anda
+                                    </span>
+                                </div>
+                                <div className="relative flex items-center">
+                                    <input
+                                        type="text"
+                                        value={customFileName}
+                                        onChange={(e) => setCustomFileName(e.target.value)}
+                                        placeholder="dokumen"
+                                        className="w-full px-3.5 py-2.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-blue-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                    />
+                                    <span className="absolute right-3.5 text-xs font-bold text-blue-400/90 pointer-events-none select-none">
+                                        .pdf
+                                    </span>
+                                </div>
+                            </div>
+
                             {/* Conversion Progress Bar */}
                             {isProcessing && (
                                 <div className="p-4 rounded-xl glass-panel border border-blue-500/30 space-y-2 animate-fade-in">
@@ -369,10 +406,30 @@ export default function ClientWordToPdf() {
                 </>
             ) : (
                 /* Output: Embedded Live PDF Viewer */
-                <div className="space-y-6 animate-fade-in">
+                <div className="space-y-4 animate-fade-in">
+                    {/* Bar Ubah Nama File sebelum unduh */}
+                    <div className="p-4 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+                        <div className="flex items-center gap-2">
+                            <PenLine className="w-4 h-4 text-blue-400 shrink-0" />
+                            <span className="text-xs font-bold text-foreground">Nama Berkas Unduhan:</span>
+                        </div>
+                        <div className="relative flex items-center flex-1 max-w-sm">
+                            <input
+                                type="text"
+                                value={customFileName}
+                                onChange={(e) => setCustomFileName(e.target.value)}
+                                placeholder="dokumen"
+                                className="w-full px-3 py-1.5 pr-12 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-blue-500/80 focus:outline-hidden text-foreground font-semibold"
+                            />
+                            <span className="absolute right-3 text-xs font-bold text-blue-400 pointer-events-none select-none">
+                                .pdf
+                            </span>
+                        </div>
+                    </div>
+
                     <PdfEmbeddedViewer
                         blob={pdfBlob}
-                        fileName={`${docxFiles[0]?.name.replace(/\.docx$/i, "") || "dokumen"}.pdf`}
+                        fileName={getFinalFileName()}
                         title="Dokumen PDF Hasil Konversi dari Word"
                         onClose={resetState}
                         accentColor="blue"

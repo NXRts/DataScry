@@ -3,13 +3,20 @@
 import { useState } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import { mergeDocx } from "@/lib/mergeDocx";
-import { ArrowUp, ArrowDown, FileText, Download, CheckCircle2, Sliders, RotateCcw } from "lucide-react";
+import { ArrowUp, ArrowDown, FileText, Download, CheckCircle2, Sliders, RotateCcw, PenLine } from "lucide-react";
 
 export default function ClientMergeWord() {
     const [docxFiles, setDocxFiles] = useState<File[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [mergedBlob, setMergedBlob] = useState<Blob | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+    const [customFileName, setCustomFileName] = useState<string>("dokumen-gabungan");
+
+    const getFinalFileName = () => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "dokumen-gabungan";
+        return baseName.endsWith(".docx") ? baseName : `${baseName}.docx`;
+    };
 
     // Neatness options
     const [insertPageBreak, setInsertPageBreak] = useState(true);
@@ -22,6 +29,15 @@ export default function ClientMergeWord() {
                 f.name.endsWith(".docx")
         );
         if (validDocx.length > 0) {
+            // Auto set initial customFileName from first Word file
+            if ((!customFileName || customFileName === "dokumen-gabungan") && validDocx.length > 0) {
+                const rawName = validDocx[0].name.replace(/\.[^/.]+$/, "");
+                const clean = rawName.replace(/[/\\?%*:|"<>]/g, "").trim();
+                if (clean) {
+                    setCustomFileName(`${clean}-gabungan`);
+                }
+            }
+
             setDocxFiles((prev) => [...prev, ...validDocx]);
             setErrorMsg(null);
         }
@@ -65,7 +81,7 @@ export default function ClientMergeWord() {
         const url = URL.createObjectURL(mergedBlob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `datascry-merged-${Date.now()}.docx`;
+        a.download = getFinalFileName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -75,6 +91,7 @@ export default function ClientMergeWord() {
     const resetState = () => {
         setDocxFiles([]);
         setMergedBlob(null);
+        setCustomFileName("dokumen-gabungan");
         setErrorMsg(null);
         setIsProcessing(false);
     };
@@ -169,6 +186,31 @@ export default function ClientMergeWord() {
                                         <span>Bersihkan paragraf & spasial kosong berlebih</span>
                                     </label>
                                 </div>
+
+                                {/* Input Nama Berkas Word Gabungan */}
+                                <div className="pt-3 border-t border-border/40 space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                            <PenLine className="w-3.5 h-3.5 text-cyan-400" />
+                                            <span>Nama File Hasil Word Gabungan</span>
+                                        </label>
+                                        <span className="text-[11px] text-foreground/50 hidden sm:inline">
+                                            Tentukan nama berkas sesuai kebutuhan
+                                        </span>
+                                    </div>
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="text"
+                                            value={customFileName}
+                                            onChange={(e) => setCustomFileName(e.target.value)}
+                                            placeholder="dokumen-gabungan"
+                                            className="w-full px-3.5 py-2.5 pr-16 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-cyan-500/80 focus:bg-surface focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                        />
+                                        <span className="absolute right-3.5 text-xs font-bold text-cyan-400/90 pointer-events-none select-none">
+                                            .docx
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Files List */}
@@ -237,6 +279,33 @@ export default function ClientMergeWord() {
                     <p className="text-foreground/80 text-lg">
                         Dokumen Word Anda telah berhasil digabungkan secara rapi.
                     </p>
+
+                    {/* Kartu Informasi & Edit Nama File Hasil */}
+                    <div className="max-w-md mx-auto p-4 rounded-2xl bg-surface/80 border border-border/80 space-y-2.5 text-left shadow-lg">
+                        <div className="flex items-center justify-between">
+                            <label className="text-xs font-bold text-foreground/80 flex items-center gap-1.5">
+                                <PenLine className="w-3.5 h-3.5 text-cyan-400" />
+                                <span>Nama Berkas Word:</span>
+                            </label>
+                            <span className="text-[10px] text-foreground/50 font-medium">Bisa diubah sebelum unduh</span>
+                        </div>
+                        <div className="relative flex items-center">
+                            <input
+                                type="text"
+                                value={customFileName}
+                                onChange={(e) => setCustomFileName(e.target.value)}
+                                placeholder="dokumen-gabungan"
+                                className="w-full px-3.5 py-2 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-cyan-500/80 focus:outline-hidden text-foreground font-semibold"
+                            />
+                            <span className="absolute right-3 text-xs font-bold text-cyan-400 select-none pointer-events-none">
+                                .docx
+                            </span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px] text-foreground/60 pt-0.5">
+                            <span>📄 {docxFiles.length} Dokumen Digabung</span>
+                            <span>💾 {(mergedBlob.size / 1024).toFixed(1)} KB</span>
+                        </div>
+                    </div>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                         <button
