@@ -119,7 +119,7 @@ export default function CustomDropdownSelect({
                 </button>
 
                 {isOpen && (
-                    <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-neutral-900/95 border border-border rounded-xl shadow-2xl p-1.5 space-y-1 backdrop-blur-xl animate-fade-in max-h-64 overflow-y-auto">
+                    <div className="absolute left-0 right-0 top-full mt-1.5 z-40 bg-neutral-900/95 border border-border rounded-xl shadow-2xl p-1.5 space-y-1 backdrop-blur-xl animate-fade-in max-h-56 sm:max-h-64 overflow-y-auto">
                         {options.map((option) => {
                             const isSelected = option.id === value;
                             return (

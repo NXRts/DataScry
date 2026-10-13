@@ -451,18 +451,18 @@ export default function ClientUnzip() {
                 /* 2. DASHBOARD & PENJELAJAH ISI ARSIP ZIP */
                 <div className="space-y-6">
                     {/* Top HUD Panel: Metadata Arsip ZIP */}
-                    <div className="glass-panel p-5 rounded-3xl border border-border/80 shadow-xl space-y-4">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                            <div className="flex items-center gap-3.5">
-                                <div className="w-12 h-12 rounded-2xl bg-fuchsia-500/15 text-fuchsia-400 border border-fuchsia-500/30 flex items-center justify-center">
-                                    <FileArchive className="w-6 h-6" />
+                    <div className="glass-panel p-3.5 sm:p-5 rounded-3xl border border-border/80 shadow-xl space-y-3.5 sm:space-y-4">
+                        <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+                            <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-fuchsia-500/15 text-fuchsia-400 border border-fuchsia-500/30 flex items-center justify-center shrink-0">
+                                    <FileArchive className="w-5 h-5 sm:w-6 sm:h-6" />
                                 </div>
-                                <div>
-                                    <h2 className="text-base sm:text-lg font-black text-foreground truncate max-w-xs sm:max-w-md">
+                                <div className="min-w-0">
+                                    <h2 className="text-sm sm:text-base md:text-lg font-black text-foreground truncate max-w-44 sm:max-w-xs md:max-w-md">
                                         {zipFile.name}
                                     </h2>
-                                    <p className="text-xs text-foreground/60">
-                                        Ukuran Arsip: <span className="font-mono font-bold text-foreground">{formatBytes(zipFile.size)}</span>
+                                    <p className="text-[11px] sm:text-xs text-foreground/60">
+                                        Ukuran: <span className="font-mono font-bold text-foreground">{formatBytes(zipFile.size)}</span>
                                     </p>
                                 </div>
                             </div>
@@ -471,7 +471,7 @@ export default function ClientUnzip() {
                                 <button
                                     type="button"
                                     onClick={handleResetAll}
-                                    className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-surface border border-border/80 text-foreground/70 hover:text-rose-400 hover:border-rose-500/40 transition-colors flex items-center gap-1.5"
+                                    className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl text-xs font-semibold bg-surface border border-border/80 text-foreground/70 hover:text-rose-400 hover:border-rose-500/40 transition-colors flex items-center gap-1.5"
                                 >
                                     <RotateCcw className="w-3.5 h-3.5" />
                                     <span>Tutup Arsip</span>
@@ -480,28 +480,28 @@ export default function ClientUnzip() {
                         </div>
 
                         {/* Statistik Grid HUD */}
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-border/40">
-                            <div className="p-3 rounded-2xl bg-surface/60 border border-border/60">
-                                <span className="text-[11px] text-foreground/50 block">Total Berkas</span>
-                                <span className="text-base sm:text-lg font-mono font-bold text-foreground">
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 pt-3 border-t border-border/40">
+                            <div className="p-2.5 sm:p-3 rounded-2xl bg-surface/60 border border-border/60">
+                                <span className="text-[10px] sm:text-[11px] text-foreground/50 block">Total Berkas</span>
+                                <span className="text-sm sm:text-base md:text-lg font-mono font-bold text-foreground">
                                     {entries.length} file
                                 </span>
                             </div>
-                            <div className="p-3 rounded-2xl bg-surface/60 border border-border/60">
-                                <span className="text-[11px] text-foreground/50 block">Total Folder</span>
-                                <span className="text-base sm:text-lg font-mono font-bold text-foreground">
+                            <div className="p-2.5 sm:p-3 rounded-2xl bg-surface/60 border border-border/60">
+                                <span className="text-[10px] sm:text-[11px] text-foreground/50 block">Total Folder</span>
+                                <span className="text-sm sm:text-base md:text-lg font-mono font-bold text-foreground">
                                     {folderCount} folder
                                 </span>
                             </div>
-                            <div className="p-3 rounded-2xl bg-surface/60 border border-border/60">
-                                <span className="text-[11px] text-foreground/50 block">Ukuran Asli Uncompressed</span>
-                                <span className="text-base sm:text-lg font-mono font-bold text-foreground">
+                            <div className="p-2.5 sm:p-3 rounded-2xl bg-surface/60 border border-border/60">
+                                <span className="text-[10px] sm:text-[11px] text-foreground/50 block">Ukuran Uncompressed</span>
+                                <span className="text-sm sm:text-base md:text-lg font-mono font-bold text-foreground">
                                     {formatBytes(totalUncompressedSize)}
                                 </span>
                             </div>
-                            <div className="p-3 rounded-2xl bg-surface/60 border border-border/60">
-                                <span className="text-[11px] text-foreground/50 block">Efisiensi Kompresi</span>
-                                <span className="text-base sm:text-lg font-mono font-bold text-emerald-400">
+                            <div className="p-2.5 sm:p-3 rounded-2xl bg-surface/60 border border-border/60">
+                                <span className="text-[10px] sm:text-[11px] text-foreground/50 block">Efisiensi Kompresi</span>
+                                <span className="text-sm sm:text-base md:text-lg font-mono font-bold text-emerald-400">
                                     Hemat {savingsRatio}%
                                 </span>
                             </div>
@@ -509,8 +509,8 @@ export default function ClientUnzip() {
                     </div>
 
                     {/* Toolbar Pencarian, Filter Kategori & Mode Tampilan */}
-                    <div className="glass-panel p-4 rounded-3xl border border-border/80 space-y-4 shadow-lg">
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <div className="glass-panel p-3.5 sm:p-4 rounded-3xl border border-border/80 space-y-3 sm:space-y-4 shadow-lg">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
                             {/* Search Bar Input */}
                             <div className="relative flex-1">
                                 <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground/40" />
@@ -519,7 +519,7 @@ export default function ClientUnzip() {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     placeholder="Cari nama berkas atau jalur folder..."
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-surface border border-border/80 text-xs text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-fuchsia-500/50"
+                                    className="w-full pl-10 pr-4 py-2 sm:py-2.5 rounded-2xl bg-surface border border-border/80 text-xs text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-fuchsia-500/50"
                                 />
                                 {searchQuery && (
                                     <button
@@ -537,7 +537,7 @@ export default function ClientUnzip() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode("list")}
-                                    className={`p-2.5 rounded-xl border text-xs transition-colors ${
+                                    className={`p-2 sm:p-2.5 rounded-xl border text-xs transition-colors ${
                                         viewMode === "list"
                                             ? "bg-fuchsia-500/15 border-fuchsia-500/50 text-fuchsia-400"
                                             : "bg-surface border-border/60 text-foreground/60 hover:bg-surface-hover"
@@ -549,7 +549,7 @@ export default function ClientUnzip() {
                                 <button
                                     type="button"
                                     onClick={() => setViewMode("grid")}
-                                    className={`p-2.5 rounded-xl border text-xs transition-colors ${
+                                    className={`p-2 sm:p-2.5 rounded-xl border text-xs transition-colors ${
                                         viewMode === "grid"
                                             ? "bg-fuchsia-500/15 border-fuchsia-500/50 text-fuchsia-400"
                                             : "bg-surface border-border/60 text-foreground/60 hover:bg-surface-hover"
@@ -562,7 +562,7 @@ export default function ClientUnzip() {
                         </div>
 
                         {/* Filter Tabs Kategori */}
-                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+                        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
                             {[
                                 { id: "all", label: `Semua (${entries.length})` },
                                 { id: "image", label: `Gambar (${entries.filter((e) => e.category === "image").length})` },
@@ -575,7 +575,7 @@ export default function ClientUnzip() {
                                     key={tab.id}
                                     type="button"
                                     onClick={() => setSelectedCategory(tab.id as FileCategory)}
-                                    className={`px-3 py-1.5 rounded-xl font-medium transition-colors whitespace-nowrap ${
+                                    className={`px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl font-medium transition-colors whitespace-nowrap text-[11px] sm:text-xs ${
                                         selectedCategory === tab.id
                                             ? "bg-fuchsia-500 text-white shadow-md shadow-fuchsia-500/20 font-bold"
                                             : "bg-surface border border-border/60 text-foreground/70 hover:bg-surface-hover"
@@ -588,21 +588,21 @@ export default function ClientUnzip() {
                     </div>
 
                     {/* Batch Actions Bar (Seleksi & Ekstraksi Cepat) */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 px-1 text-xs text-foreground/70">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 px-1 text-xs text-foreground/70">
                         <div className="flex items-center gap-2">
                             <button
                                 type="button"
                                 onClick={selectAllFiltered}
-                                className="px-3 py-1.5 rounded-xl bg-surface border border-border/60 hover:bg-surface-hover transition-colors font-medium flex items-center gap-1.5"
+                                className="flex-1 sm:flex-initial px-3 py-1.5 rounded-xl bg-surface border border-border/60 hover:bg-surface-hover transition-colors font-medium flex items-center justify-center gap-1.5 text-xs"
                             >
                                 <CheckSquare className="w-3.5 h-3.5 text-fuchsia-400" />
-                                <span>Pilih Semua Hasil ({filteredEntries.length})</span>
+                                <span>Pilih Semua ({filteredEntries.length})</span>
                             </button>
                             {selectedIds.size > 0 && (
                                 <button
                                     type="button"
                                     onClick={clearSelection}
-                                    className="px-3 py-1.5 rounded-xl bg-surface border border-border/60 hover:bg-surface-hover transition-colors text-foreground/60"
+                                    className="px-3 py-1.5 rounded-xl bg-surface border border-border/60 hover:bg-surface-hover transition-colors text-foreground/60 text-xs"
                                 >
                                     Batal ({selectedIds.size})
                                 </button>
@@ -613,7 +613,7 @@ export default function ClientUnzip() {
                             type="button"
                             onClick={handleExtractSelected}
                             disabled={isExtracting || filteredEntries.length === 0}
-                            className="px-5 py-2 rounded-xl bg-linear-to-r from-fuchsia-600 to-fuchsia-500 hover:from-fuchsia-500 hover:to-fuchsia-600 text-white font-bold shadow-lg shadow-fuchsia-500/20 hover:shadow-fuchsia-500/30 transition-all flex items-center gap-2 disabled:opacity-50"
+                            className="w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2 rounded-xl bg-linear-to-r from-fuchsia-600 to-fuchsia-500 hover:from-fuchsia-500 hover:to-fuchsia-600 text-white font-bold shadow-lg shadow-fuchsia-500/20 hover:shadow-fuchsia-500/30 transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-xs sm:text-sm"
                         >
                             {isExtracting ? (
                                 <>
@@ -635,10 +635,10 @@ export default function ClientUnzip() {
 
                     {/* DAFTAR BERKAS (VIEW MODE: LIST / GRID) */}
                     {filteredEntries.length === 0 ? (
-                        <div className="glass-panel p-12 rounded-3xl border border-border/80 text-center space-y-3">
-                            <FolderOpen className="w-12 h-12 text-foreground/20 mx-auto" />
-                            <h3 className="font-bold text-sm text-foreground">Tidak Ada Berkas yang Cocok</h3>
-                            <p className="text-xs text-foreground/50">
+                        <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-border/80 text-center space-y-3">
+                            <FolderOpen className="w-10 h-10 sm:w-12 sm:h-12 text-foreground/20 mx-auto" />
+                            <h3 className="font-bold text-xs sm:text-sm text-foreground">Tidak Ada Berkas yang Cocok</h3>
+                            <p className="text-[11px] sm:text-xs text-foreground/50">
                                 Coba ubah kata kunci pencarian atau ganti filter kategori berkas di atas.
                             </p>
                         </div>
@@ -649,13 +649,13 @@ export default function ClientUnzip() {
                                 <table className="w-full text-left text-xs">
                                     <thead className="bg-surface/90 border-b border-border/80 text-foreground/60 uppercase text-[10px] tracking-wider font-bold">
                                         <tr>
-                                            <th className="py-3 px-4 w-10 text-center">
+                                            <th className="py-2.5 sm:py-3 px-2.5 sm:px-4 w-9 sm:w-10 text-center">
                                                 <span className="sr-only">Pilih</span>
                                             </th>
-                                            <th className="py-3 px-4">Nama Berkas & Lokasi Folder</th>
-                                            <th className="py-3 px-4 w-28 text-right">Ukuran</th>
-                                            <th className="py-3 px-4 w-32 hidden sm:table-cell text-right">Tanggal</th>
-                                            <th className="py-3 px-4 w-28 text-center">Aksi</th>
+                                            <th className="py-2.5 sm:py-3 px-2.5 sm:px-4">Nama Berkas & Lokasi</th>
+                                            <th className="py-2.5 sm:py-3 px-2.5 sm:px-4 w-20 sm:w-28 text-right">Ukuran</th>
+                                            <th className="py-2.5 sm:py-3 px-2.5 sm:px-4 w-28 sm:w-32 hidden sm:table-cell text-right">Tanggal</th>
+                                            <th className="py-2.5 sm:py-3 px-2.5 sm:px-4 w-20 sm:w-28 text-center">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border/40">
@@ -671,7 +671,7 @@ export default function ClientUnzip() {
                                                     }`}
                                                 >
                                                     {/* Checkbox */}
-                                                    <td className="py-3 px-4 text-center">
+                                                    <td className="py-2.5 sm:py-3 px-2.5 sm:px-4 text-center">
                                                         <button
                                                             type="button"
                                                             onClick={() => toggleSelect(item.id)}
@@ -686,11 +686,11 @@ export default function ClientUnzip() {
                                                     </td>
 
                                                     {/* File Info */}
-                                                    <td className="py-3 px-4">
-                                                        <div className="flex items-center gap-2.5">
+                                                    <td className="py-2.5 sm:py-3 px-2.5 sm:px-4">
+                                                        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
                                                             {renderCategoryIcon(item.category, item.extension)}
-                                                            <div className="truncate max-w-xs sm:max-w-md">
-                                                                <span className="font-semibold text-foreground block truncate">
+                                                            <div className="truncate max-w-36 sm:max-w-xs md:max-w-md">
+                                                                <span className="font-semibold text-xs sm:text-sm text-foreground block truncate">
                                                                     {item.fileName}
                                                                 </span>
                                                                 {item.folderPath && (
@@ -703,23 +703,23 @@ export default function ClientUnzip() {
                                                     </td>
 
                                                     {/* Ukuran */}
-                                                    <td className="py-3 px-4 text-right font-mono text-foreground/80">
+                                                    <td className="py-2.5 sm:py-3 px-2.5 sm:px-4 text-right font-mono text-foreground/80 text-[11px] sm:text-xs">
                                                         {formatBytes(item.size)}
                                                     </td>
 
                                                     {/* Tanggal */}
-                                                    <td className="py-3 px-4 text-right text-foreground/50 font-mono text-[11px] hidden sm:table-cell">
+                                                    <td className="py-2.5 sm:py-3 px-2.5 sm:px-4 text-right text-foreground/50 font-mono text-[11px] hidden sm:table-cell">
                                                         {item.date ? item.date.toLocaleDateString("id-ID") : "-"}
                                                     </td>
 
                                                     {/* Tombol Aksi */}
-                                                    <td className="py-3 px-4 text-center">
-                                                        <div className="flex items-center justify-center gap-1.5">
+                                                    <td className="py-2.5 sm:py-3 px-2.5 sm:px-4 text-center">
+                                                        <div className="flex items-center justify-center gap-1 sm:gap-1.5">
                                                             {canPreview && (
                                                                 <button
                                                                     type="button"
                                                                     onClick={() => handlePreviewEntry(item)}
-                                                                    className="p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 text-foreground/70 hover:text-fuchsia-400 transition-colors"
+                                                                    className="p-1 sm:p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 text-foreground/70 hover:text-fuchsia-400 transition-colors"
                                                                     title="Pratinjau / Intip Berkas"
                                                                 >
                                                                     <Eye className="w-3.5 h-3.5" />
@@ -728,7 +728,7 @@ export default function ClientUnzip() {
                                                             <button
                                                                 type="button"
                                                                 onClick={() => handleDownloadSingle(item)}
-                                                                className="p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 text-foreground/70 hover:text-emerald-400 transition-colors"
+                                                                className="p-1 sm:p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 text-foreground/70 hover:text-emerald-400 transition-colors"
                                                                 title="Unduh Berkas Ini Saja"
                                                             >
                                                                 <Download className="w-3.5 h-3.5" />
@@ -744,7 +744,7 @@ export default function ClientUnzip() {
                         </div>
                     ) : (
                         /* GRID CARDS VIEW */
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 min-[380px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 sm:gap-4">
                             {filteredEntries.map((item) => {
                                 const isSelected = selectedIds.has(item.id);
                                 const canPreview = ["image", "text", "code", "pdf"].includes(item.category);
@@ -752,7 +752,7 @@ export default function ClientUnzip() {
                                 return (
                                     <div
                                         key={item.id}
-                                        className={`glass-card p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-3 ${
+                                        className={`glass-card p-3 sm:p-4 rounded-2xl border transition-all flex flex-col justify-between space-y-2.5 sm:space-y-3 ${
                                             isSelected
                                                 ? "border-fuchsia-500/80 bg-fuchsia-500/10 ring-1 ring-fuchsia-500/40"
                                                 : "border-border/60 hover:border-border hover:bg-surface"

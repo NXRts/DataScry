@@ -612,42 +612,42 @@ export default function ClientRemoveBackground() {
             ) : (
                 <div className="space-y-6 animate-fade-in">
                     {/* Header Controls Bar */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-surface/60 border border-border/60 backdrop-blur-md shadow-sm">
-                        <div className="flex items-center gap-3.5 min-w-0">
-                            <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
-                                <Eraser className="w-5 h-5" />
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 p-3.5 sm:p-5 rounded-2xl bg-surface/60 border border-border/60 backdrop-blur-md shadow-sm">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="p-2 sm:p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
+                                <Eraser className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
                             <div className="flex flex-col min-w-0">
-                                <span className="font-semibold text-base sm:text-lg text-foreground truncate max-w-xs sm:max-w-md">
+                                <span className="font-semibold text-sm sm:text-base md:text-lg text-foreground truncate max-w-50 sm:max-w-xs md:max-w-md">
                                     {activeImage?.name || "Foto Terpilih"}
                                 </span>
-                                <div className="flex items-center gap-2 text-xs text-foreground/60 mt-0.5">
+                                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-foreground/60 mt-0.5">
                                     <span className="text-emerald-400 font-semibold">
                                         {activeImage ? `${activeImage.width} × ${activeImage.height} px (HD Asli)` : ""}
                                     </span>
                                     <span>•</span>
-                                    <span>{images.length} Foto dalam Antrean</span>
+                                    <span>{images.length} Foto</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2.5 shrink-0">
+                        <div className="flex items-center gap-2 shrink-0">
                             <button
                                 type="button"
                                 onClick={handleClearAll}
-                                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold text-foreground/80 hover:text-rose-400 bg-surface hover:bg-rose-500/10 border border-border/80 hover:border-rose-500/30 rounded-xl transition-all active:scale-95 cursor-pointer"
+                                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-semibold text-foreground/80 hover:text-rose-400 bg-surface hover:bg-rose-500/10 border border-border/80 hover:border-rose-500/30 rounded-xl transition-all active:scale-95 cursor-pointer"
                                 title="Hapus semua berkas dan reset antrean"
                             >
-                                <RotateCcw className="w-4 h-4" />
+                                <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                 <span>Clear Semua</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-md shadow-emerald-600/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+                                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 rounded-xl shadow-md shadow-emerald-600/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                                 title="Tambah foto lain ke antrean"
                             >
-                                <FolderOpen className="w-4 h-4" />
+                                <FolderOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                 <span>Tambah Foto</span>
                             </button>
                         </div>
@@ -655,13 +655,13 @@ export default function ClientRemoveBackground() {
 
                     {/* Multi-image thumbnail selection row (if > 1 image) */}
                     {images.length > 1 && (
-                        <div className="glass-panel p-3 rounded-2xl border border-border/60 overflow-x-auto flex items-center gap-3">
+                        <div className="glass-panel p-2.5 sm:p-3 rounded-2xl border border-border/60 overflow-x-auto flex items-center gap-2.5 sm:gap-3">
                             {images.map((img, idx) => (
                                 <button
                                     key={img.id}
                                     type="button"
                                     onClick={() => setActiveIndex(idx)}
-                                    className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                                    className={`relative shrink-0 w-13 h-13 sm:w-16 sm:h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
                                         activeIndex === idx
                                             ? "border-emerald-500 ring-2 ring-emerald-500/20 scale-105"
                                             : "border-border/60 opacity-60 hover:opacity-100"
@@ -674,7 +674,7 @@ export default function ClientRemoveBackground() {
                                     />
                                     {img.status === "processing" && (
                                         <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white">
-                                            <Loader2 className="w-4 h-4 animate-spin text-emerald-400" />
+                                            <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 animate-spin text-emerald-400" />
                                         </div>
                                     )}
                                     {img.status === "done" && (
@@ -693,33 +693,33 @@ export default function ClientRemoveBackground() {
                             {/* Left 2 Cols: Comparison Slider or Processing Spinner */}
                             <div className="lg:col-span-2 space-y-4">
                                 {activeImage.status === "processing" ? (
-                                    <div className="relative rounded-3xl overflow-hidden border border-emerald-500/20 bg-surface/60 shadow-2xl flex flex-col items-center justify-center min-h-115 p-6 sm:p-10 group">
+                                    <div className="relative rounded-3xl overflow-hidden border border-emerald-500/20 bg-surface/60 shadow-2xl flex flex-col items-center justify-center min-h-75 sm:min-h-115 p-4 sm:p-10 group">
                                         {/* Subtle Ambient Radial Glow */}
                                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08),transparent_70%)] pointer-events-none" />
 
                                         {/* Center Futuristic AI Processing Card */}
-                                        <div className="relative z-10 flex flex-col items-center justify-center space-y-6 w-full max-w-md">
+                                        <div className="relative z-10 flex flex-col items-center justify-center space-y-4 sm:space-y-6 w-full max-w-md">
                                             {/* Glowing AI Icon Hub */}
                                             <div className="relative flex items-center justify-center">
-                                                <div className="absolute w-24 h-24 rounded-full bg-emerald-500/15 blur-xl animate-pulse" />
-                                                <div className="relative w-20 h-20 rounded-2xl bg-zinc-950/90 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+                                                <div className="absolute w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-500/15 blur-xl animate-pulse" />
+                                                <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-zinc-950/90 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10">
                                                     <div className="relative">
-                                                        <Eraser className="w-9 h-9 text-emerald-400" />
-                                                        <Sparkles className="w-4 h-4 text-teal-300 absolute -top-1.5 -right-1.5 animate-spin" />
+                                                        <Eraser className="w-7 h-7 sm:w-9 sm:h-9 text-emerald-400" />
+                                                        <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-300 absolute -top-1.5 -right-1.5 animate-spin" />
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {/* Selected File Details Badge */}
-                                            <div className="text-center space-y-2">
-                                                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-semibold shadow-sm">
+                                            <div className="text-center space-y-1.5 sm:space-y-2">
+                                                <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-semibold shadow-sm">
                                                     <span className="relative flex h-2 w-2">
                                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                                                     </span>
-                                                    <span className="truncate max-w-50 sm:max-w-xs">{activeImage.name}</span>
+                                                    <span className="truncate max-w-40 sm:max-w-xs">{activeImage.name}</span>
                                                 </div>
-                                                <div className="flex items-center justify-center gap-2 text-xs text-foreground/50 font-medium">
+                                                <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-foreground/50 font-medium">
                                                     <span className="font-mono text-emerald-400 font-semibold">{activeImage.width} × {activeImage.height} px</span>
                                                     <span>•</span>
                                                     <span>{formatBytes(activeImage.size)}</span>
@@ -729,15 +729,15 @@ export default function ClientRemoveBackground() {
                                             </div>
 
                                             {/* Progress Card */}
-                                            <div className="w-full p-4 sm:p-5 rounded-2xl bg-zinc-950/85 backdrop-blur-xl border border-emerald-500/25 shadow-xl space-y-3.5">
+                                            <div className="w-full p-3.5 sm:p-5 rounded-2xl bg-zinc-950/85 backdrop-blur-xl border border-emerald-500/25 shadow-xl space-y-3 sm:space-y-3.5">
                                                 <div className="flex items-center justify-between text-xs">
                                                     <div className="flex items-center gap-2 text-foreground font-medium min-w-0">
-                                                        <Loader2 className="w-4 h-4 text-emerald-400 animate-spin shrink-0" />
-                                                        <span className="truncate text-xs font-medium text-emerald-100">
+                                                        <Loader2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 animate-spin shrink-0" />
+                                                        <span className="truncate text-[11px] sm:text-xs font-medium text-emerald-100">
                                                             {activeImage.progressStep}
                                                         </span>
                                                     </div>
-                                                    <span className="font-mono font-bold text-emerald-400 text-sm shrink-0 ml-2">
+                                                    <span className="font-mono font-bold text-emerald-400 text-xs sm:text-sm shrink-0 ml-2">
                                                         {activeImage.progress}%
                                                     </span>
                                                 </div>
@@ -749,7 +749,7 @@ export default function ClientRemoveBackground() {
                                                     />
                                                 </div>
 
-                                                <div className="flex items-center justify-between text-[11px] text-foreground/45 pt-1 border-t border-border/40">
+                                                <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-foreground/45 pt-1 border-t border-border/40">
                                                     <span>On-Device Neural Engine</span>
                                                     <span className="text-emerald-400/80 font-medium">100% Privat Lokal</span>
                                                 </div>
@@ -764,14 +764,14 @@ export default function ClientRemoveBackground() {
                                             backdropColor={selectedBackdrop}
                                             altText={activeImage.name}
                                         />
-                                        <div className="flex items-center justify-between text-xs text-foreground/60 px-1">
+                                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-foreground/60 px-1">
                                             <span className="italic">
                                                 💡 Geser pemisah putih di tengah untuk membandingkan sebelum dan sesudah.
                                             </span>
                                             <button
                                                 type="button"
                                                 onClick={() => setIsLightboxOpen(true)}
-                                                className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold transition-colors cursor-pointer"
+                                                className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold transition-colors cursor-pointer shrink-0"
                                             >
                                                 <Eye className="w-3.5 h-3.5" />
                                                 <span>Inspeksi HD (Zoom & Pan)</span>
@@ -779,9 +779,9 @@ export default function ClientRemoveBackground() {
                                         </div>
                                     </div>
                                 ) : activeImage.status === "error" ? (
-                                    <div className="p-8 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-center space-y-4">
-                                        <AlertCircle className="w-10 h-10 text-rose-400 mx-auto" />
-                                        <h4 className="font-bold text-rose-300 text-lg">Gagal Memproses Gambar</h4>
+                                    <div className="p-6 sm:p-8 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-center space-y-4">
+                                        <AlertCircle className="w-8 h-8 sm:w-10 sm:h-10 text-rose-400 mx-auto" />
+                                        <h4 className="font-bold text-rose-300 text-base sm:text-lg">Gagal Memproses Gambar</h4>
                                         <p className="text-xs text-foreground/70">{activeImage.error}</p>
                                         <button
                                             type="button"
@@ -792,16 +792,16 @@ export default function ClientRemoveBackground() {
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className="glass-panel p-12 rounded-3xl border border-border/80 flex flex-col items-center justify-center text-center space-y-4 min-h-87.5">
+                                    <div className="glass-panel p-6 sm:p-12 rounded-3xl border border-border/80 flex flex-col items-center justify-center text-center space-y-4 min-h-60 sm:min-h-87.5">
                                         <img
                                             src={activeImage.originalUrl}
                                             alt={activeImage.name}
-                                            className="max-h-60 rounded-xl object-contain"
+                                            className="max-h-48 sm:max-h-60 rounded-xl object-contain"
                                         />
                                         <button
                                             type="button"
                                             onClick={() => processPendingQueue([activeImage])}
-                                            className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-lg shadow-emerald-600/30 hover:scale-105 active:scale-95 cursor-pointer flex items-center gap-2"
+                                            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-lg shadow-emerald-600/30 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
                                         >
                                             <Sparkles className="w-4 h-4" />
                                             <span>Mulai Hapus Latar Belakang</span>
@@ -811,18 +811,18 @@ export default function ClientRemoveBackground() {
                             </div>
 
                             {/* Right 1 Col: Backdrop Customizer & Actions */}
-                            <div className="space-y-6">
+                            <div className="space-y-4 sm:space-y-6">
                                 {/* Backdrop Selector Card */}
-                                <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-border/80 shadow-xl space-y-4">
-                                    <div className="flex items-center gap-2.5 pb-3 border-b border-border/60">
-                                        <Palette className="w-5 h-5 text-emerald-400" />
+                                <div className="glass-panel p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xl space-y-3.5 sm:space-y-4">
+                                    <div className="flex items-center gap-2.5 pb-2.5 sm:pb-3 border-b border-border/60">
+                                        <Palette className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-400" />
                                         <h3 className="font-bold text-sm sm:text-base text-foreground">
                                             Ganti Latar Belakang
                                         </h3>
                                     </div>
 
                                     {/* Presets Grid */}
-                                    <div className="grid grid-cols-4 gap-2.5">
+                                    <div className="grid grid-cols-4 gap-2 sm:gap-2.5">
                                         {BACKDROP_PRESETS.map((preset) => {
                                             const isSelected = selectedBackdrop === preset.value;
                                             return (
@@ -830,7 +830,7 @@ export default function ClientRemoveBackground() {
                                                     key={preset.value}
                                                     type="button"
                                                     onClick={() => setSelectedBackdrop(preset.value)}
-                                                    className={`group relative p-2 rounded-xl border flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
+                                                    className={`group relative p-1.5 sm:p-2 rounded-xl border flex flex-col items-center gap-1 sm:gap-1.5 transition-all cursor-pointer ${
                                                         isSelected
                                                             ? "bg-emerald-500/10 border-emerald-500 ring-2 ring-emerald-500/30 scale-105"
                                                             : "bg-surface/50 border-border/70 hover:bg-surface"
@@ -838,7 +838,7 @@ export default function ClientRemoveBackground() {
                                                     title={preset.label}
                                                 >
                                                     <div
-                                                        className={`w-7 h-7 rounded-lg shadow-inner ${
+                                                        className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg shadow-inner ${
                                                             preset.border ? "border border-border" : ""
                                                         }`}
                                                         style={{
@@ -850,7 +850,7 @@ export default function ClientRemoveBackground() {
                                                                 : "none",
                                                         }}
                                                     />
-                                                    <span className="text-[10px] font-semibold text-foreground/80 truncate w-full text-center">
+                                                    <span className="text-[9px] sm:text-[10px] font-semibold text-foreground/80 truncate w-full text-center">
                                                         {preset.label}
                                                     </span>
                                                 </button>
@@ -871,7 +871,7 @@ export default function ClientRemoveBackground() {
                                                     setCustomColor(e.target.value);
                                                     setSelectedBackdrop(e.target.value);
                                                 }}
-                                                className="w-8 h-8 rounded-lg border border-border cursor-pointer bg-transparent"
+                                                className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-border cursor-pointer bg-transparent"
                                                 title="Pilih warna kustom"
                                             />
                                             <span className="text-xs font-mono text-foreground/60 uppercase">
@@ -882,26 +882,26 @@ export default function ClientRemoveBackground() {
                                 </div>
 
                                 {/* Quality Badge Guarantee */}
-                                <div className="p-4 rounded-2xl bg-surface/50 border border-border/70 flex items-center gap-3">
+                                <div className="p-3.5 sm:p-4 rounded-2xl bg-surface/50 border border-border/70 flex items-center gap-3">
                                     <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shrink-0">
-                                        <CheckCircle2 className="w-5 h-5" />
+                                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
                                     </div>
                                     <div className="text-xs space-y-0.5">
                                         <p className="font-bold text-foreground">Garansi Kualitas HD 1:1</p>
-                                        <p className="text-foreground/60">
+                                        <p className="text-foreground/60 text-[11px] sm:text-xs">
                                             Piksel asli tidak di-downscale. Format ekspor PNG mempertahankan ketajaman 100%.
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Kustomisasi Nama File Hasil Cutout */}
-                                <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
+                                <div className="p-3 sm:p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
                                     <div className="flex items-center justify-between">
                                         <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
                                             <PenLine className="w-3.5 h-3.5 text-emerald-400" />
                                             <span>Nama File Hasil Cutout</span>
                                         </label>
-                                        <span className="text-[10px] text-foreground/50">
+                                        <span className="text-[10px] text-foreground/50 hidden sm:inline">
                                             Kustomisasi nama berkas
                                         </span>
                                     </div>
@@ -927,14 +927,14 @@ export default function ClientRemoveBackground() {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <div className="space-y-3 pt-2">
+                                <div className="space-y-2.5 sm:space-y-3 pt-1 sm:pt-2">
                                     {activeImage.status === "done" && (
                                         <button
                                             type="button"
                                             onClick={() => handleDownloadSingle(activeImage)}
-                                            className="w-full py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-xl shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center justify-center gap-2.5 text-sm sm:text-base"
+                                            className="w-full py-3.5 sm:py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-xl shadow-emerald-600/30 hover:scale-[1.02] active:scale-95 cursor-pointer flex items-center justify-center gap-2 sm:gap-2.5 text-xs sm:text-sm md:text-base"
                                         >
-                                            <Download className="w-5 h-5" />
+                                            <Download className="w-4 h-4 sm:w-5 sm:h-5" />
                                             <span>
                                                 {selectedBackdrop === "transparent"
                                                     ? "Unduh PNG Transparan HD"
@@ -947,7 +947,7 @@ export default function ClientRemoveBackground() {
                                         <button
                                             type="button"
                                             onClick={handleDownloadAllZip}
-                                            className="w-full py-3.5 rounded-2xl bg-surface hover:bg-surface/80 border border-border text-foreground font-semibold text-xs sm:text-sm transition-all hover:scale-[1.01] active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+                                            className="w-full py-3 sm:py-3.5 rounded-2xl bg-surface hover:bg-surface/80 border border-border text-foreground font-semibold text-xs sm:text-sm transition-all hover:scale-[1.01] active:scale-95 cursor-pointer flex items-center justify-center gap-2"
                                         >
                                             <FileArchive className="w-4 h-4 text-emerald-400" />
                                             <span>Unduh Semua Hasil (.ZIP)</span>

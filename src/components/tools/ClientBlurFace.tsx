@@ -652,24 +652,24 @@ export default function ClientBlurFace() {
                 </div>
             ) : (
                 /* 2. WORKSPACE EDITOR SENSOR FOTO INTERAKTIF */
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                     {/* Top Action Bar */}
-                    <div className="glass-panel p-4 rounded-2xl border border-border/80 flex flex-wrap items-center justify-between gap-4 shadow-lg">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center">
-                                <EyeOff className="w-5 h-5" />
+                    <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-lg">
+                        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0">
+                                <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
-                            <div>
-                                <h3 className="font-bold text-sm text-foreground flex items-center gap-2 truncate max-w-50 sm:max-w-xs">
+                            <div className="min-w-0">
+                                <h3 className="font-bold text-xs sm:text-sm text-foreground flex items-center gap-2 truncate max-w-44 sm:max-w-xs">
                                     {file?.name}
                                 </h3>
-                                <p className="text-xs text-foreground/60">
+                                <p className="text-[10px] sm:text-xs text-foreground/60">
                                     {naturalSize.width} × {naturalSize.height} px • {formatBytes(file?.size || 0)}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2 flex-wrap">
+                        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-0.5 sm:pb-0 no-scrollbar justify-start sm:justify-end">
                             {/* Tombol Tahan untuk Lihat Asli */}
                             <button
                                 type="button"
@@ -678,15 +678,15 @@ export default function ClientBlurFace() {
                                 onMouseLeave={() => setIsPeekingOriginal(false)}
                                 onTouchStart={() => setIsPeekingOriginal(true)}
                                 onTouchEnd={() => setIsPeekingOriginal(false)}
-                                className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all select-none ${
+                                className={`px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold flex items-center gap-1 sm:gap-1.5 transition-all select-none shrink-0 cursor-pointer ${
                                     isPeekingOriginal
                                         ? "bg-amber-500 text-black shadow-lg scale-95"
                                         : "bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover"
                                 }`}
                                 title="Tekan & tahan untuk mengintip foto asli tanpa sensor"
                             >
-                                <Eye className="w-4 h-4 text-amber-400" />
-                                <span>{isPeekingOriginal ? "Melihat Asli..." : "Tahan: Lihat Asli"}</span>
+                                <Eye className="w-3.5 h-3.5 text-amber-400" />
+                                <span>{isPeekingOriginal ? "Melihat Asli..." : "Tahan: Asli"}</span>
                             </button>
 
                             {/* Undo / Redo */}
@@ -694,7 +694,7 @@ export default function ClientBlurFace() {
                                 type="button"
                                 onClick={handleUndo}
                                 disabled={historyIndex === 0}
-                                className="p-2 rounded-xl bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                className="p-1.5 sm:p-2 rounded-xl bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
                                 title="Batalkan (Undo) [Ctrl+Z]"
                             >
                                 <Undo2 className="w-4 h-4" />
@@ -703,7 +703,7 @@ export default function ClientBlurFace() {
                                 type="button"
                                 onClick={handleRedo}
                                 disabled={historyIndex >= history.length - 1}
-                                className="p-2 rounded-xl bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                className="p-1.5 sm:p-2 rounded-xl bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
                                 title="Ulangi (Redo) [Ctrl+Y]"
                             >
                                 <Redo2 className="w-4 h-4" />
@@ -714,7 +714,7 @@ export default function ClientBlurFace() {
                                 type="button"
                                 onClick={handleClearAllRegions}
                                 disabled={regions.length === 0}
-                                className="p-2 rounded-xl bg-surface border border-border/80 text-rose-400 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                className="p-1.5 sm:p-2 rounded-xl bg-surface border border-border/80 text-rose-400 hover:bg-rose-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shrink-0 cursor-pointer"
                                 title="Hapus Semua Sensor"
                             >
                                 <Trash2 className="w-4 h-4" />
@@ -724,7 +724,7 @@ export default function ClientBlurFace() {
                             <button
                                 type="button"
                                 onClick={handleOpenLightbox}
-                                className="p-2 rounded-xl bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover transition-colors"
+                                className="p-1.5 sm:p-2 rounded-xl bg-surface border border-border/80 text-foreground/80 hover:bg-surface-hover transition-colors shrink-0 cursor-pointer"
                                 title="Pratinjau Layar Penuh (Zoom & Pan Lightbox)"
                             >
                                 <Maximize2 className="w-4 h-4" />
@@ -734,248 +734,37 @@ export default function ClientBlurFace() {
                             <button
                                 type="button"
                                 onClick={handleResetAll}
-                                className="px-3 py-2 rounded-xl text-xs font-semibold bg-surface border border-border/80 text-foreground/60 hover:text-rose-400 hover:border-rose-500/40 transition-colors flex items-center gap-1.5"
+                                className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl text-xs font-semibold bg-surface border border-border/80 text-foreground/60 hover:text-rose-400 hover:border-rose-500/40 transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
                             >
                                 <RotateCcw className="w-3.5 h-3.5" />
-                                <span>Ganti Foto</span>
+                                <span>Ganti</span>
                             </button>
                         </div>
                     </div>
 
-                    {/* Toolbar Pengaturan Efek & Alat Seleksi */}
-                    <div className="glass-panel p-5 rounded-3xl border border-border/80 space-y-5 shadow-xl">
-                        {/* 1. Preset 1-Klik Cepat */}
-                        <div>
-                            <div className="flex items-center justify-between mb-2">
-                                <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider flex items-center gap-1.5">
-                                    <Sparkles className="w-3.5 h-3.5 text-rose-400" />
-                                    Preset Instan 1-Klik
-                                </span>
-                                <span className="text-xs text-foreground/50">Pilih skenario siap pakai</span>
-                            </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                                {QUICK_PRESETS.map((preset) => {
-                                    const isMatch =
-                                        toolMode === preset.tool &&
-                                        activeEffect === preset.effect &&
-                                        (preset.effect === "blur"
-                                            ? blurIntensity === preset.intensity
-                                            : preset.effect === "pixelate"
-                                            ? pixelateSize === preset.intensity
-                                            : true);
-                                    return (
-                                        <button
-                                            key={preset.id}
-                                            type="button"
-                                            onClick={() => applyPreset(preset)}
-                                            className={`p-3 rounded-2xl border text-left transition-all ${
-                                                isMatch
-                                                    ? "bg-rose-500/15 border-rose-500/50 shadow-md ring-1 ring-rose-500/30"
-                                                    : "bg-surface/60 border-border/60 hover:bg-surface hover:border-border"
-                                            }`}
-                                        >
-                                            <div className="flex items-center justify-between">
-                                                <span className="font-bold text-xs text-foreground">{preset.name}</span>
-                                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-surface border border-border text-foreground/60">
-                                                    {preset.badge}
-                                                </span>
-                                            </div>
-                                            <p className="text-[11px] text-foreground/50 mt-1 line-clamp-1">
-                                                {preset.description}
-                                            </p>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* 2. Pilihan Alat & Pilihan Efek Sensor */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-border/40">
-                            {/* Alat Seleksi: Kotak vs Kuas */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-foreground/70 flex items-center gap-1.5">
-                                    <Layers className="w-3.5 h-3.5 text-sky-400" />
-                                    Bentuk Seleksi
-                                </label>
-                                <div className="grid grid-cols-2 gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setToolMode("box")}
-                                        className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                                            toolMode === "box"
-                                                ? "bg-sky-500/15 border-sky-500 text-sky-400 shadow-sm"
-                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
-                                        }`}
-                                    >
-                                        <Square className="w-4 h-4" />
-                                        <span>Kotak Presisi (Box)</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setToolMode("brush")}
-                                        className={`p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all ${
-                                            toolMode === "brush"
-                                                ? "bg-sky-500/15 border-sky-500 text-sky-400 shadow-sm"
-                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
-                                        }`}
-                                    >
-                                        <Paintbrush className="w-4 h-4" />
-                                        <span>Kuas Sentuh (Brush)</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Tipe Efek: Gaussian Blur vs Mosaik vs Hitam */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-bold text-foreground/70 flex items-center gap-1.5">
-                                    <Sliders className="w-3.5 h-3.5 text-rose-400" />
-                                    Gaya Efek Sensor
-                                </label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveEffect("blur")}
-                                        className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all ${
-                                            activeEffect === "blur"
-                                                ? "bg-rose-500/15 border-rose-500 text-rose-400 shadow-sm"
-                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
-                                        }`}
-                                    >
-                                        <Sparkles className="w-4 h-4" />
-                                        <span>Blur Halus</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveEffect("pixelate")}
-                                        className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all ${
-                                            activeEffect === "pixelate"
-                                                ? "bg-amber-500/15 border-amber-500 text-amber-400 shadow-sm"
-                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
-                                        }`}
-                                    >
-                                        <Grid3X3 className="w-4 h-4" />
-                                        <span>Mosaik</span>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveEffect("blackout")}
-                                        className={`p-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all ${
-                                            activeEffect === "blackout"
-                                                ? "bg-purple-500/15 border-purple-500 text-purple-400 shadow-sm"
-                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
-                                        }`}
-                                    >
-                                        <ShieldAlert className="w-4 h-4" />
-                                        <span>Hitam Pekat</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* 3. Slider Kontrol Parameter Efek & Ukuran Kuas */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t border-border/40">
-                            {/* Slider Efek Terpilih */}
-                            {activeEffect === "blur" && (
-                                <div className="space-y-1.5">
-                                    <div className="flex justify-between text-xs font-medium text-foreground/80">
-                                        <span>Kekuatan Blur (Radius)</span>
-                                        <span className="font-mono text-rose-400 font-bold">{blurIntensity} px</span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min={4}
-                                        max={50}
-                                        value={blurIntensity}
-                                        onChange={(e) => setBlurIntensity(Number(e.target.value))}
-                                        className="w-full accent-rose-500"
-                                    />
-                                    <div className="flex justify-between text-[10px] text-foreground/40">
-                                        <span>Samar (4px)</span>
-                                        <span>Kabur Pekat (50px)</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeEffect === "pixelate" && (
-                                <div className="space-y-1.5">
-                                    <div className="flex justify-between text-xs font-medium text-foreground/80">
-                                        <span>Ukuran Kotak Mosaik</span>
-                                        <span className="font-mono text-amber-400 font-bold">{pixelateSize} px</span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min={4}
-                                        max={36}
-                                        value={pixelateSize}
-                                        onChange={(e) => setPixelateSize(Number(e.target.value))}
-                                        className="w-full accent-amber-500"
-                                    />
-                                    <div className="flex justify-between text-[10px] text-foreground/40">
-                                        <span>Kecil Halus (4px)</span>
-                                        <span>Kotak Besar TV (36px)</span>
-                                    </div>
-                                </div>
-                            )}
-
-                            {activeEffect === "blackout" && (
-                                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300 flex items-center gap-2">
-                                    <Lock className="w-4 h-4 shrink-0" />
-                                    <span>Sensor Hitam Pekat menutup 100% piksel tanpa transparansi.</span>
-                                </div>
-                            )}
-
-                            {/* Slider Ukuran Kuas (Khusus mode Brush) */}
-                            {toolMode === "brush" ? (
-                                <div className="space-y-1.5">
-                                    <div className="flex justify-between text-xs font-medium text-foreground/80">
-                                        <span>Ketebalan Kuas (Brush Size)</span>
-                                        <span className="font-mono text-sky-400 font-bold">{brushSize} px</span>
-                                    </div>
-                                    <input
-                                        type="range"
-                                        min={10}
-                                        max={80}
-                                        value={brushSize}
-                                        onChange={(e) => setBrushSize(Number(e.target.value))}
-                                        className="w-full accent-sky-500"
-                                    />
-                                    <div className="flex justify-between text-[10px] text-foreground/40">
-                                        <span>Presisi (10px)</span>
-                                        <span>Sapu Lebar (80px)</span>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="p-3 rounded-xl bg-surface border border-border/60 text-xs text-foreground/60 flex items-center gap-2">
-                                    <Info className="w-4 h-4 text-sky-400 shrink-0" />
-                                    <span>Klik & seret kursor pada gambar untuk membuat kotak sensor.</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* KANVAS INTERAKTIF KERJA UTAMA */}
-                    <div className="glass-panel p-4 rounded-3xl border border-border/80 shadow-2xl space-y-3">
+                    {/* KANVAS INTERAKTIF KERJA UTAMA (Workspace-First) */}
+                    <div className="glass-panel p-3 sm:p-4 rounded-2xl sm:rounded-3xl border border-border/80 shadow-2xl space-y-2.5 sm:space-y-3">
                         <div className="flex items-center justify-between text-xs text-foreground/60 px-1">
-                            <span className="flex items-center gap-1.5">
+                            <span className="flex items-center gap-1.5 text-[11px] sm:text-xs">
                                 <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
                                 {toolMode === "box" ? "Mode Kotak: Seret untuk menyensor" : "Mode Kuas: Gambar sapuan bebas"}
                             </span>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 sm:gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setZoomScale((prev) => Math.max(0.5, prev - 0.25))}
-                                    className="p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60"
+                                    className="p-1 sm:p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 cursor-pointer"
                                     title="Perkecil Zoom"
                                 >
                                     <ZoomOut className="w-3.5 h-3.5" />
                                 </button>
-                                <span className="font-mono font-bold w-12 text-center">
+                                <span className="font-mono font-bold w-10 sm:w-12 text-center text-xs">
                                     {Math.round(zoomScale * 100)}%
                                 </span>
                                 <button
                                     type="button"
                                     onClick={() => setZoomScale((prev) => Math.min(2.5, prev + 0.25))}
-                                    className="p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60"
+                                    className="p-1 sm:p-1.5 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 cursor-pointer"
                                     title="Perbesar Zoom"
                                 >
                                     <ZoomIn className="w-3.5 h-3.5" />
@@ -983,7 +772,7 @@ export default function ClientBlurFace() {
                                 <button
                                     type="button"
                                     onClick={() => setZoomScale(1.0)}
-                                    className="px-2 py-1 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 text-[11px]"
+                                    className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-lg bg-surface hover:bg-surface-hover border border-border/60 text-[10px] sm:text-[11px] cursor-pointer"
                                     title="Reset ke 100%"
                                 >
                                     Reset
@@ -994,7 +783,7 @@ export default function ClientBlurFace() {
                         {/* Wadah Kanvas & Interaksi Drag */}
                         <div
                             ref={containerRef}
-                            className="relative overflow-auto max-h-162.5 min-h-87.5 rounded-2xl bg-black/40 border border-border/60 flex items-center justify-center p-4 touch-none select-none cursor-crosshair"
+                            className="relative overflow-auto max-h-85 sm:max-h-125 lg:max-h-162.5 min-h-60 sm:min-h-80 rounded-xl sm:rounded-2xl bg-black/40 border border-border/60 flex items-center justify-center p-2 sm:p-4 touch-none select-none cursor-crosshair"
                         >
                             <div
                                 className="relative transition-transform duration-75 origin-center"
@@ -1008,7 +797,7 @@ export default function ClientBlurFace() {
                                 {/* Kanvas Hasil Render Real-Time */}
                                 <canvas
                                     ref={canvasRef}
-                                    className="max-w-full max-h-150 object-contain rounded-xl shadow-2xl block"
+                                    className="max-w-full max-h-80 sm:max-h-115 lg:max-h-150 object-contain rounded-xl shadow-2xl block"
                                     style={{
                                         imageRendering: "auto"
                                     }}
@@ -1082,7 +871,7 @@ export default function ClientBlurFace() {
                                                         <button
                                                             type="button"
                                                             onClick={(e) => handleDeleteRegion(r.id, e)}
-                                                            className="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center hover:bg-rose-700 shadow"
+                                                            className="w-4 h-4 rounded-full bg-rose-600 text-white flex items-center justify-center hover:bg-rose-700 shadow cursor-pointer"
                                                             title="Hapus sensor ini"
                                                         >
                                                             <X className="w-2.5 h-2.5" />
@@ -1117,6 +906,217 @@ export default function ClientBlurFace() {
                                         return null;
                                     })}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Toolbar Pengaturan Efek & Alat Seleksi */}
+                    <div className="glass-panel p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-border/80 space-y-4 sm:space-y-5 shadow-xl">
+                        {/* 1. Preset 1-Klik Cepat */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider flex items-center gap-1.5">
+                                    <Sparkles className="w-3.5 h-3.5 text-rose-400" />
+                                    Preset Instan 1-Klik
+                                </span>
+                                <span className="text-[11px] sm:text-xs text-foreground/50">Pilih skenario siap pakai</span>
+                            </div>
+                            <div className="flex sm:grid sm:grid-cols-4 gap-2 sm:gap-2.5 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
+                                {QUICK_PRESETS.map((preset) => {
+                                    const isMatch =
+                                        toolMode === preset.tool &&
+                                        activeEffect === preset.effect &&
+                                        (preset.effect === "blur"
+                                            ? blurIntensity === preset.intensity
+                                            : preset.effect === "pixelate"
+                                            ? pixelateSize === preset.intensity
+                                            : true);
+                                    return (
+                                        <button
+                                            key={preset.id}
+                                            type="button"
+                                            onClick={() => applyPreset(preset)}
+                                            className={`p-2.5 sm:p-3 rounded-2xl border text-left transition-all shrink-0 sm:shrink min-w-36 sm:min-w-0 cursor-pointer ${
+                                                isMatch
+                                                    ? "bg-rose-500/15 border-rose-500/50 shadow-md ring-1 ring-rose-500/30"
+                                                    : "bg-surface/60 border-border/60 hover:bg-surface hover:border-border"
+                                            }`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <span className="font-bold text-xs text-foreground">{preset.name}</span>
+                                                <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-surface border border-border text-foreground/60">
+                                                    {preset.badge}
+                                                </span>
+                                            </div>
+                                            <p className="text-[10px] sm:text-[11px] text-foreground/50 mt-1 line-clamp-1">
+                                                {preset.description}
+                                            </p>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* 2. Pilihan Alat & Pilihan Efek Sensor */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 pt-3 border-t border-border/40">
+                            {/* Alat Seleksi: Kotak vs Kuas */}
+                            <div className="space-y-1.5 sm:space-y-2">
+                                <label className="text-xs font-bold text-foreground/70 flex items-center gap-1.5">
+                                    <Layers className="w-3.5 h-3.5 text-sky-400" />
+                                    Bentuk Seleksi
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setToolMode("box")}
+                                        className={`p-2.5 sm:p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                                            toolMode === "box"
+                                                ? "bg-sky-500/15 border-sky-500 text-sky-400 shadow-sm"
+                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
+                                        }`}
+                                    >
+                                        <Square className="w-4 h-4" />
+                                        <span>Kotak (Box)</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setToolMode("brush")}
+                                        className={`p-2.5 sm:p-3 rounded-xl border flex items-center justify-center gap-2 text-xs font-bold transition-all cursor-pointer ${
+                                            toolMode === "brush"
+                                                ? "bg-sky-500/15 border-sky-500 text-sky-400 shadow-sm"
+                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
+                                        }`}
+                                    >
+                                        <Paintbrush className="w-4 h-4" />
+                                        <span>Kuas (Brush)</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Tipe Efek: Gaussian Blur vs Mosaik vs Hitam */}
+                            <div className="space-y-1.5 sm:space-y-2">
+                                <label className="text-xs font-bold text-foreground/70 flex items-center gap-1.5">
+                                    <Sliders className="w-3.5 h-3.5 text-rose-400" />
+                                    Gaya Efek Sensor
+                                </label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveEffect("blur")}
+                                        className={`p-2.5 sm:p-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${
+                                            activeEffect === "blur"
+                                                ? "bg-rose-500/15 border-rose-500 text-rose-400 shadow-sm"
+                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
+                                        }`}
+                                    >
+                                        <Sparkles className="w-4 h-4" />
+                                        <span>Blur</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveEffect("pixelate")}
+                                        className={`p-2.5 sm:p-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${
+                                            activeEffect === "pixelate"
+                                                ? "bg-amber-500/15 border-amber-500 text-amber-400 shadow-sm"
+                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
+                                        }`}
+                                    >
+                                        <Grid3X3 className="w-4 h-4" />
+                                        <span>Mosaik</span>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setActiveEffect("blackout")}
+                                        className={`p-2.5 sm:p-3 rounded-xl border flex flex-col items-center justify-center gap-1 text-xs font-bold transition-all cursor-pointer ${
+                                            activeEffect === "blackout"
+                                                ? "bg-purple-500/15 border-purple-500 text-purple-400 shadow-sm"
+                                                : "bg-surface border-border/60 text-foreground/70 hover:bg-surface-hover"
+                                        }`}
+                                    >
+                                        <ShieldAlert className="w-4 h-4" />
+                                        <span>Hitam</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. Slider Kontrol Parameter Efek & Ukuran Kuas */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 pt-3 border-t border-border/40">
+                            {/* Slider Efek Terpilih */}
+                            {activeEffect === "blur" && (
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between text-xs font-medium text-foreground/80">
+                                        <span>Kekuatan Blur (Radius)</span>
+                                        <span className="font-mono text-rose-400 font-bold">{blurIntensity} px</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={4}
+                                        max={50}
+                                        value={blurIntensity}
+                                        onChange={(e) => setBlurIntensity(Number(e.target.value))}
+                                        className="w-full accent-rose-500 cursor-pointer"
+                                    />
+                                    <div className="flex justify-between text-[10px] text-foreground/40">
+                                        <span>Samar (4px)</span>
+                                        <span>Kabur Pekat (50px)</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeEffect === "pixelate" && (
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between text-xs font-medium text-foreground/80">
+                                        <span>Ukuran Kotak Mosaik</span>
+                                        <span className="font-mono text-amber-400 font-bold">{pixelateSize} px</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={4}
+                                        max={36}
+                                        value={pixelateSize}
+                                        onChange={(e) => setPixelateSize(Number(e.target.value))}
+                                        className="w-full accent-amber-500 cursor-pointer"
+                                    />
+                                    <div className="flex justify-between text-[10px] text-foreground/40">
+                                        <span>Kecil Halus (4px)</span>
+                                        <span>Kotak Besar TV (36px)</span>
+                                    </div>
+                                </div>
+                            )}
+
+                            {activeEffect === "blackout" && (
+                                <div className="p-3 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300 flex items-center gap-2">
+                                    <Lock className="w-4 h-4 shrink-0" />
+                                    <span>Sensor Hitam Pekat menutup 100% piksel tanpa transparansi.</span>
+                                </div>
+                            )}
+
+                            {/* Slider Ukuran Kuas (Khusus mode Brush) */}
+                            {toolMode === "brush" ? (
+                                <div className="space-y-1.5">
+                                    <div className="flex justify-between text-xs font-medium text-foreground/80">
+                                        <span>Ketebalan Kuas (Brush Size)</span>
+                                        <span className="font-mono text-sky-400 font-bold">{brushSize} px</span>
+                                    </div>
+                                    <input
+                                        type="range"
+                                        min={10}
+                                        max={80}
+                                        value={brushSize}
+                                        onChange={(e) => setBrushSize(Number(e.target.value))}
+                                        className="w-full accent-sky-500 cursor-pointer"
+                                    />
+                                    <div className="flex justify-between text-[10px] text-foreground/40">
+                                        <span>Presisi (10px)</span>
+                                        <span>Sapu Lebar (80px)</span>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="p-3 rounded-xl bg-surface border border-border/60 text-xs text-foreground/60 flex items-center gap-2">
+                                    <Info className="w-4 h-4 text-sky-400 shrink-0" />
+                                    <span>Klik & seret kursor pada gambar untuk membuat kotak sensor.</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 

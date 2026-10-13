@@ -408,34 +408,45 @@ export default function ClientOrganizePdf() {
 
             {/* Step 2: Interactive Page Grid Editor */}
             {file && !isLoading && !resultBlob && (
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                     {/* Top Toolbar */}
-                    <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-border/80 flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                                <FileText className="w-5 h-5" />
+                    <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex items-center justify-between sm:justify-start gap-3 min-w-0">
+                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <div className="p-2 sm:p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20 shrink-0">
+                                    <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </div>
+                                <div className="min-w-0">
+                                    <h3 className="font-semibold text-foreground text-xs sm:text-base truncate max-w-40 sm:max-w-xs" title={file.name}>
+                                        {file.name}
+                                    </h3>
+                                    <p className="text-[11px] sm:text-xs text-foreground/50">
+                                        {(file.size / 1024 / 1024).toFixed(2)} MB • {pages.length} Halaman Aktif
+                                        {deletedPages.length > 0 && ` (${deletedPages.length} Dihapus)`}
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="font-semibold text-foreground text-sm sm:text-base truncate max-w-44 sm:max-w-xs" title={file.name}>
-                                    {file.name}
-                                </h3>
-                                <p className="text-xs text-foreground/50">
-                                    {(file.size / 1024 / 1024).toFixed(2)} MB • {pages.length} Halaman Aktif
-                                    {deletedPages.length > 0 && ` (${deletedPages.length} Dihapus)`}
-                                </p>
-                            </div>
+
+                            <button
+                                onClick={handleReset}
+                                className="sm:hidden px-2.5 py-1.5 rounded-xl text-xs font-medium text-foreground/60 hover:text-foreground hover:bg-surface border border-border/60 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                                title="Ganti File"
+                            >
+                                <ResetIcon className="w-3 h-3" />
+                                <span>Ganti</span>
+                            </button>
                         </div>
 
                         {/* Global Actions */}
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
                             {/* Undo deleted page */}
                             {deletedPages.length > 0 && (
                                 <button
                                     onClick={restoreLastDeletedPage}
-                                    className="px-3 py-1.5 rounded-xl text-xs font-medium text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+                                    className="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-medium text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/20 transition-colors flex items-center gap-1 sm:gap-1.5 cursor-pointer shrink-0"
                                     title="Pulihkan halaman yang baru dihapus"
                                 >
-                                    <Undo2 className="w-3.5 h-3.5" />
+                                    <Undo2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                     <span>Pulihkan ({deletedPages.length})</span>
                                 </button>
                             )}
@@ -443,26 +454,26 @@ export default function ClientOrganizePdf() {
                             {/* Rotate all CW */}
                             <button
                                 onClick={() => rotateAllPages(90)}
-                                className="px-3 py-1.5 rounded-xl text-xs font-medium bg-surface/80 hover:bg-surface border border-border/60 text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1.5 cursor-pointer"
+                                className="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-medium bg-surface/80 hover:bg-surface border border-border/60 text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1 sm:gap-1.5 cursor-pointer shrink-0"
                                 title="Putar semua halaman 90° searah jarum jam"
                             >
-                                <RotateCw className="w-3.5 h-3.5" />
+                                <RotateCw className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                 <span>Putar Semua +90°</span>
                             </button>
 
                             {/* Reverse page order */}
                             <button
                                 onClick={reversePageOrder}
-                                className="px-3 py-1.5 rounded-xl text-xs font-medium bg-surface/80 hover:bg-surface border border-border/60 text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1.5 cursor-pointer"
+                                className="px-2.5 sm:px-3 py-1.5 rounded-xl text-[11px] sm:text-xs font-medium bg-surface/80 hover:bg-surface border border-border/60 text-foreground/80 hover:text-foreground transition-colors flex items-center gap-1 sm:gap-1.5 cursor-pointer shrink-0"
                                 title="Balik urutan seluruh halaman (dari belakang ke depan)"
                             >
-                                <ArrowUpDown className="w-3.5 h-3.5" />
+                                <ArrowUpDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                                 <span>Balik Urutan</span>
                             </button>
 
                             <button
                                 onClick={handleReset}
-                                className="px-3 py-1.5 rounded-xl text-xs font-medium text-foreground/60 hover:text-foreground hover:bg-surface border border-border/60 transition-colors flex items-center gap-1.5 cursor-pointer ml-1"
+                                className="hidden sm:flex px-3 py-1.5 rounded-xl text-xs font-medium text-foreground/60 hover:text-foreground hover:bg-surface border border-border/60 transition-colors items-center gap-1.5 cursor-pointer ml-1 shrink-0"
                             >
                                 <ResetIcon className="w-3.5 h-3.5" />
                                 <span>Ganti File</span>
@@ -471,20 +482,20 @@ export default function ClientOrganizePdf() {
                     </div>
 
                     {/* Drag Hint Banner */}
-                    <div className="px-4 py-2.5 rounded-2xl bg-surface/60 border border-border/60 text-xs text-foreground/60 flex items-center justify-between">
+                    <div className="px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl bg-surface/60 border border-border/60 text-[11px] sm:text-xs text-foreground/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 sm:gap-2">
                         <div className="flex items-center gap-2">
-                            <GripVertical className="w-4 h-4 text-purple-400" />
+                            <GripVertical className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 shrink-0" />
                             <span>
                                 Tarik & lepas kartu halaman untuk mengubah urutan, atau gunakan tombol panah kiri/kanan pada tiap halaman.
                             </span>
                         </div>
-                        <span className="font-mono text-purple-400 text-[11px] font-semibold">
+                        <span className="font-mono text-purple-400 text-[10px] sm:text-[11px] font-semibold shrink-0">
                             Total: {pages.length} Halaman
                         </span>
                     </div>
 
                     {/* Page Grid Container */}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2.5 sm:gap-3.5 md:gap-4">
                         {pages.map((item, index) => {
                             const isBeingDragged = draggedIndex === index;
                             const isOver = dragOverIndex === index;
@@ -497,7 +508,7 @@ export default function ClientOrganizePdf() {
                                     onDragOver={(e) => handleDragOver(e, index)}
                                     onDrop={() => handleDrop(index)}
                                     onDragEnd={handleDragEnd}
-                                    className={`group relative glass-panel rounded-2xl border p-2.5 transition-all flex flex-col justify-between cursor-grab active:cursor-grabbing ${
+                                    className={`group relative glass-panel rounded-2xl border p-2 sm:p-2.5 transition-all flex flex-col justify-between cursor-grab active:cursor-grabbing ${
                                         isBeingDragged
                                             ? "opacity-30 scale-95 border-purple-500"
                                             : isOver
@@ -506,13 +517,13 @@ export default function ClientOrganizePdf() {
                                     }`}
                                 >
                                     {/* Card Header (Order Badge & Quick Actions) */}
-                                    <div className="flex items-center justify-between gap-1 mb-2">
-                                        <div className="flex items-center gap-1.5">
-                                            <span className="w-6 h-6 rounded-lg bg-purple-600 text-white text-xs font-bold flex items-center justify-center shadow-xs">
+                                    <div className="flex items-center justify-between gap-1 mb-1.5 sm:mb-2">
+                                        <div className="flex items-center gap-1 sm:gap-1.5">
+                                            <span className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-purple-600 text-white text-[11px] sm:text-xs font-bold flex items-center justify-center shadow-xs">
                                                 {index + 1}
                                             </span>
                                             {item.displayNumber !== index + 1 && (
-                                                <span className="text-[10px] text-foreground/40 font-mono">
+                                                <span className="text-[9px] sm:text-[10px] text-foreground/40 font-mono">
                                                     (Asli: {item.displayNumber})
                                                 </span>
                                             )}
@@ -529,7 +540,7 @@ export default function ClientOrganizePdf() {
                                                     totalPages: pages.length
                                                 });
                                             }}
-                                            className="p-1 rounded-md text-foreground/40 hover:text-purple-400 hover:bg-surface transition-colors cursor-pointer"
+                                            className="p-1 sm:p-1.5 rounded-md text-foreground/40 hover:text-purple-400 hover:bg-surface transition-colors cursor-pointer"
                                             title="Perbesar Pratinjau Halaman"
                                         >
                                             <ZoomIn className="w-3.5 h-3.5" />
@@ -537,7 +548,7 @@ export default function ClientOrganizePdf() {
                                     </div>
 
                                     {/* Thumbnail Preview Image with Rotation */}
-                                    <div className="relative aspect-3/4 rounded-xl overflow-hidden bg-black/30 border border-border/50 flex items-center justify-center p-1 my-1">
+                                    <div className="relative aspect-3/4 rounded-xl overflow-hidden bg-black/30 border border-border/50 flex items-center justify-center p-1 my-0.5 sm:my-1">
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img
                                             src={item.thumbnailUrl}
@@ -551,14 +562,14 @@ export default function ClientOrganizePdf() {
                                         />
 
                                         {item.rotation !== 0 && (
-                                            <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded-xs bg-black/80 text-[9px] font-mono text-purple-300 border border-purple-500/30">
+                                            <div className="absolute bottom-1 right-1 sm:bottom-1.5 sm:right-1.5 px-1 sm:px-1.5 py-0.5 rounded-xs bg-black/80 text-[8px] sm:text-[9px] font-mono text-purple-300 border border-purple-500/30">
                                                 {item.rotation}°
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Bottom Control Actions */}
-                                    <div className="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-border/40">
+                                    <div className="grid grid-cols-4 gap-1 mt-1.5 sm:mt-2 pt-1.5 sm:pt-2 border-t border-border/40">
                                         {/* Move Left */}
                                         <button
                                             onClick={(e) => {
@@ -566,7 +577,7 @@ export default function ClientOrganizePdf() {
                                                 movePage(index, "left");
                                             }}
                                             disabled={index === 0}
-                                            className="p-1.5 rounded-lg bg-surface/60 hover:bg-surface disabled:opacity-20 text-foreground/70 hover:text-foreground flex items-center justify-center transition-colors cursor-pointer disabled:cursor-not-allowed"
+                                            className="h-8 sm:h-7 rounded-lg bg-surface/60 hover:bg-surface disabled:opacity-20 text-foreground/70 hover:text-foreground flex items-center justify-center transition-colors cursor-pointer disabled:cursor-not-allowed"
                                             title="Geser ke kiri / maju"
                                         >
                                             <MoveLeft className="w-3.5 h-3.5" />
@@ -578,7 +589,7 @@ export default function ClientOrganizePdf() {
                                                 e.stopPropagation();
                                                 rotatePage(index);
                                             }}
-                                            className="p-1.5 rounded-lg bg-surface/60 hover:bg-purple-500/20 text-foreground/70 hover:text-purple-300 flex items-center justify-center transition-colors cursor-pointer"
+                                            className="h-8 sm:h-7 rounded-lg bg-surface/60 hover:bg-purple-500/20 text-foreground/70 hover:text-purple-300 flex items-center justify-center transition-colors cursor-pointer"
                                             title="Putar 90° searah jarum jam"
                                         >
                                             <RotateCw className="w-3.5 h-3.5" />
@@ -590,7 +601,7 @@ export default function ClientOrganizePdf() {
                                                 e.stopPropagation();
                                                 duplicatePage(index);
                                             }}
-                                            className="p-1.5 rounded-lg bg-surface/60 hover:bg-surface text-foreground/70 hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
+                                            className="h-8 sm:h-7 rounded-lg bg-surface/60 hover:bg-surface text-foreground/70 hover:text-foreground flex items-center justify-center transition-colors cursor-pointer"
                                             title="Duplikat / salin halaman ini"
                                         >
                                             <Copy className="w-3.5 h-3.5" />
@@ -602,7 +613,7 @@ export default function ClientOrganizePdf() {
                                                 e.stopPropagation();
                                                 deletePage(index);
                                             }}
-                                            className="p-1.5 rounded-lg bg-surface/60 hover:bg-rose-500/20 text-foreground/70 hover:text-rose-400 flex items-center justify-center transition-colors cursor-pointer"
+                                            className="h-8 sm:h-7 rounded-lg bg-surface/60 hover:bg-rose-500/20 text-foreground/70 hover:text-rose-400 flex items-center justify-center transition-colors cursor-pointer"
                                             title="Hapus halaman ini"
                                         >
                                             <Trash2 className="w-3.5 h-3.5" />
@@ -614,20 +625,20 @@ export default function ClientOrganizePdf() {
                     </div>
 
                     {/* Bottom Save Action Bar */}
-                    <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-border/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-border/80 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
                         <div className="space-y-1 text-center sm:text-left">
                             <div className="flex items-center gap-2 justify-center sm:justify-start">
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                                <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20">
                                     <FileStack className="w-3.5 h-3.5" />
                                     {pages.length} Halaman Siap Disimpan
                                 </span>
                                 {deletedPages.length > 0 && (
                                     <span className="text-xs text-foreground/50">
-                                        ({deletedPages.length} halaman dibuang)
+                                        ({deletedPages.length} dibuang)
                                     </span>
                                 )}
                             </div>
-                            <p className="text-xs text-foreground/60">
+                            <p className="text-[11px] sm:text-xs text-foreground/60">
                                 Dokumen baru akan dirakit sesuai urutan dan orientasi yang Anda tetapkan.
                             </p>
                         </div>
@@ -635,7 +646,7 @@ export default function ClientOrganizePdf() {
                         <button
                             onClick={saveOrganizedPdf}
                             disabled={pages.length === 0 || isSaving}
-                            className="w-full sm:w-auto px-6 py-3.5 rounded-2xl font-bold text-sm bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                            className="w-full sm:w-auto px-5 sm:px-6 py-3 sm:py-3.5 rounded-2xl font-bold text-xs sm:text-sm bg-purple-600 hover:bg-purple-500 disabled:opacity-40 text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                         >
                             {isSaving ? (
                                 <>
@@ -655,47 +666,49 @@ export default function ClientOrganizePdf() {
 
             {/* Step 3: Success & Download State */}
             {resultBlob && (
-                <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-border/80 space-y-6 animate-in fade-in duration-300">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-border/60">
-                        <div className="flex items-center gap-4 text-center sm:text-left">
-                            <div className="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0 mx-auto sm:mx-0">
-                                <CheckCircle2 className="w-7 h-7" />
+                <div className="glass-panel p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-border/80 space-y-4 sm:space-y-6 animate-in fade-in duration-300">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pb-4 sm:pb-6 border-b border-border/60">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+                                <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7" />
                             </div>
-                            <div>
-                                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-semibold mb-1">
+                            <div className="min-w-0">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20 text-[11px] sm:text-xs font-semibold mb-1">
                                     <Sparkles className="w-3.5 h-3.5" />
                                     PDF Berhasil Dikelola!
                                 </div>
-                                <h3 className="text-xl font-bold text-foreground truncate max-w-sm sm:max-w-md">
+                                <h3 className="text-base sm:text-xl font-bold text-foreground truncate max-w-xs sm:max-w-md">
                                     {resultFileName}
                                 </h3>
-                                <p className="text-xs text-foreground/60 mt-0.5">
+                                <p className="text-[11px] sm:text-xs text-foreground/60 mt-0.5">
                                     Total: {pages.length} Halaman • Ukuran: {(resultSize / 1024 / 1024).toFixed(2)} MB
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
                             <button
                                 onClick={handleDownload}
-                                className="flex-1 sm:flex-initial px-6 py-3 rounded-2xl font-bold text-sm bg-purple-600 hover:bg-purple-500 text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-sm bg-purple-600 hover:bg-purple-500 text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <Download className="w-4 h-4" />
                                 <span>Unduh PDF Baru</span>
                             </button>
-                            <button
-                                onClick={() => setResultBlob(null)}
-                                className="px-4 py-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-xs font-semibold text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
-                            >
-                                Atur Lagi
-                            </button>
-                            <button
-                                onClick={handleReset}
-                                className="p-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-foreground/70 hover:text-foreground transition-colors"
-                                title="Kelola Dokumen Lain"
-                            >
-                                <ResetIcon className="w-5 h-5" />
-                            </button>
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
+                                <button
+                                    onClick={() => setResultBlob(null)}
+                                    className="flex-1 sm:flex-initial px-4 py-2.5 sm:py-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-xs font-semibold text-foreground/80 hover:text-foreground transition-colors cursor-pointer text-center"
+                                >
+                                    Atur Lagi
+                                </button>
+                                <button
+                                    onClick={handleReset}
+                                    className="p-2.5 sm:p-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+                                    title="Kelola Dokumen Lain"
+                                >
+                                    <ResetIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </button>
+                            </div>
                         </div>
                     </div>
 

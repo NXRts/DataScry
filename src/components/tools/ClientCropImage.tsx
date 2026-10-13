@@ -546,44 +546,44 @@ export default function ClientCropImage() {
 
             {/* Step 2: Interactive Cropper State */}
             {imageSrc && !resultBlob && (
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 items-start">
                     {/* Left: Interactive Canvas Viewport (8 Cols) */}
-                    <div className="lg:col-span-8 space-y-4">
+                    <div className="lg:col-span-8 space-y-3 sm:space-y-4">
                         {/* Editor Header Toolbar */}
-                        <div className="glass-panel p-4 rounded-2xl border border-border/80 flex flex-wrap items-center justify-between gap-3">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <div className="glass-panel p-3 sm:p-4 rounded-2xl border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <div className="p-1.5 sm:p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
                                     <ImageIcon className="w-4 h-4" />
                                 </div>
-                                <div>
+                                <div className="min-w-0">
                                     <h4 className="font-semibold text-xs sm:text-sm text-foreground truncate max-w-44 sm:max-w-xs" title={file?.name}>
                                         {file?.name}
                                     </h4>
-                                    <p className="text-[11px] text-foreground/50">
+                                    <p className="text-[10px] sm:text-[11px] text-foreground/50">
                                         Asli: {naturalSize.width} × {naturalSize.height} px
                                     </p>
                                 </div>
                             </div>
 
                             {/* Rotation & Flip Controls */}
-                            <div className="flex items-center gap-1.5">
+                            <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-0.5 sm:pb-0 no-scrollbar">
                                 <button
                                     onClick={rotateCounterClockwise}
-                                    className="p-2 rounded-xl bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70 hover:text-foreground transition-colors"
+                                    className="p-1.5 sm:p-2 rounded-xl bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70 hover:text-foreground transition-colors cursor-pointer shrink-0"
                                     title="Putar 90° Berlawanan Arah Jarum Jam"
                                 >
                                     <RotateCcw className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={rotateClockwise}
-                                    className="p-2 rounded-xl bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70 hover:text-foreground transition-colors"
+                                    className="p-1.5 sm:p-2 rounded-xl bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70 hover:text-foreground transition-colors cursor-pointer shrink-0"
                                     title="Putar 90° Searah Jarum Jam"
                                 >
                                     <RotateCw className="w-4 h-4" />
                                 </button>
                                 <button
                                     onClick={() => setFlipH((prev) => !prev)}
-                                    className={`p-2 rounded-xl border transition-colors ${
+                                    className={`p-1.5 sm:p-2 rounded-xl border transition-colors cursor-pointer shrink-0 ${
                                         flipH
                                             ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
                                             : "bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70"
@@ -594,7 +594,7 @@ export default function ClientCropImage() {
                                 </button>
                                 <button
                                     onClick={() => setFlipV((prev) => !prev)}
-                                    className={`p-2 rounded-xl border transition-colors ${
+                                    className={`p-1.5 sm:p-2 rounded-xl border transition-colors cursor-pointer shrink-0 ${
                                         flipV
                                             ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
                                             : "bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70"
@@ -605,7 +605,7 @@ export default function ClientCropImage() {
                                 </button>
                                 <button
                                     onClick={() => setShowGrid((prev) => !prev)}
-                                    className={`p-2 rounded-xl border transition-colors ${
+                                    className={`p-1.5 sm:p-2 rounded-xl border transition-colors cursor-pointer shrink-0 ${
                                         showGrid
                                             ? "bg-emerald-500/20 border-emerald-500/40 text-emerald-400"
                                             : "bg-surface/80 hover:bg-surface border border-border/60 text-foreground/70"
@@ -616,7 +616,7 @@ export default function ClientCropImage() {
                                 </button>
                                 <button
                                     onClick={handleReset}
-                                    className="p-2 rounded-xl bg-surface/80 hover:bg-surface border border-border/60 text-foreground/50 hover:text-foreground transition-colors ml-1"
+                                    className="p-1.5 sm:p-2 rounded-xl bg-surface/80 hover:bg-surface border border-border/60 text-foreground/50 hover:text-foreground transition-colors ml-0.5 sm:ml-1 cursor-pointer shrink-0"
                                     title="Ganti Foto"
                                 >
                                     <ResetIcon className="w-4 h-4" />
@@ -625,13 +625,13 @@ export default function ClientCropImage() {
                         </div>
 
                         {/* Visual Interactive Viewport */}
-                        <div className="glass-panel p-4 sm:p-6 rounded-3xl border border-border/80 flex items-center justify-center bg-black/40 min-h-110 overflow-hidden select-none">
+                        <div className="glass-panel p-2.5 sm:p-6 rounded-2xl sm:rounded-3xl border border-border/80 flex items-center justify-center bg-black/40 min-h-70 sm:min-h-100 lg:min-h-110 overflow-hidden select-none">
                             <div
                                 ref={imageContainerRef}
                                 onPointerMove={handlePointerMove}
                                 onPointerUp={handlePointerUp}
                                 onPointerCancel={handlePointerUp}
-                                className="relative max-w-full max-h-125 flex items-center justify-center overflow-hidden touch-none rounded-xl border border-border/50"
+                                className="relative max-w-full max-h-80 sm:max-h-110 lg:max-h-125 flex items-center justify-center overflow-hidden touch-none rounded-xl border border-border/50"
                             >
                                 {/* Base Image */}
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -643,7 +643,7 @@ export default function ClientCropImage() {
                                         transform: `rotate(${rotation}deg) scale(${flipH ? -1 : 1}, ${flipV ? -1 : 1})`,
                                         transition: "transform 0.15s ease-out"
                                     }}
-                                    className="max-w-full max-h-125 object-contain pointer-events-none block"
+                                    className="max-w-full max-h-80 sm:max-h-110 lg:max-h-125 object-contain pointer-events-none block"
                                     draggable={false}
                                 />
 
@@ -753,27 +753,27 @@ export default function ClientCropImage() {
                     </div>
 
                     {/* Right: Settings & Presets Panel (4 Cols) */}
-                    <div className="lg:col-span-4 space-y-6">
+                    <div className="lg:col-span-4 space-y-4 sm:space-y-6">
                         {/* Aspect Ratio Presets */}
-                        <div className="glass-panel p-5 rounded-3xl border border-border/80 space-y-4">
+                        <div className="glass-panel p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-border/80 space-y-3 sm:space-y-4">
                             <div className="flex items-center justify-between">
-                                <h3 className="font-bold text-sm text-foreground flex items-center gap-2">
+                                <h3 className="font-bold text-xs sm:text-sm text-foreground flex items-center gap-1.5 sm:gap-2">
                                     <Crop className="w-4 h-4 text-emerald-400" />
                                     Preset Rasio & Pas Foto
                                 </h3>
-                                <span className="text-[11px] font-mono text-emerald-400 font-semibold">
+                                <span className="text-[10px] sm:text-[11px] font-mono text-emerald-400 font-semibold">
                                     {currentPreset.label}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2">
+                            <div className="flex sm:grid sm:grid-cols-2 gap-2 overflow-x-auto pb-1 sm:pb-0 no-scrollbar">
                                 {RATIO_PRESETS.map((preset) => {
                                     const isSelected = selectedPresetId === preset.id;
                                     return (
                                         <button
                                             key={preset.id}
                                             onClick={() => handlePresetChange(preset.id)}
-                                            className={`p-2.5 rounded-xl text-left border transition-all flex flex-col justify-between cursor-pointer ${
+                                            className={`p-2.5 rounded-xl text-left border transition-all flex flex-col justify-between cursor-pointer shrink-0 sm:shrink min-w-32.5 sm:min-w-0 ${
                                                 isSelected
                                                     ? "bg-emerald-500/15 border-emerald-500/60 text-foreground shadow-sm"
                                                     : "bg-surface/60 border-border/50 text-foreground/70 hover:bg-surface hover:text-foreground"
@@ -975,50 +975,52 @@ export default function ClientCropImage() {
 
             {/* Step 3: Success & Download State */}
             {resultBlob && resultUrl && (
-                <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-border/80 space-y-6 animate-in fade-in duration-300">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-border/60">
-                        <div className="flex items-center gap-4 text-center sm:text-left">
-                            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 mx-auto sm:mx-0">
-                                <CheckCircle2 className="w-7 h-7" />
+                <div className="glass-panel p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-border/80 space-y-5 sm:space-y-6 animate-in fade-in duration-300">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 pb-5 sm:pb-6 border-b border-border/60">
+                        <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-center sm:text-left">
+                            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 mx-auto sm:mx-0">
+                                <CheckCircle2 className="w-6 h-6 sm:w-7 sm:h-7" />
                             </div>
-                            <div>
-                                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold mb-1">
+                            <div className="min-w-0">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] sm:text-xs font-semibold mb-1">
                                     <Sparkles className="w-3.5 h-3.5" />
                                     Foto Berhasil Dipotong!
                                 </div>
-                                <h3 className="text-xl font-bold text-foreground truncate max-w-sm sm:max-w-md">
+                                <h3 className="text-base sm:text-xl font-bold text-foreground truncate max-w-xs sm:max-w-md">
                                     {resultFileName}
                                 </h3>
-                                <p className="text-xs text-foreground/60 mt-0.5">
+                                <p className="text-[11px] sm:text-xs text-foreground/60 mt-0.5">
                                     Dimensi: {resultDimensions.width} × {resultDimensions.height} px • Ukuran: {(resultBlob.size / 1024).toFixed(1)} KB
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
                             <button
                                 onClick={handleDownload}
-                                className="flex-1 sm:flex-initial px-6 py-3 rounded-2xl font-bold text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                                className="w-full sm:w-auto px-6 py-2.5 sm:py-3 rounded-2xl font-bold text-xs sm:text-sm bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <Download className="w-4 h-4" />
                                 <span>Unduh Foto</span>
                             </button>
-                            <button
-                                onClick={() => {
-                                    setResultBlob(null);
-                                    setResultUrl(null);
-                                }}
-                                className="px-4 py-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-xs font-semibold text-foreground/80 hover:text-foreground transition-colors cursor-pointer"
-                            >
-                                Atur Ulang Crop
-                            </button>
-                            <button
-                                onClick={handleReset}
-                                className="p-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-foreground/70 hover:text-foreground transition-colors"
-                                title="Pilih Foto Lain"
-                            >
-                                <ResetIcon className="w-5 h-5" />
-                            </button>
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
+                                <button
+                                    onClick={() => {
+                                        setResultBlob(null);
+                                        setResultUrl(null);
+                                    }}
+                                    className="flex-1 sm:flex-initial px-4 py-2.5 sm:py-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-xs font-semibold text-foreground/80 hover:text-foreground transition-colors cursor-pointer text-center"
+                                >
+                                    Atur Ulang
+                                </button>
+                                <button
+                                    onClick={handleReset}
+                                    className="p-2.5 sm:p-3 rounded-2xl bg-surface hover:bg-surface/80 border border-border/60 text-foreground/70 hover:text-foreground transition-colors cursor-pointer"
+                                    title="Pilih Foto Lain"
+                                >
+                                    <ResetIcon className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </button>
+                            </div>
                         </div>
                     </div>
 

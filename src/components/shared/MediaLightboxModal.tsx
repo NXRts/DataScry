@@ -244,14 +244,14 @@ export default function MediaLightboxModal({
         >
             <div className="relative w-full max-w-5xl bg-neutral-900/95 border border-border/80 rounded-3xl shadow-2xl flex flex-col overflow-hidden max-h-[94vh]">
                 {/* Header Lightbox */}
-                <div className="p-3 sm:p-4 sm:px-6 border-b border-border/50 flex items-center justify-between gap-2 sm:gap-4">
-                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <div className="p-2.5 sm:p-4 sm:px-6 border-b border-border/50 flex items-center justify-between gap-1.5 sm:gap-4">
+                    <div className="flex items-center gap-1.5 sm:gap-3 min-w-0">
                         {item.pageNumber && (
-                            <span className={`px-2.5 py-1 rounded-lg text-xs font-bold border shrink-0 ${theme.badge}`}>
-                                Hal {item.pageNumber}{item.totalPages ? ` dari ${item.totalPages}` : ""}
+                            <span className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[10px] sm:text-xs font-bold border shrink-0 ${theme.badge}`}>
+                                Hal {item.pageNumber}{item.totalPages ? `/${item.totalPages}` : ""}
                             </span>
                         )}
-                        <span className="text-xs sm:text-sm font-semibold text-foreground truncate max-w-36 sm:max-w-xs md:max-w-md">
+                        <span className="text-xs sm:text-sm font-semibold text-foreground truncate max-w-28 sm:max-w-xs md:max-w-md">
                             {item.title}
                         </span>
                         {item.width && item.height && (

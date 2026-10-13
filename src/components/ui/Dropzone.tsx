@@ -56,8 +56,8 @@ export default function Dropzone({
 
     return (
         <div
-            className={`relative group w-full p-6 md:p-16 rounded-3xl border-2 border-dashed transition-all duration-300 ${isDragActive
-                ? "border-primary bg-primary/5 scale-[1.02]"
+            className={`relative group w-full p-4 sm:p-8 md:p-14 rounded-2xl sm:rounded-3xl border-2 border-dashed transition-all duration-300 ${isDragActive
+                ? "border-primary bg-primary/5 scale-[1.01]"
                 : "border-border hover:border-primary/50 hover:bg-surface/50 glass-panel"
                 }`}
             onDragEnter={handleDragEnter}
@@ -73,43 +73,43 @@ export default function Dropzone({
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
             />
 
-            <div className="flex flex-col items-center justify-center text-center space-y-6">
+            <div className="flex flex-col items-center justify-center text-center space-y-3 sm:space-y-5 md:space-y-6">
                 <div
-                    className={`w-20 h-20 rounded-2xl flex items-center justify-center transition-colors duration-300 ${isDragActive
+                    className={`w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center transition-colors duration-300 ${isDragActive
                         ? "bg-primary text-white"
-                        : "bg-surface shadow-sm text-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                        : "bg-surface shadow-xs sm:shadow-sm text-foreground group-hover:bg-primary/10 group-hover:text-primary"
                         }`}
                 >
-                    <UploadCloud className="w-10 h-10" />
+                    <UploadCloud className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10" />
                 </div>
 
-                <div className="space-y-1.5 sm:space-y-2">
-                    <h3 className="text-lg sm:text-2xl font-bold tracking-tight px-2">
+                <div className="space-y-1 sm:space-y-2">
+                    <h3 className="text-base sm:text-xl md:text-2xl font-bold tracking-tight px-2">
                         <span className="sm:hidden">Ketuk untuk Memilih Berkas</span>
                         <span className="hidden sm:inline">{title}</span>
                     </h3>
-                    <p className="text-foreground/60 max-w-sm mx-auto text-xs sm:text-sm px-2 leading-relaxed">
+                    <p className="text-foreground/60 max-w-sm mx-auto text-[11px] sm:text-xs md:text-sm px-2 leading-relaxed">
                         {description}
                     </p>
-                    <div className="pt-1 sm:hidden">
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20">
+                    <div className="pt-0.5 sm:hidden">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20">
                             Pilih dari Galeri / Berkas
                         </span>
                     </div>
                 </div>
 
                 {icons ? (
-                    <div className="flex items-center gap-4 text-sm font-medium text-foreground/50">
+                    <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-medium text-foreground/50">
                         {icons}
                     </div>
                 ) : (
-                    <div className="flex items-center gap-4 text-sm font-medium text-foreground/50">
+                    <div className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-medium text-foreground/50">
                         <div className="flex items-center gap-1.5">
-                            <ImageIcon size={16} /> Photos
+                            <ImageIcon size={14} className="sm:w-4 sm:h-4" /> Photos
                         </div>
                         <div className="w-1 h-1 rounded-full bg-border" />
                         <div className="flex items-center gap-1.5">
-                            <File size={16} /> PDFs
+                            <File size={14} className="sm:w-4 sm:h-4" /> PDFs
                         </div>
                     </div>
                 )}

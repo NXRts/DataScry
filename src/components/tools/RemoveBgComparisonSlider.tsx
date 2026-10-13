@@ -97,7 +97,7 @@ export default function RemoveBgComparisonSlider({
             <img
                 src={resultUrl}
                 alt={`${altText} - Sesudah`}
-                className="w-full h-auto max-h-137.5 object-contain block relative z-10 pointer-events-none rounded-none"
+                className="w-full h-auto max-h-75 sm:max-h-110 lg:max-h-137.5 object-contain block relative z-10 pointer-events-none rounded-none"
             />
 
             {/* Layer 3: Original Image Overlaid (Clipped to slider position) */}
@@ -111,19 +111,19 @@ export default function RemoveBgComparisonSlider({
                 <img
                     src={originalUrl}
                     alt={`${altText} - Sebelum`}
-                    className="w-full h-auto max-h-137.5 object-contain block relative z-10 rounded-none"
+                    className="w-full h-auto max-h-75 sm:max-h-110 lg:max-h-137.5 object-contain block relative z-10 rounded-none"
                 />
 
                 {/* Badge Label "Asli" */}
-                <div className="absolute top-4 left-4 z-30 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[11px] font-bold tracking-wider uppercase text-white flex items-center gap-1.5 shadow-lg">
-                    <ImageIcon className="w-3.5 h-3.5 text-neutral-400" />
+                <div className="absolute top-2.5 sm:top-4 left-2.5 sm:left-4 z-30 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-white flex items-center gap-1 sm:gap-1.5 shadow-lg">
+                    <ImageIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-neutral-400" />
                     <span>Foto Asli</span>
                 </div>
             </div>
 
             {/* Badge Label "Hasil Cutout" */}
-            <div className="absolute top-4 right-4 z-30 px-3 py-1 rounded-full bg-emerald-500/80 backdrop-blur-md border border-emerald-400/40 text-[11px] font-bold tracking-wider uppercase text-white flex items-center gap-1.5 shadow-lg pointer-events-none">
-                <Sparkles className="w-3.5 h-3.5 text-emerald-200" />
+            <div className="absolute top-2.5 sm:top-4 right-2.5 sm:right-4 z-30 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-emerald-500/80 backdrop-blur-md border border-emerald-400/40 text-[10px] sm:text-[11px] font-bold tracking-wider uppercase text-white flex items-center gap-1 sm:gap-1.5 shadow-lg pointer-events-none">
+                <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-200" />
                 <span>Tanpa Latar (HD)</span>
             </div>
 
@@ -139,8 +139,8 @@ export default function RemoveBgComparisonSlider({
                 <div className="w-0.5 h-full bg-white shadow-[0_0_8px_rgba(0,0,0,0.8)]" />
 
                 {/* Draggable Circle Knob */}
-                <div className="absolute w-10 h-10 -ml-px rounded-full bg-white/95 backdrop-blur-md shadow-2xl border-2 border-emerald-500 flex items-center justify-center text-emerald-700 transition-transform group-hover:scale-110 active:scale-95">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                <div className="absolute w-8 h-8 sm:w-10 sm:h-10 -ml-px rounded-full bg-white/95 backdrop-blur-md shadow-2xl border-2 border-emerald-500 flex items-center justify-center text-emerald-700 transition-transform group-hover:scale-110 active:scale-95">
+                    <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" viewBox="0 0 24 24">
                         <path d="M8.5 7l-5 5 5 5V7zm7 0v10l5-5-5-5z" />
                     </svg>
                 </div>
