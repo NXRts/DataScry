@@ -21,7 +21,8 @@ import {
     Check,
     FolderOpen,
     Info,
-    Eye
+    Eye,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
@@ -37,6 +38,7 @@ interface CompressFileItem {
     compressedSize?: number;
     compressedBlob?: Blob;
     errorMsg?: string;
+    customFileName?: string;
 }
 
 export default function ClientCompress() {
@@ -46,22 +48,50 @@ export default function ClientCompress() {
     const [isProcessingAll, setIsProcessingAll] = useState(false);
     const [lightboxItem, setLightboxItem] = useState<LightboxItem | null>(null);
     const [activePdfPreview, setActivePdfPreview] = useState<{ blob: Blob; fileName: string } | null>(null);
+    const [singleCustomName, setSingleCustomName] = useState<string>("");
+    const [customZipName, setCustomZipName] = useState<string>("DataScry-Kompresi");
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const getFinalSingleFileName = (item: CompressFileItem) => {
+        const nameParts = item.file.name.split('.');
+        const ext = nameParts.length > 1 ? nameParts.pop() : "";
+        const defaultBase = `${nameParts.join('.')}-terkompres`;
+
+        let chosen = "";
+        if (files.length === 1 && singleCustomName) {
+            chosen = singleCustomName;
+        } else if (item.customFileName) {
+            chosen = item.customFileName;
+        } else {
+            chosen = defaultBase;
+        }
+
+        const clean = chosen.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || defaultBase;
+        return ext ? (baseName.endsWith(`.${ext}`) ? baseName : `${baseName}.${ext}`) : baseName;
+    };
+
+    const getFinalZipName = () => {
+        const clean = customZipName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "DataScry-Kompresi";
+        return baseName.endsWith(".zip") ? baseName : `${baseName}.zip`;
+    };
 
     const handlePreview = (item: CompressFileItem) => {
         const isPdf = item.file.type === "application/pdf";
         const targetBlob = item.compressedBlob || item.file;
+        const finalName = getFinalSingleFileName(item);
 
         if (isPdf) {
             setActivePdfPreview({
                 blob: targetBlob,
-                fileName: item.file.name
+                fileName: finalName
             });
         } else {
             const previewUrl = URL.createObjectURL(targetBlob);
             setLightboxItem({
                 url: previewUrl,
-                title: `${item.file.name} ${item.compressedSize ? "(Hasil Kompresi)" : "(Asli)"}`,
+                title: `${finalName} ${item.compressedSize ? "(Hasil Kompresi)" : "(Asli)"}`,
                 size: item.compressedSize || item.originalSize,
                 aspectRatio: item.file.type.replace("image/", "").toUpperCase()
             });
@@ -69,18 +99,35 @@ export default function ClientCompress() {
     };
 
     const handleFilesAccepted = (acceptedFiles: File[]) => {
-        const newItems: CompressFileItem[] = acceptedFiles.map(file => ({
-            id: `${file.name}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-            file,
-            status: "idle",
-            progress: 0,
-            originalSize: file.size,
-        }));
+        const newItems: CompressFileItem[] = acceptedFiles.map(file => {
+            const rawBase = file.name.replace(/\.[^/.]+$/, "");
+            const clean = rawBase.replace(/[/\\?%*:|"<>]/g, "").trim();
+            return {
+                id: `${file.name}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+                file,
+                status: "idle",
+                progress: 0,
+                originalSize: file.size,
+                customFileName: clean ? `${clean}-terkompres` : "file-terkompres",
+            };
+        });
+
+        if (files.length === 0 && acceptedFiles.length === 1) {
+            const rawBase = acceptedFiles[0].name.replace(/\.[^/.]+$/, "");
+            const clean = rawBase.replace(/[/\\?%*:|"<>]/g, "").trim();
+            setSingleCustomName(clean ? `${clean}-terkompres` : "file-terkompres");
+            setCustomZipName(clean ? `${clean}-kompresi` : "DataScry-Kompresi");
+        } else if (files.length === 0 && acceptedFiles.length > 1) {
+            setCustomZipName("DataScry-Kompresi");
+        }
+
         setFiles(prev => [...prev, ...newItems]);
     };
 
     const handleClearAll = () => {
         setFiles([]);
+        setSingleCustomName("");
+        setCustomZipName("DataScry-Kompresi");
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
@@ -187,10 +234,7 @@ export default function ClientCompress() {
         const url = URL.createObjectURL(item.compressedBlob);
         const a = document.createElement("a");
         a.href = url;
-        const nameParts = item.file.name.split('.');
-        const ext = nameParts.pop();
-        const baseName = nameParts.join('.');
-        a.download = `${baseName}-terkompres.${ext}`;
+        a.download = getFinalSingleFileName(item);
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -209,10 +253,7 @@ export default function ClientCompress() {
         const zip = new JSZip();
         successFiles.forEach(item => {
             if (item.compressedBlob) {
-                const nameParts = item.file.name.split('.');
-                const ext = nameParts.pop();
-                const baseName = nameParts.join('.');
-                zip.file(`${baseName}-terkompres.${ext}`, item.compressedBlob);
+                zip.file(getFinalSingleFileName(item), item.compressedBlob);
             }
         });
 
@@ -220,7 +261,7 @@ export default function ClientCompress() {
         const url = URL.createObjectURL(zipBlob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `DataScry-Kompresi-${Date.now()}.zip`;
+        a.download = getFinalZipName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -501,6 +542,39 @@ export default function ClientCompress() {
                         </div>
                     </div>
 
+                    {/* Panel Kustomisasi Nama File / ZIP */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-surface/70 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
+                        <div className="space-y-1">
+                            <label className="text-xs font-bold text-foreground/80 flex items-center gap-1.5 uppercase tracking-wide">
+                                <PenLine className="w-3.5 h-3.5 text-blue-500" />
+                                <span>{files.length === 1 ? "Nama Berkas Hasil Kompresi" : "Nama Paket Arsip Unduhan (ZIP)"}</span>
+                            </label>
+                            <p className="text-[11px] text-foreground/50">
+                                {files.length === 1
+                                    ? "Sesuaikan nama berkas hasil kompresi sebelum atau sesudah diunduh."
+                                    : "Nama berkas .zip jika Anda mengunduh seluruh berkas sekaligus."}
+                            </p>
+                        </div>
+                        <div className="relative flex items-center w-full sm:max-w-xs">
+                            <input
+                                type="text"
+                                value={files.length === 1 ? singleCustomName : customZipName}
+                                onChange={(e) => {
+                                    if (files.length === 1) {
+                                        setSingleCustomName(e.target.value);
+                                    } else {
+                                        setCustomZipName(e.target.value);
+                                    }
+                                }}
+                                placeholder={files.length === 1 ? "nama-terkompres" : "DataScry-Kompresi"}
+                                className="w-full px-3.5 py-2 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-blue-500/80 focus:outline-hidden text-foreground font-semibold shadow-inner"
+                            />
+                            <span className="absolute right-3.5 text-xs font-bold text-blue-400 pointer-events-none select-none">
+                                .{files.length === 1 ? (files[0].file.name.split('.').pop() || "pdf") : "zip"}
+                            </span>
+                        </div>
+                    </div>
+
                     {/* Files List Table / Cards */}
                     <div className="glass-panel overflow-hidden rounded-2xl border border-border/60 shadow-xl">
                         <div className="divide-y divide-border/40">
@@ -538,6 +612,22 @@ export default function ClientCompress() {
                                                         </>
                                                     )}
                                                 </div>
+                                                {files.length > 1 && (
+                                                    <div className="mt-2 flex items-center gap-1.5">
+                                                        <PenLine className="w-3 h-3 text-foreground/40 shrink-0" />
+                                                        <span className="text-[10px] text-foreground/50">Nama hasil:</span>
+                                                        <input
+                                                            type="text"
+                                                            value={item.customFileName ?? ""}
+                                                            onChange={(e) => updateItem(item.id, { customFileName: e.target.value })}
+                                                            placeholder={`${item.file.name.replace(/\.[^/.]+$/, "")}-terkompres`}
+                                                            className="text-xs px-2 py-0.5 rounded-md bg-surface border border-border/60 text-foreground placeholder:text-foreground/30 focus:border-blue-500/70 focus:outline-hidden max-w-44 sm:max-w-60"
+                                                        />
+                                                        <span className="text-[10px] font-semibold text-foreground/40">
+                                                            .{item.file.name.split('.').pop()}
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
 
