@@ -4,8 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import Dropzone from "@/components/ui/Dropzone";
 import ExifReader from "exifreader";
 import { PDFDocument } from "pdf-lib";
-import { FileSearch, ArrowLeft, Loader2, RotateCcw, FolderOpen, FileText, Copy, Check, Eye, Image as ImageIcon } from "lucide-react";
-import Link from "next/link";
+import { FileSearch, Loader2, RotateCcw, FolderOpen, FileText, Copy, Check, Eye, Image as ImageIcon } from "lucide-react";
 import Header from "@/components/layout/Header";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
@@ -164,22 +163,21 @@ export default function MetadataViewerPage() {
         <div className="flex flex-col min-h-screen">
             <Header />
 
-            <main className="flex-1 container mx-auto px-4 py-8 md:py-16">
-                <div className="max-w-4xl mx-auto space-y-8">
+            <main className="flex-1 container mx-auto px-4 py-4 sm:py-6 md:py-12">
+                <div className="max-w-4xl mx-auto space-y-5 sm:space-y-8">
                     {/* Header Top */}
-                    <div className="flex items-center gap-4 mb-8">
-                        <Link href="/#tools" className="p-2 hover:bg-surface rounded-full transition-colors">
-                            <ArrowLeft className="w-6 h-6" />
-                        </Link>
-                        <div>
-                            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-                                <FileSearch className="w-8 h-8 text-blue-500" />
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2.5 sm:gap-3">
+                            <div className="p-2 sm:p-2.5 rounded-2xl bg-blue-500/10 text-blue-500 shrink-0">
+                                <FileSearch className="w-6 h-6 sm:w-7 sm:h-7" />
+                            </div>
+                            <h1 className="text-xl sm:text-2xl md:text-3xl font-black tracking-tight leading-tight">
                                 Penampil Metadata (EXIF/PDF Info)
                             </h1>
-                            <p className="text-foreground/60 mt-1">
-                                Intip informasi tersembunyi (EXIF, Kreator, GPS) pada foto dan dokumen Anda 100% lokal.
-                            </p>
                         </div>
+                        <p className="text-foreground/70 text-xs sm:text-sm md:text-base leading-relaxed">
+                            Intip informasi tersembunyi (EXIF, Kreator, GPS) pada foto dan dokumen Anda 100% lokal.
+                        </p>
                     </div>
 
                     {!file ? (
@@ -243,13 +241,13 @@ export default function MetadataViewerPage() {
 
                             {/* Interactive Visual Media Preview Bar */}
                             {previewUrl && (
-                                <div className="p-4 sm:p-5 rounded-2xl bg-surface/60 border border-border/70 backdrop-blur-md shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 animate-fade-in">
-                                    <div className="flex items-center gap-3.5 min-w-0 w-full sm:w-auto">
+                                <div className="p-3.5 sm:p-5 rounded-2xl bg-surface/60 border border-border/70 backdrop-blur-md shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 animate-fade-in">
+                                    <div className="flex items-center gap-3 sm:gap-3.5 min-w-0 w-full sm:w-auto">
                                         {file.type.startsWith("image/") ? (
                                             <button
                                                 type="button"
                                                 onClick={() => setIsLightboxOpen(true)}
-                                                className="w-14 h-14 bg-black/40 rounded-none border border-primary/40 overflow-hidden shrink-0 group relative cursor-pointer"
+                                                className="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 rounded-none border border-primary/40 overflow-hidden shrink-0 group relative cursor-pointer"
                                                 title="Klik untuk perbesar foto (Zoom & Pan)"
                                             >
                                                 <img src={previewUrl} alt={file.name} className="w-full h-full object-cover rounded-none" />
@@ -258,15 +256,15 @@ export default function MetadataViewerPage() {
                                                 </div>
                                             </button>
                                         ) : (
-                                            <div className="w-14 h-14 bg-blue-500/10 rounded-xl border border-blue-500/20 flex items-center justify-center shrink-0 text-blue-400">
-                                                <FileText className="w-6 h-6" />
+                                            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/10 rounded-xl border border-blue-500/20 flex items-center justify-center shrink-0 text-blue-400">
+                                                <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                                             </div>
                                         )}
                                         <div className="flex flex-col min-w-0">
                                             <h4 className="text-sm sm:text-base font-bold text-foreground">
                                                 {file.type.startsWith("image/") ? "Pratinjau Foto Resolusi Penuh" : "Pratinjau Dokumen PDF"}
                                             </h4>
-                                            <p className="text-xs text-foreground/60 mt-0.5">
+                                            <p className="text-[11px] sm:text-xs text-foreground/60 mt-0.5">
                                                 {file.type.startsWith("image/")
                                                     ? "Periksa detail foto dengan zoom halus 50%-400% dan drag-to-pan."
                                                     : "Buka dan baca dokumen PDF langsung di dalam aplikasi."}
@@ -278,18 +276,18 @@ export default function MetadataViewerPage() {
                                         <button
                                             type="button"
                                             onClick={() => setIsLightboxOpen(true)}
-                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 text-xs sm:text-sm font-bold text-primary transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl bg-primary/10 hover:bg-primary/20 border border-primary/30 text-xs sm:text-sm font-bold text-primary transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
                                         >
-                                            <Eye className="w-4 h-4" />
+                                            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                             <span>Lihat Foto (Zoom & Pan)</span>
                                         </button>
                                     ) : file.type === "application/pdf" ? (
                                         <button
                                             type="button"
                                             onClick={() => setShowPdfViewer(!showPdfViewer)}
-                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-xs sm:text-sm font-bold text-blue-400 transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+                                            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 sm:py-2.5 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-xs sm:text-sm font-bold text-blue-400 transition-all hover:scale-105 active:scale-95 cursor-pointer shrink-0"
                                         >
-                                            <FileText className="w-4 h-4" />
+                                            <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                             <span>{showPdfViewer ? "Sembunyikan Dokumen" : "Buka Reader PDF"}</span>
                                         </button>
                                     ) : null}
@@ -311,17 +309,17 @@ export default function MetadataViewerPage() {
                             )}
 
                             {isLoading ? (
-                                <div className="flex flex-col items-center justify-center py-20 bg-surface/30 rounded-2xl border border-border/50">
-                                    <Loader2 className="w-10 h-10 animate-spin text-primary mb-4" />
-                                    <p className="text-foreground/70 animate-pulse">Membedah partikel metadata...</p>
+                                <div className="flex flex-col items-center justify-center py-16 sm:py-20 bg-surface/30 rounded-2xl border border-border/50">
+                                    <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin text-primary mb-4" />
+                                    <p className="text-xs sm:text-sm text-foreground/70 animate-pulse">Membedah partikel metadata...</p>
                                 </div>
                             ) : error ? (
-                                <div className="p-6 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-2xl text-center space-y-4">
-                                    <p>{error}</p>
+                                <div className="p-5 sm:p-6 bg-rose-500/10 border border-rose-500/20 text-rose-500 rounded-2xl text-center space-y-4">
+                                    <p className="text-xs sm:text-sm">{error}</p>
                                     <button
                                         type="button"
                                         onClick={handleClear}
-                                        className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-foreground bg-surface border border-border rounded-xl hover:bg-surface/80"
+                                        className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-foreground bg-surface border border-border rounded-xl hover:bg-surface/80"
                                     >
                                         <RotateCcw className="w-4 h-4" />
                                         <span>Coba File Lain</span>
@@ -329,10 +327,10 @@ export default function MetadataViewerPage() {
                                 </div>
                             ) : (
                                 <div className="glass-panel overflow-hidden rounded-2xl border border-border/50 shadow-xl">
-                                    <div className="bg-surface/80 p-4 border-b border-border/50 flex flex-wrap justify-between items-center gap-3">
-                                        <div className="flex items-center gap-2.5">
-                                            <h3 className="font-bold tracking-tight text-foreground">Properti Ditemukan</h3>
-                                            <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold uppercase tracking-wider">
+                                    <div className="bg-surface/80 p-3.5 sm:p-4 border-b border-border/50 flex flex-wrap justify-between items-center gap-2 sm:gap-3">
+                                        <div className="flex items-center gap-2 sm:gap-2.5">
+                                            <h3 className="font-bold text-sm sm:text-base tracking-tight text-foreground">Properti Ditemukan</h3>
+                                            <span className="text-[10px] bg-primary/10 text-primary px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold uppercase tracking-wider">
                                                 {metadata.length} Entri
                                             </span>
                                         </div>
@@ -340,7 +338,7 @@ export default function MetadataViewerPage() {
                                             <button
                                                 type="button"
                                                 onClick={handleCopyAll}
-                                                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-surface hover:bg-surface/80 border border-border/60 hover:border-primary/50 text-foreground/80 hover:text-primary transition-all active:scale-95 cursor-pointer"
+                                                className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-surface hover:bg-surface/80 border border-border/60 hover:border-primary/50 text-foreground/80 hover:text-primary transition-all active:scale-95 cursor-pointer"
                                             >
                                                 {copied ? (
                                                     <>
@@ -357,7 +355,7 @@ export default function MetadataViewerPage() {
                                             <button
                                                 type="button"
                                                 onClick={handleClear}
-                                                className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-surface hover:bg-rose-500/10 border border-border/60 hover:border-rose-500/30 text-foreground/70 hover:text-rose-400 transition-all active:scale-95 cursor-pointer"
+                                                className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-lg bg-surface hover:bg-rose-500/10 border border-border/60 hover:border-rose-500/30 text-foreground/70 hover:text-rose-400 transition-all active:scale-95 cursor-pointer"
                                                 title="Bersihkan metadata untuk membedah file selanjutnya"
                                             >
                                                 <RotateCcw className="w-3.5 h-3.5" />
@@ -365,21 +363,42 @@ export default function MetadataViewerPage() {
                                             </button>
                                         </div>
                                     </div>
-                                    <div className="overflow-x-auto">
+
+                                    {/* Mobile Responsive Definition List View */}
+                                    <div className="sm:hidden divide-y divide-border/30 p-2">
+                                        {metadata.map((item, idx) => (
+                                            <div key={idx} className="p-3 hover:bg-surface/30 transition-colors rounded-xl space-y-1">
+                                                <span className="text-[11px] font-semibold text-primary block wrap-break-word">
+                                                    {item.key}
+                                                </span>
+                                                <span className="text-xs text-foreground/90 font-mono block wrap-break-word">
+                                                    {item.value}
+                                                </span>
+                                            </div>
+                                        ))}
+                                        {metadata.length === 0 && (
+                                            <div className="p-8 text-center text-foreground/50 text-xs italic">
+                                                Tidak ada metadata khusus ditemukan, mungkin sudah pernah discrub.
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Desktop & Tablet Table View */}
+                                    <div className="hidden sm:block overflow-x-auto">
                                         <table className="w-full text-sm text-left">
                                             <thead className="bg-surface/50 text-foreground/60 text-xs uppercase border-b border-border/30">
                                                 <tr>
-                                                    <th className="px-6 py-4 font-semibold w-1/3">Properti / Kunci</th>
-                                                    <th className="px-6 py-4 font-semibold">Nilai</th>
+                                                    <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold w-1/3">Properti / Kunci</th>
+                                                    <th className="px-4 sm:px-6 py-3 sm:py-4 font-semibold">Nilai</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-border/30">
                                                 {metadata.map((item, idx) => (
                                                     <tr key={idx} className="hover:bg-surface/30 transition-colors">
-                                                        <td className="px-6 py-4 font-medium text-foreground/80 break-all border-r border-border/10">
+                                                        <td className="px-4 sm:px-6 py-3 sm:py-4 font-medium text-foreground/80 break-all border-r border-border/10">
                                                             {item.key}
                                                         </td>
-                                                        <td className="px-6 py-4 text-foreground/90 font-mono text-xs break-all">
+                                                        <td className="px-4 sm:px-6 py-3 sm:py-4 text-foreground/90 font-mono text-xs break-all">
                                                             {item.value}
                                                         </td>
                                                     </tr>
@@ -396,15 +415,15 @@ export default function MetadataViewerPage() {
                                     </div>
 
                                     {/* Table Footer Actions */}
-                                    <div className="bg-surface/40 p-4 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-3">
-                                        <span className="text-xs text-foreground/50">
+                                    <div className="bg-surface/40 p-3.5 sm:p-4 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-3">
+                                        <span className="text-[11px] sm:text-xs text-foreground/50">
                                             Menampilkan {metadata.length} baris data tersembunyi.
                                         </span>
-                                        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+                                        <div className="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto justify-end">
                                             <button
                                                 type="button"
                                                 onClick={handleClear}
-                                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-surface border border-border/60 hover:bg-rose-500/10 hover:border-rose-500/30 text-foreground/80 hover:text-rose-400 transition-all active:scale-95 cursor-pointer"
+                                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold rounded-xl bg-surface border border-border/60 hover:bg-rose-500/10 hover:border-rose-500/30 text-foreground/80 hover:text-rose-400 transition-all active:scale-95 cursor-pointer"
                                             >
                                                 <RotateCcw className="w-3.5 h-3.5" />
                                                 <span>Clear / Reset</span>
@@ -412,7 +431,7 @@ export default function MetadataViewerPage() {
                                             <button
                                                 type="button"
                                                 onClick={handlePickFileDirectly}
-                                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-focus rounded-xl shadow-md shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+                                                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-white bg-primary hover:bg-primary-focus rounded-xl shadow-md shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                                             >
                                                 <FolderOpen className="w-3.5 h-3.5" />
                                                 <span>Bedah File Lain</span>

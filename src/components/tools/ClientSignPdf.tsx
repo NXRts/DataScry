@@ -67,6 +67,7 @@ export default function ClientSignPdf() {
     const [signedPdfBlob, setSignedPdfBlob] = useState<Blob | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [customFileName, setCustomFileName] = useState<string>("dokumen-bertandatangan");
+    const [mobileStep, setMobileStep] = useState<"create" | "place">("create");
 
     const getFinalFileName = () => {
         const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
@@ -465,11 +466,40 @@ export default function ClientSignPdf() {
                         </div>
                     </div>
 
+                    {/* Mobile Stepper Bar */}
+                    <div className="lg:hidden flex items-center p-1 bg-surface/80 rounded-2xl border border-border/70 shadow-sm">
+                        <button
+                            type="button"
+                            onClick={() => setMobileStep("create")}
+                            className={`flex-1 py-2 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                mobileStep === "create"
+                                    ? "bg-rose-600 text-white shadow-md"
+                                    : "text-foreground/70 hover:text-foreground"
+                            }`}
+                        >
+                            <PenTool className="w-3.5 h-3.5" />
+                            <span>1. Buat Tanda Tangan</span>
+                            {activeSignatureDataUrl && <Check className="w-3 h-3 text-emerald-300" />}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setMobileStep("place")}
+                            className={`flex-1 py-2 text-xs font-bold rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                                mobileStep === "place"
+                                    ? "bg-rose-600 text-white shadow-md"
+                                    : "text-foreground/70 hover:text-foreground"
+                            }`}
+                        >
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>2. Lembar Dokumen</span>
+                        </button>
+                    </div>
+
                     {/* Main Signature Workspace: Creator Studio (Left) & Document Preview with Drag/Resize (Right) */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
                         {/* Left Column: Signature Creator Studio */}
-                        <div className="lg:col-span-5 space-y-6">
-                            <div className="glass-panel p-6 rounded-3xl border border-border/80 shadow-xl space-y-6">
+                        <div className={`${mobileStep === "create" ? "block" : "hidden"} lg:block lg:col-span-5 space-y-6`}>
+                            <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-border/80 shadow-xl space-y-5 sm:space-y-6">
                                 <div className="flex items-center justify-between border-b border-border/60 pb-3">
                                     <div className="flex items-center gap-2">
                                         <PenTool className="w-5 h-5 text-rose-500" />
@@ -485,7 +515,7 @@ export default function ClientSignPdf() {
                                     <button
                                         type="button"
                                         onClick={() => setMethod("draw")}
-                                        className={`py-2 text-xs font-bold rounded-lg transition-all ${method === "draw"
+                                        className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${method === "draw"
                                             ? "bg-rose-600 text-white shadow-md"
                                             : "text-foreground/70 hover:text-foreground"
                                             }`}
@@ -495,7 +525,7 @@ export default function ClientSignPdf() {
                                     <button
                                         type="button"
                                         onClick={() => setMethod("upload")}
-                                        className={`py-2 text-xs font-bold rounded-lg transition-all ${method === "upload"
+                                        className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${method === "upload"
                                             ? "bg-rose-600 text-white shadow-md"
                                             : "text-foreground/70 hover:text-foreground"
                                             }`}
@@ -505,7 +535,7 @@ export default function ClientSignPdf() {
                                     <button
                                         type="button"
                                         onClick={() => setMethod("type")}
-                                        className={`py-2 text-xs font-bold rounded-lg transition-all ${method === "type"
+                                        className={`py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${method === "type"
                                             ? "bg-rose-600 text-white shadow-md"
                                             : "text-foreground/70 hover:text-foreground"
                                             }`}
@@ -531,7 +561,7 @@ export default function ClientSignPdf() {
                                                             key={c.color}
                                                             type="button"
                                                             onClick={() => setPenColor(c.color)}
-                                                            className={`w-6 h-6 rounded-full ${c.bg} border transition-transform ${penColor === c.color ? "scale-125 ring-2 ring-rose-500 ring-offset-2 ring-offset-surface" : "opacity-70 hover:opacity-100"}`}
+                                                            className={`w-6 h-6 rounded-full ${c.bg} border transition-transform cursor-pointer ${penColor === c.color ? "scale-125 ring-2 ring-rose-500 ring-offset-2 ring-offset-surface" : "opacity-70 hover:opacity-100"}`}
                                                             title={c.label}
                                                         />
                                                     ))}
@@ -541,7 +571,7 @@ export default function ClientSignPdf() {
                                             <button
                                                 type="button"
                                                 onClick={clearDrawingCanvas}
-                                                className="inline-flex items-center gap-1 text-foreground/60 hover:text-rose-400 font-semibold"
+                                                className="inline-flex items-center gap-1 text-foreground/60 hover:text-rose-400 font-semibold cursor-pointer"
                                             >
                                                 <Eraser className="w-3.5 h-3.5" />
                                                 <span>Hapus</span>
@@ -572,7 +602,7 @@ export default function ClientSignPdf() {
                                 {/* 2. UPLOAD TAB */}
                                 {method === "upload" && (
                                     <div className="space-y-4 animate-fade-in">
-                                        <div className="p-4 rounded-2xl bg-surface/40 border border-border/60 text-xs text-foreground/70 space-y-2">
+                                        <div className="p-3.5 sm:p-4 rounded-2xl bg-surface/40 border border-border/60 text-xs text-foreground/70 space-y-1.5 sm:space-y-2">
                                             <p className="font-semibold text-foreground">💡 Fitur Cerdas Auto-Transparan:</p>
                                             <p>Foto tanda tangan di atas kertas putih akan otomatis dibersihkan latar belakangnya agar tembus pandang dan menyatu rapi dengan dokumen.</p>
                                         </div>
@@ -624,7 +654,7 @@ export default function ClientSignPdf() {
                                                             setTypedFont(f.font);
                                                             generateTypedSignature(typedName, f.font);
                                                         }}
-                                                        className={`p-2 rounded-xl border text-xs font-semibold ${typedFont === f.font ? "bg-rose-500/20 text-rose-400 border-rose-500/40" : "bg-surface/50 text-foreground/70 border-border/60"}`}
+                                                        className={`p-2 rounded-xl border text-xs font-semibold cursor-pointer ${typedFont === f.font ? "bg-rose-500/20 text-rose-400 border-rose-500/40" : "bg-surface/50 text-foreground/70 border-border/60"}`}
                                                     >
                                                         {f.label}
                                                     </button>
@@ -634,9 +664,9 @@ export default function ClientSignPdf() {
                                     </div>
                                 )}
 
-                                {/* Signature Size Adjuster */}
+                                {/* Signature Size Adjuster (Desktop View) */}
                                 {activeSignatureDataUrl && (
-                                    <div className="space-y-3 pt-4 border-t border-border/40">
+                                    <div className="hidden lg:block space-y-3 pt-4 border-t border-border/40">
                                         <div className="flex justify-between items-center text-xs font-bold">
                                             <span className="text-foreground/70 flex items-center gap-1.5">
                                                 <Maximize2 className="w-3.5 h-3.5 text-rose-500" />
@@ -659,8 +689,8 @@ export default function ClientSignPdf() {
                                     </div>
                                 )}
 
-                                {/* Kustomisasi Nama File Hasil PDF */}
-                                <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
+                                {/* Kustomisasi Nama File Hasil PDF (Desktop View) */}
+                                <div className="hidden lg:block p-3.5 rounded-2xl bg-surface/80 border border-border/80 space-y-2 shadow-sm">
                                     <div className="flex items-center justify-between">
                                         <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
                                             <PenLine className="w-3.5 h-3.5 text-rose-500" />
@@ -684,8 +714,8 @@ export default function ClientSignPdf() {
                                     </div>
                                 </div>
 
-                                {/* Final Embed & Download Button */}
-                                <div className="pt-2">
+                                {/* Final Embed & Download Button (Desktop View) */}
+                                <div className="hidden lg:block pt-2">
                                     <button
                                         type="button"
                                         onClick={saveSignedPdf}
@@ -713,28 +743,45 @@ export default function ClientSignPdf() {
                                         )}
                                     </button>
                                 </div>
+
+                                {/* Mobile Button: Proceed to Step 2 */}
+                                <div className="lg:hidden pt-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setMobileStep("place")}
+                                        disabled={!activeSignatureDataUrl}
+                                        className={`w-full py-3 px-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-all ${
+                                            activeSignatureDataUrl
+                                                ? "bg-rose-600 text-white hover:bg-rose-500 cursor-pointer"
+                                                : "bg-surface text-foreground/40 border border-border cursor-not-allowed"
+                                        }`}
+                                    >
+                                        <span>Lanjut Atur di Dokumen</span>
+                                        <ChevronRight className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         {/* Right Column: PDF Preview Workspace with Drag-and-Drop Signature */}
-                        <div className="lg:col-span-7 space-y-4">
-                            <div className="glass-panel p-5 sm:p-6 rounded-3xl border border-border/80 shadow-xl space-y-4">
-                                <div className="flex items-center justify-between border-b border-border/50 pb-3">
-                                    <div className="flex items-center gap-2">
-                                        <Eye className="w-4 h-4 text-rose-500" />
-                                        <h4 className="font-bold text-sm text-foreground">
-                                            Lembar Dokumen (Geser Tanda Tangan ke Kolom yang Dituju)
+                        <div className={`${mobileStep === "place" ? "block" : "hidden"} lg:block lg:col-span-7 space-y-4`}>
+                            <div className="glass-panel p-4 sm:p-6 rounded-3xl border border-border/80 shadow-xl space-y-4">
+                                <div className="flex items-center justify-between border-b border-border/50 pb-3 gap-2">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <Eye className="w-4 h-4 text-rose-500 shrink-0" />
+                                        <h4 className="font-bold text-xs sm:text-sm text-foreground truncate">
+                                            Lembar Dokumen (Geser Tanda Tangan)
                                         </h4>
                                     </div>
 
                                     {/* Page Navigator */}
                                     {pageCount > 1 && (
-                                        <div className="flex items-center gap-1.5 bg-surface/60 px-2 py-1 rounded-xl border border-border/60">
+                                        <div className="flex items-center gap-1 bg-surface/60 px-2 py-1 rounded-xl border border-border/60 shrink-0">
                                             <button
                                                 type="button"
                                                 onClick={() => handlePageChange(currentPageIndex - 1)}
                                                 disabled={currentPageIndex === 0}
-                                                className="p-1 rounded-md text-foreground/70 hover:text-foreground disabled:opacity-30"
+                                                className="p-1 rounded-md text-foreground/70 hover:text-foreground disabled:opacity-30 cursor-pointer"
                                             >
                                                 <ChevronLeft className="w-4 h-4" />
                                             </button>
@@ -745,7 +792,7 @@ export default function ClientSignPdf() {
                                                 type="button"
                                                 onClick={() => handlePageChange(currentPageIndex + 1)}
                                                 disabled={currentPageIndex >= pageCount - 1}
-                                                className="p-1 rounded-md text-foreground/70 hover:text-foreground disabled:opacity-30"
+                                                className="p-1 rounded-md text-foreground/70 hover:text-foreground disabled:opacity-30 cursor-pointer"
                                             >
                                                 <ChevronRight className="w-4 h-4" />
                                             </button>
@@ -754,7 +801,7 @@ export default function ClientSignPdf() {
                                 </div>
 
                                 {/* Document Viewport Area */}
-                                <div className="overflow-x-auto max-h-187.5 overflow-y-auto rounded-2xl bg-black/40 border border-border/60 p-4 flex justify-center">
+                                <div className="overflow-x-auto max-h-90 sm:max-h-120 lg:max-h-187.5 overflow-y-auto rounded-2xl bg-black/40 border border-border/60 p-2 sm:p-4 flex justify-center touch-pan-x touch-pan-y">
                                     <div
                                         ref={docContainerRef}
                                         className="relative bg-white shadow-2xl select-none"
@@ -803,26 +850,115 @@ export default function ClientSignPdf() {
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                                                <div className="bg-black/70 backdrop-blur-md text-white text-xs px-4 py-2.5 rounded-2xl shadow-xl flex items-center gap-2 border border-white/20">
-                                                    <PenTool className="w-4 h-4 text-rose-400" />
-                                                    <span>Buat tanda tangan di panel kiri untuk menampilkannya di sini</span>
+                                            <div className="absolute inset-0 pointer-events-none flex items-center justify-center p-4">
+                                                <div className="bg-black/75 backdrop-blur-md text-white text-xs px-3.5 py-2 rounded-2xl shadow-xl flex items-center gap-2 border border-white/20 text-center">
+                                                    <PenTool className="w-4 h-4 text-rose-400 shrink-0" />
+                                                    <span>Buat tanda tangan di langkah 1 untuk menampilkannya di sini</span>
                                                 </div>
                                             </div>
                                         )}
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-between text-xs text-foreground/50 pt-1">
-                                    <span>💡 Sentuh dan geser kotak tanda tangan untuk menempatkannya tepat di kolom paraf.</span>
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-foreground/50 pt-1">
+                                    <span className="text-[11px] sm:text-xs">💡 Geser kotak stempel ke kolom paraf yang tepat.</span>
                                     <button
                                         type="button"
                                         onClick={openLightbox}
                                         className="text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1 cursor-pointer"
                                     >
                                         <Eye className="w-3.5 h-3.5" />
-                                        <span>Zoom Lembar Dokumen</span>
+                                        <span>Zoom Dokumen</span>
                                     </button>
+                                </div>
+
+                                {/* Mobile Controls placed directly below the document */}
+                                <div className="lg:hidden space-y-4 pt-3 border-t border-border/50">
+                                    {/* Mobile Signature Size Adjuster */}
+                                    {activeSignatureDataUrl && (
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center text-xs font-bold">
+                                                <span className="text-foreground/70 flex items-center gap-1.5">
+                                                    <Maximize2 className="w-3.5 h-3.5 text-rose-500" />
+                                                    Ukuran Stempel:
+                                                </span>
+                                                <span className="text-rose-400 font-mono">{sigSize.width} px</span>
+                                            </div>
+                                            <input
+                                                type="range"
+                                                min="80"
+                                                max="300"
+                                                step="5"
+                                                value={sigSize.width}
+                                                onChange={(e) => {
+                                                    const w = parseInt(e.target.value);
+                                                    setSigSize({ width: w, height: Math.round(w * 0.45) });
+                                                }}
+                                                className="w-full accent-rose-500 cursor-pointer"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {/* Mobile Custom File Name */}
+                                    <div className="p-3 rounded-2xl bg-surface/80 border border-border/80 space-y-1.5 shadow-sm">
+                                        <div className="flex items-center justify-between">
+                                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                                <PenLine className="w-3.5 h-3.5 text-rose-500" />
+                                                <span>Nama File Hasil PDF</span>
+                                            </label>
+                                        </div>
+                                        <div className="relative flex items-center">
+                                            <input
+                                                type="text"
+                                                value={customFileName}
+                                                onChange={(e) => setCustomFileName(e.target.value)}
+                                                placeholder="dokumen-bertandatangan"
+                                                className="w-full px-3 py-2 pr-12 text-xs rounded-xl bg-surface border border-border/80 focus:border-rose-500/80 focus:outline-hidden text-foreground font-medium"
+                                            />
+                                            <span className="absolute right-3 text-xs font-bold text-rose-500 pointer-events-none select-none">
+                                                .pdf
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Mobile Action Buttons */}
+                                    <div className="space-y-2">
+                                        <button
+                                            type="button"
+                                            onClick={saveSignedPdf}
+                                            disabled={isSaving || !activeSignatureDataUrl}
+                                            className={`w-full inline-flex items-center justify-center gap-2 py-3.5 px-6 rounded-2xl text-sm font-bold text-white shadow-xl transition-all ${isSaving || !activeSignatureDataUrl
+                                                ? "bg-rose-500/50 cursor-not-allowed"
+                                                : "bg-rose-600 hover:bg-rose-500 shadow-rose-600/30 active:scale-95 cursor-pointer"
+                                                }`}
+                                        >
+                                            {isSaving ? (
+                                                <>
+                                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                                    <span>Menyematkan ke Dokumen...</span>
+                                                </>
+                                            ) : isSaved ? (
+                                                <>
+                                                    <Check className="w-5 h-5" />
+                                                    <span>Unduh Ulang PDF Bertanda Tangan</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Download className="w-5 h-5" />
+                                                    <span>Terapkan & Unduh PDF</span>
+                                                </>
+                                            )}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setMobileStep("create")}
+                                            className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold text-foreground/70 hover:text-foreground bg-surface border border-border/70 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                        >
+                                            <PenTool className="w-3.5 h-3.5 text-rose-500" />
+                                            <span>Kembali Edit / Ganti Tanda Tangan</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

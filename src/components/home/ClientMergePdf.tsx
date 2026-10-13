@@ -334,13 +334,13 @@ export default function ClientMergePdf() {
                 /* Daftar Dokumen untuk Digabung & Reordering */
                 <div className="space-y-6 animate-fade-in">
                     {/* Header Ringkasan & Tombol Aksi */}
-                    <div className="p-4 sm:p-6 glass-panel rounded-2xl border border-purple-500/30 flex flex-wrap items-center justify-between gap-4 shadow-xl">
-                        <div className="flex items-center gap-4 min-w-0">
-                            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold text-xl shrink-0 shadow-inner">
-                                <Files className="w-6 h-6" />
+                    <div className="p-3.5 sm:p-6 glass-panel rounded-2xl border border-purple-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-xl">
+                        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold text-lg sm:text-xl shrink-0 shadow-inner">
+                                <Files className="w-5 h-5 sm:w-6 sm:h-6" />
                             </div>
                             <div className="min-w-0">
-                                <h2 className="text-base sm:text-xl font-bold text-foreground">
+                                <h2 className="text-sm sm:text-xl font-bold text-foreground">
                                     Dokumen untuk Digabung ({pdfItems.length})
                                 </h2>
                                 <div className="flex items-center gap-2 text-xs sm:text-sm text-foreground/60">
@@ -352,11 +352,11 @@ export default function ClientMergePdf() {
                         </div>
 
                         {/* Tombol Tambah Berkas & Clear Data */}
-                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end">
+                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end pt-1 sm:pt-0 border-t sm:border-t-0 border-border/40">
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="px-3.5 py-2 rounded-xl bg-surface/80 border border-border/80 hover:bg-surface text-foreground/80 hover:text-foreground text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                className="flex-1 sm:flex-initial px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-surface/80 border border-border/80 hover:bg-surface text-foreground/80 hover:text-foreground text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                             >
                                 <Plus className="w-3.5 h-3.5 text-purple-400" />
                                 <span>Tambah PDF</span>
@@ -364,7 +364,7 @@ export default function ClientMergePdf() {
                             <button
                                 type="button"
                                 onClick={handleClearAll}
-                                className="px-3.5 py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 text-rose-400 text-xs sm:text-sm font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                className="flex-1 sm:flex-initial px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 text-rose-400 text-xs sm:text-sm font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                                 title="Hapus semua berkas dan mulai ulang"
                             >
                                 <RotateCcw className="w-3.5 h-3.5" />
@@ -375,37 +375,37 @@ export default function ClientMergePdf() {
 
                     {/* Feedback saat merender cover */}
                     {isRenderingThumbnails && (
-                        <div className="p-4 rounded-xl glass-panel border border-border flex items-center justify-center gap-2 text-xs text-purple-400 animate-fade-in">
+                        <div className="p-3 sm:p-4 rounded-xl glass-panel border border-border flex items-center justify-center gap-2 text-xs text-purple-400 animate-fade-in">
                             <Sparkles className="w-4 h-4 animate-spin" />
                             <span>{renderingStatus}</span>
                         </div>
                     )}
 
                     {/* Petunjuk Reordering */}
-                    <div className="p-3 px-4 rounded-xl bg-purple-500/5 border border-purple-500/10 text-xs text-foreground/60 flex items-center justify-between">
+                    <div className="p-2.5 px-3.5 sm:p-3 sm:px-4 rounded-xl bg-purple-500/5 border border-purple-500/10 text-[11px] sm:text-xs text-foreground/60 flex items-center justify-between">
                         <span className="flex items-center gap-1.5">
-                            <ArrowUpDown className="w-3.5 h-3.5 text-purple-400" />
+                            <ArrowUpDown className="w-3.5 h-3.5 text-purple-400 shrink-0" />
                             <span>Urutan di bawah menentukan posisi halaman dalam dokumen PDF akhir. Gunakan panah naik/turun untuk mengatur urutan.</span>
                         </span>
                     </div>
 
                     {/* List Dokumen dengan Cover Thumbnail & Reordering Controls */}
-                    <div className="space-y-3">
+                    <div className="space-y-2.5 sm:space-y-3">
                         {pdfItems.map((item, idx) => (
                             <div
                                 key={item.id}
-                                className="p-3 sm:p-4 rounded-2xl glass-panel border border-border/80 flex items-center justify-between gap-3 hover:border-purple-500/40 transition-all shadow-md group"
+                                className="p-3 sm:p-4 rounded-2xl glass-panel border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 hover:border-purple-500/40 transition-all shadow-md group"
                             >
-                                <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div className="flex items-center gap-2.5 sm:gap-4 min-w-0 flex-1">
                                     {/* Nomor Urutan */}
-                                    <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-400 font-bold text-xs flex items-center justify-center shrink-0 border border-purple-500/20">
+                                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-purple-500/10 text-purple-400 font-bold text-xs flex items-center justify-center shrink-0 border border-purple-500/20">
                                         #{idx + 1}
                                     </div>
 
                                     {/* Cover Thumbnail Clickable for Lightbox */}
                                     <div
                                         onClick={() => openLightbox(idx)}
-                                        className="w-12 h-16 sm:w-14 sm:h-20 rounded-lg bg-neutral-950/60 border border-border/60 overflow-hidden flex items-center justify-center shrink-0 cursor-pointer relative group/thumb shadow-sm"
+                                        className="w-11 h-14 sm:w-14 sm:h-20 rounded-lg bg-neutral-950/60 border border-border/60 overflow-hidden flex items-center justify-center shrink-0 cursor-pointer relative group/thumb shadow-sm"
                                         title="Klik untuk melihat sampul dokumen (Zoom & Pan)"
                                     >
                                         {item.thumbnailUrl ? (
@@ -415,7 +415,7 @@ export default function ClientMergePdf() {
                                                 className="max-h-full max-w-full object-contain rounded-none pointer-events-none"
                                             />
                                         ) : (
-                                            <FileText className="w-6 h-6 text-foreground/40" />
+                                            <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-foreground/40" />
                                         )}
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity flex items-center justify-center">
                                             <Eye className="w-4 h-4 text-purple-400" />
@@ -423,12 +423,12 @@ export default function ClientMergePdf() {
                                     </div>
 
                                     {/* Detail Berkas */}
-                                    <div className="min-w-0">
-                                        <h4 className="font-semibold text-xs sm:text-sm text-foreground truncate max-w-45 sm:max-w-xs md:max-w-md">
+                                    <div className="min-w-0 flex-1">
+                                        <h4 className="font-semibold text-xs sm:text-sm text-foreground truncate max-w-full">
                                             {item.name}
                                         </h4>
-                                        <div className="flex items-center gap-2 text-[11px] text-foreground/50 mt-0.5">
-                                            <span className="font-bold text-purple-400">{item.pageCount} Halaman</span>
+                                        <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] text-foreground/50 mt-0.5">
+                                            <span className="font-bold text-purple-400">{item.pageCount} Hal</span>
                                             <span>•</span>
                                             <span>{(item.size / 1024 / 1024).toFixed(2)} MB</span>
                                             <span className="hidden sm:inline">•</span>
@@ -438,7 +438,7 @@ export default function ClientMergePdf() {
                                 </div>
 
                                 {/* Reordering Controls & Delete */}
-                                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                                <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-border/40">
                                     <button
                                         type="button"
                                         onClick={() => moveItemUp(idx)}

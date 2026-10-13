@@ -323,20 +323,20 @@ export default function ClientCompress() {
                 </div>
 
                 {/* Mode Selector Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
                     <button
                         type="button"
                         onClick={() => setMode("recommended")}
-                        className={`p-4 rounded-2xl border text-left transition-all relative ${mode === "recommended"
+                        className={`p-3 sm:p-4 rounded-2xl border text-left transition-all relative ${mode === "recommended"
                             ? "bg-blue-500/10 border-blue-500 text-foreground ring-2 ring-blue-500/20"
                             : "bg-surface/50 border-border/60 hover:bg-surface hover:border-border text-foreground/80"
                             }`}
                     >
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="font-bold text-sm text-blue-400">Rekomendasi</span>
-                            {mode === "recommended" && <Check className="w-4 h-4 text-blue-400" />}
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="font-bold text-xs sm:text-sm text-blue-400">Rekomendasi</span>
+                            {mode === "recommended" && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400 shrink-0" />}
                         </div>
-                        <p className="text-xs text-foreground/60 leading-relaxed">
+                        <p className="text-[11px] sm:text-xs text-foreground/60 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
                             Keseimbangan ideal antara kualitas visual prima dan ukuran hemat (~60-75% reduksi).
                         </p>
                     </button>
@@ -344,33 +344,33 @@ export default function ClientCompress() {
                     <button
                         type="button"
                         onClick={() => setMode("extreme")}
-                        className={`p-4 rounded-2xl border text-left transition-all relative ${mode === "extreme"
+                        className={`p-3 sm:p-4 rounded-2xl border text-left transition-all relative ${mode === "extreme"
                             ? "bg-purple-500/10 border-purple-500 text-foreground ring-2 ring-purple-500/20"
                             : "bg-surface/50 border-border/60 hover:bg-surface hover:border-border text-foreground/80"
                             }`}
                     >
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="font-bold text-sm text-purple-400">Kompresi Ekstrem</span>
-                            {mode === "extreme" && <Check className="w-4 h-4 text-purple-400" />}
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="font-bold text-xs sm:text-sm text-purple-400">Ekstrem</span>
+                            {mode === "extreme" && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 shrink-0" />}
                         </div>
-                        <p className="text-xs text-foreground/60 leading-relaxed">
-                            Pemangkasan agresif hingga 80-90% untuk ukuran sekecil mungkin (arsip hemat ruang).
+                        <p className="text-[11px] sm:text-xs text-foreground/60 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
+                            Pemangkasan agresif hingga 80-90% untuk ukuran sekecil mungkin.
                         </p>
                     </button>
 
                     <button
                         type="button"
                         onClick={() => setMode("light")}
-                        className={`p-4 rounded-2xl border text-left transition-all relative ${mode === "light"
+                        className={`p-3 sm:p-4 rounded-2xl border text-left transition-all relative ${mode === "light"
                             ? "bg-emerald-500/10 border-emerald-500 text-foreground ring-2 ring-emerald-500/20"
                             : "bg-surface/50 border-border/60 hover:bg-surface hover:border-border text-foreground/80"
                             }`}
                     >
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="font-bold text-sm text-emerald-400">Kualitas Terbaik</span>
-                            {mode === "light" && <Check className="w-4 h-4 text-emerald-400" />}
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="font-bold text-xs sm:text-sm text-emerald-400">Kualitas Prima</span>
+                            {mode === "light" && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-400 shrink-0" />}
                         </div>
-                        <p className="text-xs text-foreground/60 leading-relaxed">
+                        <p className="text-[11px] sm:text-xs text-foreground/60 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
                             Kompresi halus (~20-40%) mempertahankan ketajaman mendekati aslinya.
                         </p>
                     </button>
@@ -378,27 +378,27 @@ export default function ClientCompress() {
                     <button
                         type="button"
                         onClick={() => setMode("custom")}
-                        className={`p-4 rounded-2xl border text-left transition-all relative ${mode === "custom"
+                        className={`p-3 sm:p-4 rounded-2xl border text-left transition-all relative ${mode === "custom"
                             ? "bg-amber-500/10 border-amber-500 text-foreground ring-2 ring-amber-500/20"
                             : "bg-surface/50 border-border/60 hover:bg-surface hover:border-border text-foreground/80"
                             }`}
                     >
-                        <div className="flex items-center justify-between mb-2">
-                            <span className="font-bold text-sm text-amber-400">Target KB Khusus</span>
-                            {mode === "custom" && <Check className="w-4 h-4 text-amber-400" />}
+                        <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+                            <span className="font-bold text-xs sm:text-sm text-amber-400">Target Khusus</span>
+                            {mode === "custom" && <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400 shrink-0" />}
                         </div>
-                        <p className="text-xs text-foreground/60 leading-relaxed">
-                            Tentukan batas ukuran presisi (cocok untuk syarat upload CPNS / CASN / portal instansi).
+                        <p className="text-[11px] sm:text-xs text-foreground/60 leading-snug sm:leading-relaxed line-clamp-2 sm:line-clamp-none">
+                            Tentukan batas ukuran presisi (cocok untuk syarat upload CPNS / CASN).
                         </p>
                     </button>
                 </div>
 
                 {/* Custom Target Size Controls */}
                 {mode === "custom" && (
-                    <div className="p-4 sm:p-5 rounded-2xl bg-surface/70 border border-amber-500/30 space-y-4 animate-fade-in">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                                <Info className="w-4 h-4 text-amber-400" />
+                    <div className="p-3.5 sm:p-5 rounded-2xl bg-surface/70 border border-amber-500/30 space-y-3 sm:space-y-4 animate-fade-in">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-3">
+                            <label className="text-xs sm:text-sm font-semibold text-foreground flex items-center gap-1.5 sm:gap-2">
+                                <Info className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-400" />
                                 <span>Target Ukuran Maksimal Berkas:</span>
                             </label>
                             <div className="flex items-center gap-2">
@@ -409,27 +409,27 @@ export default function ClientCompress() {
                                     step="50"
                                     value={customTargetKB}
                                     onChange={(e) => setCustomTargetKB(Math.max(30, Number(e.target.value)))}
-                                    className="w-28 px-3 py-1.5 rounded-xl bg-surface border border-border/80 text-foreground font-bold text-center text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                                    className="w-24 sm:w-28 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-surface border border-border/80 text-foreground font-bold text-center text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                                 />
-                                <span className="text-sm font-bold text-foreground/70">KB</span>
+                                <span className="text-xs sm:text-sm font-bold text-foreground/70">KB</span>
                             </div>
                         </div>
 
                         {/* Quick Presets for Portals */}
-                        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/40">
-                            <span className="text-xs font-medium text-foreground/50">Pilihan Cepat Portal:</span>
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1 border-t border-border/40">
+                            <span className="text-[11px] sm:text-xs font-medium text-foreground/50">Pilihan Cepat Portal:</span>
                             {[
                                 { label: "100 KB (Pasfoto)", val: 100 },
                                 { label: "200 KB (KTP/Kartu)", val: 200 },
                                 { label: "300 KB (Ijazah/BKN)", val: 300 },
-                                { label: "500 KB (Dokumen Surat)", val: 500 },
+                                { label: "500 KB (Dokumen)", val: 500 },
                                 { label: "1 MB (Standar)", val: 1000 },
                             ].map((preset) => (
                                 <button
                                     key={preset.val}
                                     type="button"
                                     onClick={() => setCustomTargetKB(preset.val)}
-                                    className={`px-2.5 py-1 text-xs font-semibold rounded-lg border transition-colors ${customTargetKB === preset.val
+                                    className={`px-2 py-0.5 sm:px-2.5 sm:py-1 text-[11px] sm:text-xs font-semibold rounded-lg border transition-colors ${customTargetKB === preset.val
                                         ? "bg-amber-500/20 text-amber-400 border-amber-500/40"
                                         : "bg-surface hover:bg-surface/80 text-foreground/70 border-border/60"
                                         }`}
@@ -466,19 +466,19 @@ export default function ClientCompress() {
             ) : (
                 <div className="space-y-6 animate-fade-in">
                     {/* Top Action Bar */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-surface/60 border border-border/60 backdrop-blur-md shadow-sm">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 sm:gap-4 p-3.5 sm:p-5 rounded-2xl bg-surface/60 border border-border/60 backdrop-blur-md shadow-sm">
                         <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-400">
-                                <Minimize2 className="w-5 h-5" />
+                            <div className="p-2 sm:p-2.5 rounded-xl bg-blue-500/10 text-blue-400 shrink-0">
+                                <Minimize2 className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
-                            <div>
-                                <h4 className="font-bold text-base text-foreground">
+                            <div className="min-w-0">
+                                <h4 className="font-bold text-sm sm:text-base text-foreground truncate">
                                     {files.length} Berkas Dipilih
                                 </h4>
-                                <p className="text-xs text-foreground/60">
-                                    Total Ukuran Asli: {formatBytes(totalOriginalSize)}
+                                <p className="text-[11px] sm:text-xs text-foreground/60">
+                                    Total: {formatBytes(totalOriginalSize)}
                                     {successCount > 0 && totalSavings > 0 && (
-                                        <span className="text-emerald-400 font-bold ml-2">
+                                        <span className="text-emerald-400 font-bold ml-1.5 sm:ml-2">
                                             • Hemat {totalSavings}% ({formatBytes(totalOriginalSize - totalCompressedSize)})
                                         </span>
                                     )}
@@ -486,23 +486,23 @@ export default function ClientCompress() {
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2.5">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
                             <button
                                 type="button"
                                 onClick={() => fileInputRef.current?.click()}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-foreground/80 hover:text-foreground bg-surface hover:bg-surface/80 border border-border/70 rounded-xl transition-all active:scale-95"
+                                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-semibold text-foreground/80 hover:text-foreground bg-surface hover:bg-surface/80 border border-border/70 rounded-xl transition-all active:scale-95"
                             >
-                                <FolderOpen className="w-4 h-4 text-blue-400" />
+                                <FolderOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400" />
                                 <span>Tambah File</span>
                             </button>
 
                             <button
                                 type="button"
                                 onClick={handleClearAll}
-                                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-foreground/70 hover:text-rose-400 bg-surface hover:bg-rose-500/10 border border-border/70 hover:border-rose-500/30 rounded-xl transition-all active:scale-95"
+                                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs sm:text-sm font-semibold text-foreground/70 hover:text-rose-400 bg-surface hover:bg-rose-500/10 border border-border/70 hover:border-rose-500/30 rounded-xl transition-all active:scale-95"
                             >
-                                <RotateCcw className="w-4 h-4" />
-                                <span>Bersihkan Semua</span>
+                                <RotateCcw className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                <span>Bersihkan</span>
                             </button>
 
                             {successCount < files.length && (
@@ -510,7 +510,7 @@ export default function ClientCompress() {
                                     type="button"
                                     onClick={processAllFiles}
                                     disabled={isProcessingAll}
-                                    className={`inline-flex items-center gap-2 px-5 py-2 text-xs sm:text-sm font-bold text-white rounded-xl shadow-lg transition-all ${isProcessingAll
+                                    className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 sm:px-5 sm:py-2 text-xs sm:text-sm font-bold text-white rounded-xl shadow-lg transition-all ${isProcessingAll
                                         ? "bg-blue-500/50 cursor-not-allowed"
                                         : "bg-blue-600 hover:bg-blue-500 shadow-blue-500/25 hover:scale-[1.02] active:scale-95"
                                         }`}
@@ -533,7 +533,7 @@ export default function ClientCompress() {
                                 <button
                                     type="button"
                                     onClick={downloadAllAsZip}
-                                    className="inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 rounded-xl transition-all hover:scale-[1.02] active:scale-95"
+                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-500 shadow-lg shadow-emerald-500/25 rounded-xl transition-all hover:scale-[1.02] active:scale-95"
                                 >
                                     <Download className="w-4 h-4" />
                                     <span>Unduh Semua ({successCount})</span>
@@ -543,13 +543,13 @@ export default function ClientCompress() {
                     </div>
 
                     {/* Panel Kustomisasi Nama File / ZIP */}
-                    <div className="p-4 sm:p-5 rounded-2xl bg-surface/70 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
-                        <div className="space-y-1">
+                    <div className="p-3.5 sm:p-5 rounded-2xl bg-surface/70 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-sm">
+                        <div className="space-y-0.5 sm:space-y-1">
                             <label className="text-xs font-bold text-foreground/80 flex items-center gap-1.5 uppercase tracking-wide">
                                 <PenLine className="w-3.5 h-3.5 text-blue-500" />
                                 <span>{files.length === 1 ? "Nama Berkas Hasil Kompresi" : "Nama Paket Arsip Unduhan (ZIP)"}</span>
                             </label>
-                            <p className="text-[11px] text-foreground/50">
+                            <p className="text-[10px] sm:text-[11px] text-foreground/50">
                                 {files.length === 1
                                     ? "Sesuaikan nama berkas hasil kompresi sebelum atau sesudah diunduh."
                                     : "Nama berkas .zip jika Anda mengunduh seluruh berkas sekaligus."}
@@ -567,7 +567,7 @@ export default function ClientCompress() {
                                     }
                                 }}
                                 placeholder={files.length === 1 ? "nama-terkompres" : "DataScry-Kompresi"}
-                                className="w-full px-3.5 py-2 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-blue-500/80 focus:outline-hidden text-foreground font-semibold shadow-inner"
+                                className="w-full px-3 py-1.5 sm:px-3.5 sm:py-2 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-blue-500/80 focus:outline-hidden text-foreground font-semibold shadow-inner"
                             />
                             <span className="absolute right-3.5 text-xs font-bold text-blue-400 pointer-events-none select-none">
                                 .{files.length === 1 ? (files[0].file.name.split('.').pop() || "pdf") : "zip"}
@@ -585,19 +585,19 @@ export default function ClientCompress() {
                                 return (
                                     <div
                                         key={item.id}
-                                        className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface/30 transition-colors"
+                                        className="p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:bg-surface/30 transition-colors"
                                     >
-                                        <div className="flex items-center gap-3.5 min-w-0">
-                                            <div className={`p-2.5 rounded-xl shrink-0 ${isPdf ? "bg-rose-500/10 text-rose-400" : "bg-blue-500/10 text-blue-400"
+                                        <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
+                                            <div className={`p-2 sm:p-2.5 rounded-xl shrink-0 ${isPdf ? "bg-rose-500/10 text-rose-400" : "bg-blue-500/10 text-blue-400"
                                                 }`}>
-                                                {isPdf ? <FileText className="w-5 h-5" /> : <ImageIcon className="w-5 h-5" />}
+                                                {isPdf ? <FileText className="w-4 h-4 sm:w-5 sm:h-5" /> : <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5" />}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="font-semibold text-sm sm:text-base text-foreground truncate max-w-xs sm:max-w-md">
+                                                <p className="font-semibold text-xs sm:text-sm md:text-base text-foreground truncate max-w-44 sm:max-w-xs md:max-w-md">
                                                     {item.file.name}
                                                 </p>
-                                                <div className="flex flex-wrap items-center gap-2 text-xs text-foreground/60 mt-0.5">
-                                                    <span>Ukuran Asli: {formatBytes(item.originalSize)}</span>
+                                                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-foreground/60 mt-0.5">
+                                                    <span>Asli: {formatBytes(item.originalSize)}</span>
                                                     {item.status === "success" && item.compressedSize !== undefined && (
                                                         <>
                                                             <span>➔</span>
@@ -605,7 +605,7 @@ export default function ClientCompress() {
                                                                 {formatBytes(item.compressedSize)}
                                                             </span>
                                                             {savings > 0 && (
-                                                                <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold text-[10px] border border-emerald-500/20">
+                                                                <span className="px-1.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 font-bold text-[10px] border border-emerald-500/20">
                                                                     Hemat {savings}%
                                                                 </span>
                                                             )}
@@ -613,15 +613,15 @@ export default function ClientCompress() {
                                                     )}
                                                 </div>
                                                 {files.length > 1 && (
-                                                    <div className="mt-2 flex items-center gap-1.5">
+                                                    <div className="mt-1.5 sm:mt-2 flex items-center gap-1.5">
                                                         <PenLine className="w-3 h-3 text-foreground/40 shrink-0" />
-                                                        <span className="text-[10px] text-foreground/50">Nama hasil:</span>
+                                                        <span className="text-[10px] text-foreground/50">Nama:</span>
                                                         <input
                                                             type="text"
                                                             value={item.customFileName ?? ""}
                                                             onChange={(e) => updateItem(item.id, { customFileName: e.target.value })}
                                                             placeholder={`${item.file.name.replace(/\.[^/.]+$/, "")}-terkompres`}
-                                                            className="text-xs px-2 py-0.5 rounded-md bg-surface border border-border/60 text-foreground placeholder:text-foreground/30 focus:border-blue-500/70 focus:outline-hidden max-w-44 sm:max-w-60"
+                                                            className="text-xs px-2 py-0.5 rounded-md bg-surface border border-border/60 text-foreground placeholder:text-foreground/30 focus:border-blue-500/70 focus:outline-hidden max-w-36 sm:max-w-60"
                                                         />
                                                         <span className="text-[10px] font-semibold text-foreground/40">
                                                             .{item.file.name.split('.').pop()}
@@ -631,7 +631,7 @@ export default function ClientCompress() {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
+                                        <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-3 shrink-0 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-border/30">
                                             {/* Progress bar if processing */}
                                             {item.status === "processing" && (
                                                 <div className="flex items-center gap-2.5">

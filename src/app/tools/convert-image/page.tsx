@@ -23,8 +23,8 @@ export default function ConvertImagePage() {
         <div className="flex flex-col min-h-screen">
             <Header />
 
-            <main className="flex-1 container mx-auto px-4 py-5 sm:py-8 md:py-12">
-                <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
+            <main className="flex-1 container mx-auto px-4 py-4 sm:py-6 md:py-12">
+                <div className="max-w-5xl mx-auto space-y-5 sm:space-y-8">
                     {/* Header Top */}
                     <div className="space-y-2">
                         <div className="flex items-center gap-2.5 sm:gap-3">

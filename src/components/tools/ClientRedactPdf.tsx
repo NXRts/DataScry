@@ -487,122 +487,135 @@ export default function ClientRedactPdf() {
             {file && !resultBlob && (
                 <div className="space-y-6">
                     {/* Top Toolbar */}
-                    <div className="glass-panel p-4 sm:p-5 rounded-2xl border border-border/80 flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                                <FileText className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="font-semibold text-foreground text-sm sm:text-base truncate max-w-50 sm:max-w-xs" title={file.name}>
-                                    {file.name}
-                                </h3>
-                                <p className="text-xs text-foreground/50">
-                                    {(file.size / 1024 / 1024).toFixed(2)} MB • {pageCount} Halaman
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Page Navigation Controls */}
-                        <div className="flex items-center gap-2 bg-surface/80 border border-border/60 rounded-xl px-2 py-1">
-                            <button
-                                onClick={() => goToPage(currentPageIndex - 1)}
-                                disabled={currentPageIndex === 0 || isLoadingPage}
-                                className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-foreground"
-                                title="Halaman Sebelumnya"
-                            >
-                                <ChevronLeft className="w-4 h-4" />
-                            </button>
-                            <span className="text-xs font-semibold px-2 text-foreground">
-                                Hal {currentPageIndex + 1} / {pageCount}
-                            </span>
-                            <button
-                                onClick={() => goToPage(currentPageIndex + 1)}
-                                disabled={currentPageIndex >= pageCount - 1 || isLoadingPage}
-                                className="p-1.5 rounded-lg hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-foreground"
-                                title="Halaman Selanjutnya"
-                            >
-                                <ChevronRight className="w-4 h-4" />
-                            </button>
-                        </div>
-
-                        {/* Zoom & Reset Button */}
-                        <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1 bg-surface/80 border border-border/60 rounded-xl px-2 py-1">
-                                <button
-                                    onClick={() => setZoomScale((prev) => Math.max(0.75, prev - 0.25))}
-                                    className="p-1.5 rounded-lg hover:bg-white/10 text-foreground transition-colors"
-                                    title="Perkecil Tampilan"
-                                >
-                                    <ZoomOut className="w-4 h-4" />
-                                </button>
-                                <span className="text-xs font-mono font-medium px-1 text-foreground">
-                                    {Math.round(zoomScale * 100)}%
-                                </span>
-                                <button
-                                    onClick={() => setZoomScale((prev) => Math.min(1.75, prev + 0.25))}
-                                    className="p-1.5 rounded-lg hover:bg-white/10 text-foreground transition-colors"
-                                    title="Perbesar Tampilan"
-                                >
-                                    <ZoomIn className="w-4 h-4" />
-                                </button>
+                    <div className="glass-panel p-3.5 sm:p-5 rounded-2xl border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex items-center justify-between gap-3 min-w-0">
+                            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <div className="p-2 sm:p-2.5 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 shrink-0">
+                                    <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+                                </div>
+                                <div className="min-w-0">
+                                    <h3 className="font-semibold text-foreground text-xs sm:text-base truncate max-w-44 sm:max-w-xs" title={file.name}>
+                                        {file.name}
+                                    </h3>
+                                    <p className="text-[11px] sm:text-xs text-foreground/50">
+                                        {(file.size / 1024 / 1024).toFixed(2)} MB • {pageCount} Halaman
+                                    </p>
+                                </div>
                             </div>
 
                             <button
                                 onClick={handleReset}
-                                className="px-3 py-2 rounded-xl text-xs font-medium text-foreground/70 hover:text-foreground hover:bg-surface border border-border/60 transition-colors flex items-center gap-1.5"
+                                className="sm:hidden px-2.5 py-1.5 rounded-xl text-xs font-medium text-foreground/70 hover:text-foreground hover:bg-surface border border-border/60 transition-colors flex items-center gap-1 shrink-0"
                             >
                                 <RotateCcw className="w-3.5 h-3.5" />
-                                Ganti File
+                                <span>Ganti</span>
                             </button>
+                        </div>
+
+                        {/* Page Navigation & Zoom Controls */}
+                        <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+                            {/* Page Navigation Controls */}
+                            <div className="flex items-center gap-1.5 bg-surface/80 border border-border/60 rounded-xl px-2 py-1">
+                                <button
+                                    onClick={() => goToPage(currentPageIndex - 1)}
+                                    disabled={currentPageIndex === 0 || isLoadingPage}
+                                    className="p-1 rounded-lg hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-foreground cursor-pointer"
+                                    title="Halaman Sebelumnya"
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                <span className="text-xs font-semibold px-1 sm:px-2 text-foreground">
+                                    {currentPageIndex + 1} / {pageCount}
+                                </span>
+                                <button
+                                    onClick={() => goToPage(currentPageIndex + 1)}
+                                    disabled={currentPageIndex >= pageCount - 1 || isLoadingPage}
+                                    className="p-1 rounded-lg hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-foreground cursor-pointer"
+                                    title="Halaman Selanjutnya"
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            {/* Zoom & Reset Button */}
+                            <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 bg-surface/80 border border-border/60 rounded-xl px-2 py-1">
+                                    <button
+                                        onClick={() => setZoomScale((prev) => Math.max(0.75, prev - 0.25))}
+                                        className="p-1 rounded-lg hover:bg-white/10 text-foreground transition-colors cursor-pointer"
+                                        title="Perkecil Tampilan"
+                                    >
+                                        <ZoomOut className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    </button>
+                                    <span className="text-xs font-mono font-medium px-1 text-foreground">
+                                        {Math.round(zoomScale * 100)}%
+                                    </span>
+                                    <button
+                                        onClick={() => setZoomScale((prev) => Math.min(1.75, prev + 0.25))}
+                                        className="p-1 rounded-lg hover:bg-white/10 text-foreground transition-colors cursor-pointer"
+                                        title="Perbesar Tampilan"
+                                    >
+                                        <ZoomIn className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    </button>
+                                </div>
+
+                                <button
+                                    onClick={handleReset}
+                                    className="hidden sm:flex px-3 py-2 rounded-xl text-xs font-medium text-foreground/70 hover:text-foreground hover:bg-surface border border-border/60 transition-colors items-center gap-1.5 cursor-pointer"
+                                >
+                                    <RotateCcw className="w-3.5 h-3.5" />
+                                    Ganti File
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                     {/* Secondary Tool Controls & Style Picker */}
-                    <div className="glass-panel p-4 rounded-2xl border border-border/80 flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-semibold text-foreground/70 uppercase tracking-wider mr-1">
-                                Gaya Sensor:
+                    <div className="glass-panel p-3.5 sm:p-4 rounded-2xl border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <span className="text-[11px] sm:text-xs font-bold text-foreground/70 uppercase tracking-wider mr-1">
+                                Gaya:
                             </span>
 
                             {/* Blackout */}
                             <button
                                 onClick={() => setActiveStyle("blackout")}
-                                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 ${
+                                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
                                     activeStyle === "blackout"
                                         ? "bg-zinc-950 text-white border border-rose-500 shadow-sm"
                                         : "bg-surface/60 text-foreground/70 hover:bg-surface border border-border/60"
                                 }`}
                             >
-                                <span className="w-3 h-3 rounded-xs bg-black border border-white/20" />
-                                Hitam Pekat (Blackout)
+                                <span className="w-3 h-3 rounded-xs bg-black border border-white/20 shrink-0" />
+                                <span>Hitam<span className="hidden sm:inline"> Pekat (Blackout)</span></span>
                             </button>
 
                             {/* Whiteout */}
                             <button
                                 onClick={() => setActiveStyle("whiteout")}
-                                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 ${
+                                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
                                     activeStyle === "whiteout"
                                         ? "bg-zinc-800 text-white border border-rose-500 shadow-sm"
                                         : "bg-surface/60 text-foreground/70 hover:bg-surface border border-border/60"
                                 }`}
                             >
-                                <span className="w-3 h-3 rounded-xs bg-white border border-gray-400" />
-                                Putih Bersih (Whiteout)
+                                <span className="w-3 h-3 rounded-xs bg-white border border-gray-400 shrink-0" />
+                                <span>Putih<span className="hidden sm:inline"> Bersih (Whiteout)</span></span>
                             </button>
 
                             {/* Badge */}
                             <button
                                 onClick={() => setActiveStyle("badge")}
-                                className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-2 ${
+                                className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer ${
                                     activeStyle === "badge"
                                         ? "bg-zinc-800 text-white border border-rose-500 shadow-sm"
                                         : "bg-surface/60 text-foreground/70 hover:bg-surface border border-border/60"
                                 }`}
                             >
-                                <span className="px-1 text-[9px] font-bold rounded-xs bg-black text-rose-400 border border-rose-500/40">
+                                <span className="px-1 text-[9px] font-bold rounded-xs bg-black text-rose-400 border border-rose-500/40 shrink-0">
                                     DISENSOR
                                 </span>
-                                Label Keamanan
+                                <span>Label<span className="hidden sm:inline"> Keamanan</span></span>
                             </button>
                         </div>
 
@@ -611,17 +624,17 @@ export default function ClientRedactPdf() {
                             {currentPageRedactions.length > 0 && (
                                 <button
                                     onClick={clearCurrentPageRedactions}
-                                    className="px-2.5 py-1.5 rounded-xl text-xs font-medium text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition-colors flex items-center gap-1.5"
+                                    className="px-2.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-medium text-rose-400 hover:bg-rose-500/10 border border-rose-500/20 transition-colors flex items-center gap-1.5 cursor-pointer"
                                 >
                                     <Trash2 className="w-3.5 h-3.5" />
-                                    Hapus di Hal {currentPageIndex + 1} ({currentPageRedactions.length})
+                                    <span>Hapus di Hal {currentPageIndex + 1} ({currentPageRedactions.length})</span>
                                 </button>
                             )}
 
                             {totalRedactionCount > 0 && (
                                 <button
                                     onClick={clearAllRedactions}
-                                    className="px-2.5 py-1.5 rounded-xl text-xs font-medium text-foreground/50 hover:text-foreground hover:bg-surface transition-colors"
+                                    className="px-2.5 py-1 sm:py-1.5 rounded-xl text-[11px] sm:text-xs font-medium text-foreground/50 hover:text-foreground hover:bg-surface transition-colors cursor-pointer"
                                 >
                                     Reset Semua ({totalRedactionCount})
                                 </button>
@@ -630,18 +643,19 @@ export default function ClientRedactPdf() {
                     </div>
 
                     {/* Main Interactive Canvas Area */}
-                    <div className="glass-panel p-4 sm:p-8 rounded-3xl border border-border/80 flex flex-col items-center justify-center min-h-125 overflow-auto bg-black/40">
+                    <div className="glass-panel p-2.5 sm:p-6 lg:p-8 rounded-3xl border border-border/80 flex flex-col items-center justify-center min-h-75 sm:min-h-100 lg:min-h-125 overflow-auto bg-black/40">
                         {isLoadingPage ? (
-                            <div className="py-24 text-center space-y-3">
+                            <div className="py-20 text-center space-y-3">
                                 <Loader2 className="w-8 h-8 animate-spin text-rose-500 mx-auto" />
                                 <p className="text-sm font-medium text-foreground/70">Memuat halaman dokumen...</p>
                             </div>
                         ) : pageCanvasDataUrl ? (
                             <div className="flex flex-col items-center">
                                 {/* Instructions Hint */}
-                                <div className="mb-3 px-3 py-1.5 rounded-full bg-surface/80 border border-border/60 text-xs text-foreground/70 flex items-center gap-1.5">
-                                    <Square className="w-3.5 h-3.5 text-rose-400" />
-                                    <span>Klik lalu seret (drag) mouse untuk menggambar kotak sensor pada dokumen</span>
+                                <div className="mb-3 px-3 py-1.5 rounded-full bg-surface/80 border border-border/60 text-xs text-foreground/70 flex items-center gap-1.5 text-center">
+                                    <Square className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                    <span className="hidden sm:inline">Klik lalu seret (drag) mouse untuk membuat kotak sensor pada dokumen</span>
+                                    <span className="sm:hidden">Ketuk & seret kotak sensor pada area dokumen</span>
                                 </div>
 
                                 {/* Scaled Document Wrapper */}
