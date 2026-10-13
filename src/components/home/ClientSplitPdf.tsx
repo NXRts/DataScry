@@ -21,7 +21,8 @@ import {
     Layers,
     ListChecks,
     Grid,
-    ZoomIn
+    ZoomIn,
+    PenLine
 } from "lucide-react";
 import MediaLightboxModal, { LightboxItem } from "@/components/shared/MediaLightboxModal";
 import PdfEmbeddedViewer from "@/components/shared/PdfEmbeddedViewer";
@@ -48,6 +49,13 @@ export default function ClientSplitPdf() {
     const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
     const [pageRange, setPageRange] = useState<string>("");
     const [splitMode, setSplitMode] = useState<SplitMode>("extract-merged");
+    const [customFileName, setCustomFileName] = useState<string>("dokumen_terpisah");
+
+    const getFinalFileName = (ext: "zip" | "pdf" = splitMode === "extract-merged" ? "pdf" : "zip") => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || (ext === "zip" ? "dokumen_terpisah" : "dokumen_ekstrak");
+        return baseName.endsWith(`.${ext}`) ? baseName : `${baseName}.${ext}`;
+    };
     
     // Processing states
     const [isLoadingPages, setIsLoadingPages] = useState(false);
@@ -95,6 +103,9 @@ export default function ClientSplitPdf() {
 
         const targetFile = pdfs[0];
         setPdfFile(targetFile);
+        const rawBase = targetFile.name.replace(/\.[^/.]+$/, "");
+        const clean = rawBase.replace(/[/\\?%*:|"<>]/g, "").trim();
+        setCustomFileName(clean ? `${clean}_terpisah` : "dokumen_terpisah");
         setIsLoadingPages(true);
         setErrorMessage(null);
         setPages([]);
@@ -253,6 +264,7 @@ export default function ClientSplitPdf() {
     // Reset everything
     const handleClearAll = () => {
         setPdfFile(null);
+        setCustomFileName("dokumen_terpisah");
         setPages([]);
         setSelectedPages(new Set());
         setPageRange("");
@@ -387,8 +399,7 @@ export default function ClientSplitPdf() {
         const url = URL.createObjectURL(extractedZipBlob);
         const a = document.createElement("a");
         a.href = url;
-        const baseName = pdfFile.name.replace(/\.pdf$/i, "");
-        a.download = `${baseName}_terpisah_${Date.now()}.zip`;
+        a.download = getFinalFileName("zip");
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -578,6 +589,29 @@ export default function ClientSplitPdf() {
                                         Gunakan tanda koma (,) untuk memisahkan hal, dan tanda setrip (-) untuk rentang angka.
                                     </p>
                                 </div>
+
+                                {/* Kustomisasi Nama File / Arsip ZIP */}
+                                <div className="space-y-2 md:col-span-2 pt-2 border-t border-border/40">
+                                    <label className="text-xs font-bold text-foreground/80 tracking-wide uppercase flex items-center gap-1.5">
+                                        <PenLine className="w-3.5 h-3.5 text-rose-500" />
+                                        <span>Nama Berkas Hasil {splitMode === "extract-merged" ? "(PDF)" : "Paket Arsip (ZIP)"}</span>
+                                    </label>
+                                    <div className="relative flex items-center max-w-md">
+                                        <input
+                                            type="text"
+                                            value={customFileName}
+                                            onChange={(e) => setCustomFileName(e.target.value)}
+                                            placeholder={splitMode === "extract-merged" ? "dokumen_ekstrak" : "dokumen_terpisah"}
+                                            className="w-full px-3.5 py-2.5 pr-14 rounded-xl bg-surface/90 border border-border/80 text-foreground text-xs sm:text-sm focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 outline-none transition-all font-medium"
+                                        />
+                                        <span className="absolute right-3.5 text-xs font-bold text-rose-400 pointer-events-none select-none">
+                                            .{splitMode === "extract-merged" ? "pdf" : "zip"}
+                                        </span>
+                                    </div>
+                                    <p className="text-[11px] text-foreground/50">
+                                        Bebas tentukan nama berkas tanpa karakter terlarang (/ \ : * ? &quot; &lt; &gt; |).
+                                    </p>
+                                </div>
                             </div>
 
                             {/* Tombol Aksi Cepat Seleksi Halaman */}
@@ -734,9 +768,27 @@ export default function ClientSplitPdf() {
                     {/* Output 1: Hasil Ekstrak Gabungan (Embedded Live PDF Viewer) */}
                     {extractedPdfBlob && (
                         <div className="space-y-4 animate-fade-in">
+                            <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left shadow-sm">
+                                <div className="flex items-center gap-2">
+                                    <PenLine className="w-4 h-4 text-rose-400 shrink-0" />
+                                    <span className="text-xs font-bold text-foreground">Nama Berkas PDF:</span>
+                                </div>
+                                <div className="relative flex items-center flex-1 max-w-sm">
+                                    <input
+                                        type="text"
+                                        value={customFileName}
+                                        onChange={(e) => setCustomFileName(e.target.value)}
+                                        placeholder="dokumen_ekstrak"
+                                        className="w-full px-3 py-1.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-rose-500/80 focus:outline-hidden text-foreground font-semibold"
+                                    />
+                                    <span className="absolute right-3 text-xs font-bold text-rose-400 pointer-events-none select-none">
+                                        .pdf
+                                    </span>
+                                </div>
+                            </div>
                             <PdfEmbeddedViewer
                                 blob={extractedPdfBlob}
-                                fileName={`${pdfFile.name.replace(/\.pdf$/i, "")}_ekstrak.pdf`}
+                                fileName={getFinalFileName("pdf")}
                                 title="Dokumen PDF Hasil Ekstraksi Siap Diunduh"
                                 accentColor="rose"
                             />
@@ -770,6 +822,27 @@ export default function ClientSplitPdf() {
                                     <span>Unduh Semua ({ (extractedZipBlob.size / 1024 / 1024).toFixed(2) } MB ZIP)</span>
                                 </button>
                             </div>
+
+                            {/* Bar Ubah Nama File ZIP sebelum unduh */}
+                            <div className="p-3.5 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left shadow-sm">
+                                <div className="flex items-center gap-2">
+                                    <PenLine className="w-4 h-4 text-emerald-400 shrink-0" />
+                                    <span className="text-xs font-bold text-foreground">Nama Paket ZIP:</span>
+                                </div>
+                                <div className="relative flex items-center flex-1 max-w-sm">
+                                    <input
+                                        type="text"
+                                        value={customFileName}
+                                        onChange={(e) => setCustomFileName(e.target.value)}
+                                        placeholder="dokumen_terpisah"
+                                        className="w-full px-3 py-1.5 pr-14 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground font-semibold"
+                                    />
+                                    <span className="absolute right-3 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                        .zip
+                                    </span>
+                                </div>
+                            </div>
+
 
                             {/* Galeri Berkas Hasil Pisahan dengan Tombol Unduh Satuan */}
                             <div className="space-y-3">

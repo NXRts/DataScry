@@ -32,7 +32,8 @@ import {
     Sliders,
     X,
     Filter,
-    AlertCircle
+    AlertCircle,
+    PenLine
 } from "lucide-react";
 
 // Setup PDF.js worker using local public worker for 100% offline & reliable loading
@@ -178,6 +179,13 @@ export default function ClientPdfToJpg() {
     const [renderQuality, setRenderQuality] = useState<RenderQuality>("high");
     const [selectionMode, setSelectionMode] = useState<PageSelectionMode>("all");
     const [customRange, setCustomRange] = useState("");
+    const [customFileName, setCustomFileName] = useState<string>("gambar-ekstrak");
+
+    const getFinalFileName = () => {
+        const clean = customFileName.trim().replace(/[/\\?%*:|"<>]/g, "");
+        const baseName = clean || "gambar-ekstrak";
+        return baseName.endsWith(".zip") ? baseName : `${baseName}.zip`;
+    };
 
     // Active dropdown state for custom selects
     const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -418,6 +426,10 @@ export default function ClientPdfToJpg() {
 
         // Reset previous states
         setFile(pdfFile);
+        const rawBase = pdfFile.name.replace(/\.[^/.]+$/, "");
+        const clean = rawBase.replace(/[/\\?%*:|"<>]/g, "").trim();
+        setCustomFileName(clean ? `${clean}_gambar-ekstrak` : "gambar-ekstrak");
+
         setIsLoadingPdf(true);
         setLoadingProgress("Membaca berkas dokumen PDF...");
         setErrorMessage(null);
@@ -660,8 +672,7 @@ export default function ClientPdfToJpg() {
         const url = URL.createObjectURL(zipBlob);
         const a = document.createElement("a");
         a.href = url;
-        const baseName = file.name.replace(/\.[^/.]+$/, "");
-        a.download = `${baseName}_gambar-ekstrak.zip`;
+        a.download = getFinalFileName();
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -683,6 +694,7 @@ export default function ClientPdfToJpg() {
         setIsExtracting(false);
         setCustomRange("");
         setSelectionMode("all");
+        setCustomFileName("gambar-ekstrak");
         closeLightbox();
     };
 
@@ -907,6 +919,26 @@ export default function ClientPdfToJpg() {
                             </div>
                         </div>
 
+                        {/* Kustomisasi Nama File Arsip ZIP */}
+                        <div className="w-full sm:max-w-xs space-y-1.5 text-left">
+                            <label className="text-xs font-semibold text-foreground/80 flex items-center gap-1.5">
+                                <PenLine className="w-3.5 h-3.5 text-amber-500" />
+                                <span>Nama Paket Arsip (ZIP)</span>
+                            </label>
+                            <div className="relative flex items-center">
+                                <input
+                                    type="text"
+                                    value={customFileName}
+                                    onChange={(e) => setCustomFileName(e.target.value)}
+                                    placeholder="gambar-ekstrak"
+                                    className="w-full px-3 py-2 pr-12 text-xs rounded-xl bg-surface border border-border/80 focus:border-amber-500/80 focus:outline-hidden text-foreground placeholder:text-foreground/40 font-medium transition-all shadow-inner"
+                                />
+                                <span className="absolute right-3 text-xs font-bold text-amber-500 pointer-events-none select-none">
+                                    .zip
+                                </span>
+                            </div>
+                        </div>
+
                         <button
                             onClick={extractImages}
                             disabled={isExtracting || isLoadingPdf || pagesToExtract.length === 0}
@@ -1033,6 +1065,26 @@ export default function ClientPdfToJpg() {
                                     <p className="text-foreground/70 text-sm sm:text-base max-w-lg mx-auto">
                                         Berhasil mengekstrak <strong>{extractedImages.length} halaman</strong> ke format <strong>{outputFormat.toUpperCase()}</strong> berkemampuan resolusi HD.
                                     </p>
+                                </div>
+
+                                {/* Bar Ubah Nama File ZIP sebelum unduh */}
+                                <div className="max-w-md mx-auto p-3.5 rounded-2xl bg-surface/80 border border-border/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left shadow-sm">
+                                    <div className="flex items-center gap-2">
+                                        <PenLine className="w-4 h-4 text-emerald-400 shrink-0" />
+                                        <span className="text-xs font-bold text-foreground">Nama Berkas ZIP:</span>
+                                    </div>
+                                    <div className="relative flex items-center flex-1">
+                                        <input
+                                            type="text"
+                                            value={customFileName}
+                                            onChange={(e) => setCustomFileName(e.target.value)}
+                                            placeholder="gambar-ekstrak"
+                                            className="w-full px-3 py-1.5 pr-12 text-xs sm:text-sm rounded-xl bg-surface border border-border/80 focus:border-emerald-500/80 focus:outline-hidden text-foreground font-semibold"
+                                        />
+                                        <span className="absolute right-3 text-xs font-bold text-emerald-400 pointer-events-none select-none">
+                                            .zip
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2 w-full">
