@@ -168,7 +168,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
                             <div className="flex items-center gap-2">
                                 <span className="font-extrabold text-base text-foreground tracking-tight">DataScry Menu</span>
                                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/15 text-primary font-bold border border-primary/25">
-                                    23 Alat
+                                    {ALL_TOOLS.length} Alat
                                 </span>
                             </div>
                             <p className="text-[11px] text-foreground/50">Navigasi dokumen & foto 100% offline</p>
