@@ -12,9 +12,9 @@ export interface ToolItem {
 }
 
 export const TOOL_CATEGORIES = [
-    { id: "all" as ToolCategory, label: "Semua Alat", count: 23 },
+    { id: "all" as ToolCategory, label: "Semua Alat", count: 24 },
     { id: "pdf" as ToolCategory, label: "PDF & Dokumen", count: 13 },
-    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 6 },
+    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 7 },
     { id: "utility" as ToolCategory, label: "Arsip & Utilitas", count: 4 }
 ];
 
@@ -74,6 +74,16 @@ export const ALL_TOOLS: ToolItem[] = [
         category: "image",
         color: "rose",
         iconName: "EyeOff"
+    },
+    {
+        id: "watermark-image",
+        title: "Cap Air & Watermark Foto",
+        description: "Beri cap pengaman miring atau logo pada scan KTP/SIM untuk mencegah penyalahgunaan pinjol.",
+        href: "/tools/watermark-image",
+        category: "image",
+        color: "rose",
+        iconName: "Stamp",
+        badge: "Baru"
     },
     {
         id: "merge-pdf",

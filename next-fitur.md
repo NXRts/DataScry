@@ -6,7 +6,7 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 
 ## 📊 Matriks Status Fitur DataScry
 
-### 1. Fitur yang Sudah Aktif & Siap Digunakan (✅ 23 Alat Aktif)
+### 1. Fitur yang Sudah Aktif & Siap Digunakan (✅ 24 Alat Aktif)
 
 Semua alat di bawah ini telah terpasang, teruji via build Next.js, dan aktif di navigasi/katalog utama [HomeGrid.tsx](file:///home/nxrts/ProgramKoding/DataScry/src/components/home/HomeGrid.tsx):
 
@@ -16,49 +16,50 @@ Semua alat di bawah ini telah terpasang, teruji via build Next.js, dan aktif di 
 | 2 | **Konverter Format Gambar Universal** | Manipulasi Gambar | `/tools/convert-image` | ✅ **Rilis Baru** (WebP ⇄ JPG ⇄ PNG ⇄ AVIF, Latar Anti-Hitam Transparansi, Batch Multi-File & ZIP, Lightbox HD) |
 | 3 | **Potong & Pas Foto (Crop & Resize)** | Manipulasi Gambar | `/tools/crop-image` | ✅ **Rilis Baru** (Preset Pas Foto 2×3, 3×4, 4×6 cm, Atur Piksel Presisi, Rotasi/Flip, Rule of Thirds) |
 | 4 | **Sensor & Blur Foto (Blur Face & Privacy)** | Privasi Gambar | `/tools/blur-face` | ✅ **Rilis Baru** (Gaussian Blur, Mosaik TV, Sensor Hitam, Kuas Sentuh & Kotak Drag, Layer Stacking Non-Destruktif, Ekspor HD) |
-| 5 | **JPG ke PDF** | Konversi | `/tools/jpg-to-pdf` | ✅ Aktif (*Gold Standard*: Lightbox Zoom 400%, Grid Thumbnail, Orientasi/Margin Kustom) |
-| 6 | **PDF ke JPG** | Konversi | `/tools/pdf-to-jpg` | ✅ Aktif (*Gold Standard*: Seleksi Halaman, Ekspor ZIP & Direct Download, Lightbox HD) |
-| 7 | **Kompresi Dokumen & Foto (Compress)** | Optimasi | `/tools/compress` | ✅ Aktif (Smart Compression multi-level, kalkulator hemat byte, pratinjau sebelum/sesudah) |
-| 8 | **Gabung PDF (Merge PDF)** | Manajemen PDF | `/tools/merge-pdf` | ✅ Aktif (Drag-to-reorder, thumbnail visual multi-halaman) |
-| 9 | **Pisah PDF (Split PDF)** | Manajemen PDF | `/tools/split-pdf` | ✅ Aktif (Mode rentang, halaman genap/ganjil, ekstraksi selektif) |
-| 10 | **Atur & Kelola Halaman PDF (Organize PDF)** | Manajemen PDF | `/tools/organize-pdf` | ✅ **Rilis Baru** (Drag & drop visual reorder, hapus, putar 90°, duplikasi halaman, tambah PDF) |
-| 11 | **Putar PDF (Rotate PDF)** | Manajemen PDF | `/tools/rotate-pdf` | ✅ Aktif (Rotasi 90°/180°/270° per halaman atau serentak) |
-| 12 | **Tanda Tangan PDF (Sign PDF)** | Tanda Tangan | `/tools/sign-pdf` | ✅ Aktif (Canvas sentuh interaktif, impor stempel PNG transparan, multi-halaman) |
-| 13 | **Cap Air PDF (Watermark PDF)** | Keamanan | `/tools/watermark-pdf` | ✅ Aktif (Teks & gambar, kustomisasi opasitas, rotasi sudut, tata letak grid/pusat) |
-| 14 | **Kunci PDF (Protect PDF)** | Keamanan | `/tools/protect-pdf` | ✅ Aktif (Enkripsi kata sandi dokumen berbasis WebAssembly) |
-| 15 | **Buka Kunci PDF (PDF Unlock)** | Keamanan | `/tools/unlock-pdf` | ✅ Aktif (Hapus proteksi password permanen, dekripsi AES-256 & RC4 client-side) |
-| 16 | **Sensor Data Sensitif PDF (PDF Redactor)** | Keamanan & Privasi | `/tools/redact-pdf` | ✅ **Rilis Baru** (*True Redaction*: Burn-in pixel bitmap, musnahkan aliran teks sensitif, 3 gaya sensor) |
-| 17 | **Word ke PDF (Word to PDF)** | Konversi | `/tools/word-to-pdf` | ✅ Aktif (Rendering docx lokal langsung menjadi PDF) |
-| 18 | **PDF ke Word (PDF to Word)** | Konversi | `/tools/pdf-to-word` | ✅ Aktif (Ekstraksi teks & struktur menjadi berkas `.docx`) |
-| 19 | **Gabung Word (Merge Word)** | Dokumen | `/tools/merge-word` | ✅ Aktif (Penggabungan multi-file `.docx` secara client-side) |
-| 20 | **Arsip ZIP (Archive ZIP)** | Utilitas Berkas | `/tools/archive-zip` | ✅ Aktif (Kompresi multi-berkas menjadi arsip `.zip` lokal) |
-| 21 | **Ekstrak & Intip ZIP (Unzip & Inspect)** | Utilitas Berkas | `/tools/unzip` | ✅ **Rilis Baru** (Tree/List & Grid View, Live Preview Gambar/PDF/Teks/Kode, Ekstraksi Selektif & Massal, HUD Penghematan) |
-| 22 | **Inspeksi Metadata (Metadata Viewer)** | Privasi | `/tools/metadata-viewer` | ✅ Aktif (Analisis atribut internal dokumen & berkas) |
-| 23 | **Pembersih EXIF (Scrub EXIF)** | Privasi | `/tools/scrub-exif` | ✅ Aktif (Hapus metadata GPS & data sensitif kamera dari foto) |
+| 5 | **Cap Air Gambar / Watermark Foto (Watermark IMAGE)** | Keamanan & Hak Cipta | `/tools/watermark-image` | ✅ **Rilis Baru** (Canvas 2D HD, Teks Pengaman KTP/SIM Anti-Pinjol, Stempel Logo PNG Transparan, Pola Berulang Tiled Grid, Batch Multi-Foto & ZIP) |
+| 6 | **JPG ke PDF** | Konversi | `/tools/jpg-to-pdf` | ✅ Aktif (*Gold Standard*: Lightbox Zoom 400%, Grid Thumbnail, Orientasi/Margin Kustom) |
+| 7 | **PDF ke JPG** | Konversi | `/tools/pdf-to-jpg` | ✅ Aktif (*Gold Standard*: Seleksi Halaman, Ekspor ZIP & Direct Download, Lightbox HD) |
+| 8 | **Kompresi Dokumen & Foto (Compress)** | Optimasi | `/tools/compress` | ✅ Aktif (Smart Compression multi-level, kalkulator hemat byte, pratinjau sebelum/sesudah) |
+| 9 | **Gabung PDF (Merge PDF)** | Manajemen PDF | `/tools/merge-pdf` | ✅ Aktif (Drag-to-reorder, thumbnail visual multi-halaman) |
+| 10 | **Pisah PDF (Split PDF)** | Manajemen PDF | `/tools/split-pdf` | ✅ Aktif (Mode rentang, halaman genap/ganjil, ekstraksi selektif) |
+| 11 | **Atur & Kelola Halaman PDF (Organize PDF)** | Manajemen PDF | `/tools/organize-pdf` | ✅ **Rilis Baru** (Drag & drop visual reorder, hapus, putar 90°, duplikasi halaman, tambah PDF) |
+| 12 | **Putar PDF (Rotate PDF)** | Manajemen PDF | `/tools/rotate-pdf` | ✅ Aktif (Rotasi 90°/180°/270° per halaman atau serentak) |
+| 13 | **Tanda Tangan PDF (Sign PDF)** | Tanda Tangan | `/tools/sign-pdf` | ✅ Aktif (Canvas sentuh interaktif, impor stempel PNG transparan, multi-halaman) |
+| 14 | **Cap Air PDF (Watermark PDF)** | Keamanan | `/tools/watermark-pdf` | ✅ Aktif (Teks & gambar, kustomisasi opasitas, rotasi sudut, tata letak grid/pusat) |
+| 15 | **Kunci PDF (Protect PDF)** | Keamanan | `/tools/protect-pdf` | ✅ Aktif (Enkripsi kata sandi dokumen berbasis WebAssembly) |
+| 16 | **Buka Kunci PDF (PDF Unlock)** | Keamanan | `/tools/unlock-pdf` | ✅ Aktif (Hapus proteksi password permanen, dekripsi AES-256 & RC4 client-side) |
+| 17 | **Sensor Data Sensitif PDF (PDF Redactor)** | Keamanan & Privasi | `/tools/redact-pdf` | ✅ **Rilis Baru** (*True Redaction*: Burn-in pixel bitmap, musnahkan aliran teks sensitif, 3 gaya sensor) |
+| 18 | **Word ke PDF (Word to PDF)** | Konversi | `/tools/word-to-pdf` | ✅ Aktif (Rendering docx lokal langsung menjadi PDF) |
+| 19 | **PDF ke Word (PDF to Word)** | Konversi | `/tools/pdf-to-word` | ✅ Aktif (Ekstraksi teks & struktur menjadi berkas `.docx`) |
+| 20 | **Gabung Word (Merge Word)** | Dokumen | `/tools/merge-word` | ✅ Aktif (Penggabungan multi-file `.docx` secara client-side) |
+| 21 | **Arsip ZIP (Archive ZIP)** | Utilitas Berkas | `/tools/archive-zip` | ✅ Aktif (Kompresi multi-berkas menjadi arsip `.zip` lokal) |
+| 22 | **Ekstrak & Intip ZIP (Unzip & Inspect)** | Utilitas Berkas | `/tools/unzip` | ✅ **Rilis Baru** (Tree/List & Grid View, Live Preview Gambar/PDF/Teks/Kode, Ekstraksi Selektif & Massal, HUD Penghematan) |
+| 23 | **Inspeksi Metadata (Metadata Viewer)** | Privasi | `/tools/metadata-viewer` | ✅ Aktif (Analisis atribut internal dokumen & berkas) |
+| 24 | **Pembersih EXIF (Scrub EXIF)** | Privasi | `/tools/scrub-exif` | ✅ Aktif (Hapus metadata GPS & data sensitif kamera dari foto) |
 
 ---
 
 ## 🎯 Rekomendasi Teratas untuk Pengembangan Selanjutnya
 
-Setelah sukses mengimplementasikan **Konverter Format Gambar Universal (`/tools/convert-image`)**, berikut adalah 5 fitur terbaik berikutnya yang siap diimplementasikan:
+Setelah sukses mengimplementasikan **Cap Air Gambar / Watermark Foto (`/tools/watermark-image`)**, berikut adalah rekomendasi fitur terbaik berikutnya yang siap diimplementasikan:
 
 ---
 
-### 🥇 1. Cap Air Gambar / Watermark Foto (Watermark IMAGE)
+### ✅ SELESAI DITERAPKAN: Cap Air Gambar / Watermark Foto (Watermark IMAGE)
 - **Kategori**: Keamanan & Hak Cipta Gambar (`/tools/watermark-image`)
-- **Tingkat Rekomendasi**: **Sangat Tinggi (Pilihan Utama)**
-- **Kenapa Paling Direkomendasikan?**:
-  1. **Tren Perlindungan Identitas di Indonesia**: Masyarakat sangat sering diimbau untuk membubuhkan watermark miring di scan KTP/SIM dengan teks seperti *"HANYA UNTUK VERIFIKASI APLIKASI X - TGL DD/MM/YY"* agar tidak disalahgunakan pinjaman online ilegal.
-  2. **Melengkapi Watermark PDF**: Melengkapi `/tools/watermark-pdf` yang sudah ada untuk format dokumen PDF.
-- **Fitur Utama**:
-  - Teks watermark kustom dengan slider ukuran font, transparansi (opasitas), sudut kemiringan, dan warna.
-  - Opsi stempel logo PNG transparan.
-  - Pola berulang (*tiled diagonal watermark*) untuk proteksi anti-crop.
-- **Estimasi Teknologi**: HTML5 Canvas 2D Rendering.
+- **Status**: **✅ Selesai Diimplementasikan (100% Client-Side)**
+- **Fitur yang Diimplementasikan**:
+  - Teks watermark pengaman e-KTP / SIM anti-pinjol ilegal dengan dukungan multi-baris dan tombol cepat "+ Tanggal Hari Ini".
+  - Slider ukuran font adaptif resolusi asli, opasitas (10% - 100%), sudut kemiringan (-90° s.d. +90° dengan chip instan -45°, -30°, 0°, 30°, 45°), dan palet warna kontras + pemilih warna bebas.
+  - Garis tepi kontras (anti-samar) agar terbaca jelas di foto terang maupun gelap.
+  - Stempel logo PNG transparan dengan kontrol skala proporsional, opasitas, dan rotasi.
+  - Pola Berulang (*Tiled Diagonal Grid*) stagger-brick anti-crop, serta posisi tunggal (tengah dan 4 sudut).
+  - Batch upload banyak foto sekaligus, pratinjau thumbnail responsif, unduh berkas individu, atau unduh seluruh foto sekaligus via arsip `.zip`.
+  - Inspeksi resolusi penuh dengan MediaLightboxModal (Zoom hingga 400% & Pan).
 
 ---
 
-### 🥈 2. Tingkatkan Resolusi Foto (AI Image Upscaler)
+### 🥇 1. Tingkatkan Resolusi Foto (AI Image Upscaler)
 - **Kategori**: Gambar & AI (`/tools/upscale-image`)
 - **Tingkat Rekomendasi**: **Tinggi (Fitur Premium & Futuristik)**
 - **Kenapa Direkomendasikan?**:

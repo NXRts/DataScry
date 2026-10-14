@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LockKeyhole, Shield, ArrowLeft, Menu } from "lucide-react";
 import MobileMenuDrawer from "./MobileMenuDrawer";
+import { ALL_TOOLS } from "@/lib/toolsData";
 
 export default function Header() {
   const pathname = usePathname();
@@ -48,8 +49,8 @@ export default function Header() {
             <button
               onClick={() => setIsMobileMenuOpen(true)}
               className="md:hidden flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-full bg-surface/90 hover:bg-surface border border-border/80 hover:border-primary/50 text-foreground transition-all duration-200 active:scale-95 cursor-pointer shadow-sm group"
-              aria-label="Buka Menu 23 Alat"
-              title="Daftar 23 Alat"
+              aria-label={`Buka Menu ${ALL_TOOLS.length} Alat`}
+              title={`Daftar ${ALL_TOOLS.length} Alat`}
             >
               <div className="flex flex-col justify-center items-center w-3 h-3 gap-0.5 sm:gap-1">
                 <span className="w-3 h-0.5 bg-primary rounded-full transition-all group-hover:scale-x-110"></span>
