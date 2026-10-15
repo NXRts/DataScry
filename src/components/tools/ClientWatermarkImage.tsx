@@ -54,7 +54,8 @@ const COLOR_SWATCHES = [
     { label: "Abu-abu", hex: "#64748b", border: "border-slate-500" },
     { label: "Biru", hex: "#2563eb", border: "border-blue-600" },
     { label: "Hijau", hex: "#16a34a", border: "border-emerald-600" },
-    { label: "Emas", hex: "#eab308", border: "border-amber-500" }
+    { label: "Emas", hex: "#eab308", border: "border-amber-500" },
+    { label: "Transparan", hex: "transparent", border: "border-slate-400" }
 ];
 
 export default function ClientWatermarkImage() {
@@ -318,19 +319,33 @@ export default function ClientWatermarkImage() {
                 const effectiveFontSize = Math.max(12, Math.round((fontSize / 1000) * baseDim));
                 const lineHeight = effectiveFontSize * 1.25;
 
+                const isTransparent = textColor.toLowerCase() === "transparent";
+
                 ctx.save();
                 ctx.font = `900 ${effectiveFontSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
                 ctx.globalAlpha = opacity;
-                ctx.fillStyle = textColor;
 
-                // Determine contrast outline color (if textColor is bright, outline is dark; else outline is white)
-                const isLightColor = textColor.toLowerCase() === "#ffffff" || textColor.toLowerCase() === "#eab308";
-                const strokeColor = isLightColor ? "rgba(0,0,0,0.7)" : "rgba(255,255,255,0.75)";
-                ctx.strokeStyle = strokeColor;
-                ctx.lineWidth = Math.max(2, Math.round(effectiveFontSize * 0.08));
-                ctx.lineJoin = "round";
+                if (isTransparent) {
+                    ctx.fillStyle = "transparent";
+                    // Cap air bening berongga (hollow): garis luar putih tegas dengan bayangan gelap anti-samar
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+                    ctx.lineWidth = Math.max(2, Math.round(effectiveFontSize * 0.08));
+                    ctx.lineJoin = "round";
+                    ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+                    ctx.shadowBlur = Math.max(2, Math.round(effectiveFontSize * 0.12));
+                    ctx.shadowOffsetX = 1;
+                    ctx.shadowOffsetY = 1;
+                } else {
+                    ctx.fillStyle = textColor;
+                    // Determine contrast outline color (if textColor is bright, outline is dark; else outline is white)
+                    const isLightColor = textColor.toLowerCase() === "#ffffff" || textColor.toLowerCase() === "#eab308";
+                    const strokeColor = isLightColor ? "rgba(0,0,0,0.7)" : "rgba(255,255,255,0.75)";
+                    ctx.strokeStyle = strokeColor;
+                    ctx.lineWidth = Math.max(2, Math.round(effectiveFontSize * 0.08));
+                    ctx.lineJoin = "round";
+                }
 
                 // Measure widest line
                 let maxLineWidth = 0;
@@ -360,8 +375,8 @@ export default function ClientWatermarkImage() {
                             const posX = x + xOffset;
                             lines.forEach((line, i) => {
                                 const posY = y + (i - (lines.length - 1) / 2) * lineHeight;
-                                if (hasOutline) ctx.strokeText(line, posX, posY);
-                                ctx.fillText(line, posX, posY);
+                                if (hasOutline || isTransparent) ctx.strokeText(line, posX, posY);
+                                if (!isTransparent) ctx.fillText(line, posX, posY);
                             });
                         }
                         rowIndex++;
@@ -391,8 +406,8 @@ export default function ClientWatermarkImage() {
 
                     lines.forEach((line, i) => {
                         const posY = (i - (lines.length - 1) / 2) * lineHeight;
-                        if (hasOutline) ctx.strokeText(line, 0, posY);
-                        ctx.fillText(line, 0, posY);
+                        if (hasOutline || isTransparent) ctx.strokeText(line, 0, posY);
+                        if (!isTransparent) ctx.fillText(line, 0, posY);
                     });
                 }
 
@@ -867,19 +882,38 @@ export default function ClientWatermarkImage() {
                                             <div className="flex items-center justify-between text-xs">
                                                 <span className="font-bold text-foreground">Pilihan Warna Teks</span>
                                                 <div className="flex items-center gap-1.5">
-                                                    <input
-                                                        type="color"
-                                                        value={textColor}
-                                                        onChange={(e) => setTextColor(e.target.value)}
-                                                        className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent p-0"
-                                                        title="Pilih warna bebas"
-                                                    />
-                                                    <span className="text-[10px] font-mono text-foreground/60">{textColor}</span>
+                                                    <div className="relative w-5 h-5 rounded overflow-hidden border border-border/80">
+                                                        {textColor.toLowerCase() === "transparent" ? (
+                                                            <div
+                                                                className="w-full h-full"
+                                                                style={{
+                                                                    backgroundImage: "repeating-conic-gradient(#94a3b8 0% 25%, #ffffff 0% 50%)",
+                                                                    backgroundSize: "6px 6px"
+                                                                }}
+                                                            />
+                                                        ) : (
+                                                            <div
+                                                                className="w-full h-full"
+                                                                style={{ backgroundColor: textColor }}
+                                                            />
+                                                        )}
+                                                        <input
+                                                            type="color"
+                                                            value={textColor.toLowerCase() === "transparent" ? "#ffffff" : textColor}
+                                                            onChange={(e) => setTextColor(e.target.value)}
+                                                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                                            title="Pilih warna bebas"
+                                                        />
+                                                    </div>
+                                                    <span className="text-[10px] font-mono text-foreground/60">
+                                                        {textColor.toLowerCase() === "transparent" ? "Transparan (Bening)" : textColor}
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-2.5 overflow-x-auto py-2 px-2 -mx-2 no-scrollbar">
                                                 {COLOR_SWATCHES.map((swatch) => {
                                                     const isSelected = textColor.toLowerCase() === swatch.hex.toLowerCase();
+                                                    const isTrans = swatch.hex === "transparent";
                                                     return (
                                                         <button
                                                             key={swatch.hex}
@@ -890,14 +924,22 @@ export default function ClientWatermarkImage() {
                                                                     ? "ring-2 ring-rose-500 ring-offset-2 ring-offset-surface scale-105 shadow-sm"
                                                                     : "border border-border/80 hover:scale-105 hover:border-foreground/50"
                                                             }`}
-                                                            style={{ backgroundColor: swatch.hex }}
+                                                            style={
+                                                                isTrans
+                                                                    ? {
+                                                                          backgroundImage:
+                                                                              "repeating-conic-gradient(#94a3b8 0% 25%, #ffffff 0% 50%)",
+                                                                          backgroundSize: "6px 6px"
+                                                                      }
+                                                                    : { backgroundColor: swatch.hex }
+                                                            }
                                                             title={swatch.label}
                                                         >
                                                             {isSelected && (
                                                                 <Check
                                                                     className={`w-3.5 h-3.5 ${
-                                                                        swatch.hex === "#ffffff" || swatch.hex === "#eab308"
-                                                                            ? "text-black"
+                                                                        swatch.hex === "#ffffff" || swatch.hex === "#eab308" || isTrans
+                                                                            ? "text-black drop-shadow-xs"
                                                                             : "text-white"
                                                                     }`}
                                                                 />
