@@ -726,7 +726,7 @@ export default function ClientWatermarkImage() {
                                 <span>Pilih foto untuk pratinjau ({activeIdx + 1} dari {images.length}):</span>
                                 <span className="text-[11px] text-rose-400 font-medium">Pengaturan cap air berlaku serentak untuk semua foto</span>
                             </div>
-                            <div className="flex items-center gap-3 overflow-x-auto pb-2 pt-1 no-scrollbar">
+                            <div className="flex items-center gap-3 overflow-x-auto pb-2 pt-1.5 px-2 -mx-2 no-scrollbar">
                                 {images.map((item, idx) => (
                                     <div
                                         key={item.id}
@@ -877,31 +877,34 @@ export default function ClientWatermarkImage() {
                                                     <span className="text-[10px] font-mono text-foreground/60">{textColor}</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-                                                {COLOR_SWATCHES.map((swatch) => (
-                                                    <button
-                                                        key={swatch.hex}
-                                                        type="button"
-                                                        onClick={() => setTextColor(swatch.hex)}
-                                                        className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer border shrink-0 ${
-                                                            textColor.toLowerCase() === swatch.hex.toLowerCase()
-                                                                ? "ring-2 ring-rose-500 scale-110 shadow-sm"
-                                                                : "border-border/80 hover:scale-105"
-                                                        }`}
-                                                        style={{ backgroundColor: swatch.hex }}
-                                                        title={swatch.label}
-                                                    >
-                                                        {textColor.toLowerCase() === swatch.hex.toLowerCase() && (
-                                                            <Check
-                                                                className={`w-3.5 h-3.5 ${
-                                                                    swatch.hex === "#ffffff" || swatch.hex === "#eab308"
-                                                                        ? "text-black"
-                                                                        : "text-white"
-                                                                }`}
-                                                            />
-                                                        )}
-                                                    </button>
-                                                ))}
+                                            <div className="flex items-center gap-2.5 overflow-x-auto py-2 px-2 -mx-2 no-scrollbar">
+                                                {COLOR_SWATCHES.map((swatch) => {
+                                                    const isSelected = textColor.toLowerCase() === swatch.hex.toLowerCase();
+                                                    return (
+                                                        <button
+                                                            key={swatch.hex}
+                                                            type="button"
+                                                            onClick={() => setTextColor(swatch.hex)}
+                                                            className={`w-7 h-7 rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0 ${
+                                                                isSelected
+                                                                    ? "ring-2 ring-rose-500 ring-offset-2 ring-offset-surface scale-105 shadow-sm"
+                                                                    : "border border-border/80 hover:scale-105 hover:border-foreground/50"
+                                                            }`}
+                                                            style={{ backgroundColor: swatch.hex }}
+                                                            title={swatch.label}
+                                                        >
+                                                            {isSelected && (
+                                                                <Check
+                                                                    className={`w-3.5 h-3.5 ${
+                                                                        swatch.hex === "#ffffff" || swatch.hex === "#eab308"
+                                                                            ? "text-black"
+                                                                            : "text-white"
+                                                                    }`}
+                                                                />
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
 
