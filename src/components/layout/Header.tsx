@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LockKeyhole, Shield, ArrowLeft, Menu } from "lucide-react";
+import { LockKeyhole, Shield, ArrowLeft, Heart, Coffee } from "lucide-react";
 import MobileMenuDrawer from "./MobileMenuDrawer";
 import { ALL_TOOLS } from "@/lib/toolsData";
 
@@ -39,6 +39,42 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            {/* Dukung Pengembang: Tablet single button, Desktop dual buttons */}
+            <div className="hidden sm:flex lg:hidden items-center">
+              <a
+                href="https://saweria.co/yusufarrofi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/25 hover:border-amber-500/50 text-xs font-semibold transition-all hover:scale-105 active:scale-95 group"
+                title="Dukung Pengembang via Saweria (Gopay, OVO, Dana, QRIS)"
+              >
+                <Heart size={13} className="fill-rose-500 text-rose-500 group-hover:scale-110 transition-transform" />
+                <span>Dukung</span>
+              </a>
+            </div>
+            <div className="hidden lg:flex items-center gap-1.5">
+              <a
+                href="https://saweria.co/yusufarrofi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/25 hover:border-amber-500/50 text-xs font-semibold transition-all hover:scale-105 active:scale-95 group"
+                title="Dukung via Saweria (Gopay, OVO, Dana, QRIS)"
+              >
+                <Heart size={13} className="fill-amber-500 text-amber-500 group-hover:scale-110 transition-transform" />
+                <span>Saweria</span>
+              </a>
+              <a
+                href="https://ko-fi.com/yusufarrofi/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 border border-sky-500/25 hover:border-sky-500/50 text-xs font-semibold transition-all hover:scale-105 active:scale-95 group"
+                title="Dukung via Ko-fi"
+              >
+                <Coffee size={13} className="text-sky-400 group-hover:scale-110 transition-transform" />
+                <span>Ko-fi</span>
+              </a>
+            </div>
+
             {/* Trust badge: ditampilkan pada layar tablet dan desktop agar navbar mobile tetap lega & proporsional */}
             <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs sm:text-sm font-medium">
               <LockKeyhole size={14} className="shrink-0" />
