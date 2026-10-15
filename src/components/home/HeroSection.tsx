@@ -11,6 +11,7 @@ import {
     Cpu,
     Sparkles
 } from "lucide-react";
+import { ALL_TOOLS } from "@/lib/toolsData";
 
 export default function HeroSection() {
     const heroColorThemes: Record<
@@ -122,7 +123,7 @@ export default function HeroSection() {
                                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm sm:text-base font-bold text-foreground bg-surface hover:bg-surface/80 border border-border rounded-2xl transition-all hover:border-primary/40 active:scale-95"
                             >
                                 <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-amber-500" />
-                                Jelajahi Semua 23 Alat
+                                Jelajahi Semua {ALL_TOOLS.length} Alat
                             </Link>
                         </div>
 
@@ -204,7 +205,7 @@ export default function HeroSection() {
                             >
                                 <span className="inline-flex items-center gap-1.5">
                                     <Sparkles className="w-3.5 h-3.5 text-primary" />
-                                    Lihat Semua 23 Alat Gratis
+                                    Lihat Semua {ALL_TOOLS.length} Alat Gratis
                                 </span>
                             </Link>
                         </div>

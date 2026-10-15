@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Globe, Instagram, ShieldCheck, Zap } from "lucide-react";
+import { Github, Globe, Instagram, ShieldCheck, Zap, Heart, Coffee } from "lucide-react";
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="container mx-auto px-4 py-6 md:py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8">
                     {/* Brand Info */}
-                    <div className="md:col-span-2 space-y-2.5 md:space-y-4">
+                    <div className="md:col-span-2 space-y-3 md:space-y-4">
                         <Link href="/" className="inline-flex items-center gap-2 group">
                             <div className="w-7 h-7 md:w-8 md:h-8 rounded-lg bg-linear-to-br from-primary to-primary-focus flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-105 transition-transform">
                                 <ShieldCheck className="text-primary-content" size={16} />
@@ -19,6 +19,37 @@ export default function Footer() {
                         <p className="text-foreground/60 text-xs md:text-sm max-w-sm leading-relaxed">
                             Platform manajemen dokumen dan foto 100% lokal di peramban Anda. Tanpa server, tanpa kirim data privasi, dan tanpa batas pakai.
                         </p>
+
+                        {/* Dukung Pengembang / Support */}
+                        <div className="p-3 rounded-2xl bg-surface/50 border border-border/60 max-w-sm space-y-2 shadow-xs">
+                            <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+                                <Heart size={13} className="fill-rose-500 text-rose-500 animate-pulse shrink-0" />
+                                <span>Dukung Pengembang (Beli Kopi):</span>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <a
+                                    href="https://saweria.co/yusufarrofi"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-400 border border-amber-500/30 hover:border-amber-500/60 transition-all hover:scale-105 active:scale-95 shadow-xs group"
+                                    title="Dukung lewat Saweria (Gopay, OVO, Dana, QRIS)"
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400 group-hover:animate-ping shrink-0" />
+                                    <span>Saweria</span>
+                                </a>
+                                <a
+                                    href="https://ko-fi.com/yusufarrofi/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-sky-500/15 hover:bg-sky-500/25 text-sky-500 dark:text-sky-400 border border-sky-500/30 hover:border-sky-500/60 transition-all hover:scale-105 active:scale-95 shadow-xs group"
+                                    title="Dukung lewat Ko-fi"
+                                >
+                                    <Coffee size={13} className="text-sky-400 group-hover:scale-110 transition-transform shrink-0" />
+                                    <span>Ko-fi</span>
+                                </a>
+                            </div>
+                        </div>
+
                         <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-emerald-500/80 bg-emerald-500/10 px-3 py-1.5 rounded-full w-fit">
                             <Zap size={14} className="fill-emerald-500" />
                             Web Worker Powered
@@ -89,6 +120,26 @@ export default function Footer() {
                                 Berkontribusi pada privasi pengguna & ikuti kabar terbaru.
                             </p>
                             <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-2 pt-0.5">
+                                <a
+                                    href="https://saweria.co/yusufarrofi"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 text-amber-500 dark:text-amber-400 rounded-xl transition-all group"
+                                    title="Saweria"
+                                >
+                                    <Heart size={14} className="fill-amber-400 text-amber-400 group-hover:scale-110 transition-transform shrink-0" />
+                                    <span>Saweria</span>
+                                </a>
+                                <a
+                                    href="https://ko-fi.com/yusufarrofi/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 md:px-3 md:py-2 text-xs md:text-sm font-medium bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500/20 text-sky-500 dark:text-sky-400 rounded-xl transition-all group"
+                                    title="Ko-fi"
+                                >
+                                    <Coffee size={14} className="text-sky-400 group-hover:scale-110 transition-transform shrink-0" />
+                                    <span>Ko-fi</span>
+                                </a>
                                 <a
                                     href="https://github.com/NXRts"
                                     target="_blank"

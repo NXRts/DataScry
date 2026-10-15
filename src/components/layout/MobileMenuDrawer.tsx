@@ -31,7 +31,9 @@ import {
     Image as ImageIcon,
     FileImage,
     Home,
-    Sparkles
+    Sparkles,
+    Heart,
+    Coffee
 } from "lucide-react";
 import { ALL_TOOLS, TOOL_CATEGORIES, ToolCategory } from "@/lib/toolsData";
 
@@ -318,6 +320,37 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
                             );
                         })
                     )}
+                </div>
+            </div>
+
+            {/* Dukung Pengembang Banner */}
+            <div className="shrink-0 px-4 py-2.5 bg-surface/60 border-t border-border/70 backdrop-blur-md">
+                <div className="max-w-2xl mx-auto flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-foreground min-w-0">
+                        <Heart size={14} className="fill-rose-500 text-rose-500 animate-pulse shrink-0" />
+                        <span className="truncate">Dukung Pengembang:</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                        <a
+                            href="https://saweria.co/yusufarrofi"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-500 dark:text-amber-400 border border-amber-500/30 transition-all active:scale-95"
+                            title="Dukung lewat Saweria (QRIS, Gopay, Dana)"
+                        >
+                            <span>Saweria</span>
+                        </a>
+                        <a
+                            href="https://ko-fi.com/yusufarrofi/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold rounded-lg bg-sky-500/15 hover:bg-sky-500/25 text-sky-500 dark:text-sky-400 border border-sky-500/30 transition-all active:scale-95"
+                            title="Dukung lewat Ko-fi"
+                        >
+                            <Coffee size={12} className="text-sky-400" />
+                            <span>Ko-fi</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
