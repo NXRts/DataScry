@@ -58,6 +58,7 @@ export default function HomeGrid() {
             case "ShieldCheck": return <ShieldCheck size={size} className="text-lime-400" />;
             case "FileSearch": return <FileSearch size={size} className="text-cyan-400" />;
             case "FileType": return <FileType size={size} className="text-indigo-400" />;
+            case "Sparkles": return <Sparkles size={size} className="text-purple-400" />;
             default: return <FileText size={size} className="text-blue-500" />;
         }
     };

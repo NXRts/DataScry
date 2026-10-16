@@ -110,6 +110,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
             case "ShieldCheck": return <ShieldCheck className={className} />;
             case "FileSearch": return <FileSearch className={className} />;
             case "FileType": return <FileType className={className} />;
+            case "Sparkles": return <Sparkles className={className} />;
             default: return <FileText className={className} />;
         }
     };

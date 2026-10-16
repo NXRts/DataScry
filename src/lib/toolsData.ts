@@ -12,9 +12,9 @@ export interface ToolItem {
 }
 
 export const TOOL_CATEGORIES = [
-    { id: "all" as ToolCategory, label: "Semua Alat", count: 24 },
+    { id: "all" as ToolCategory, label: "Semua Alat", count: 25 },
     { id: "pdf" as ToolCategory, label: "PDF & Dokumen", count: 13 },
-    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 7 },
+    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 8 },
     { id: "utility" as ToolCategory, label: "Arsip & Utilitas", count: 4 }
 ];
 
@@ -45,6 +45,16 @@ export const ALL_TOOLS: ToolItem[] = [
         category: "image",
         color: "emerald",
         iconName: "Eraser",
+        badge: "AI HD"
+    },
+    {
+        id: "upscale-image",
+        title: "Tingkatkan Resolusi Foto",
+        description: "Perbesar foto 2× hingga 4× Ultra HD, pertahankan ketajaman tepi, dan bersihkan noise AI.",
+        href: "/tools/upscale-image",
+        category: "image",
+        color: "purple",
+        iconName: "Sparkles",
         badge: "AI HD"
     },
     {
