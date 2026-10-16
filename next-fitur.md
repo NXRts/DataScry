@@ -59,13 +59,19 @@ Setelah sukses mengimplementasikan **Cap Air Gambar / Watermark Foto (`/tools/wa
 
 ---
 
-### 🥇 1. Tingkatkan Resolusi Foto (AI Image Upscaler)
+### 🥇 1. Tingkatkan Resolusi Foto (AI Image Upscaler) (SUDAH DIIMPLEMENTASIKAN ✅)
 - **Kategori**: Gambar & AI (`/tools/upscale-image`)
 - **Tingkat Rekomendasi**: **Tinggi (Fitur Premium & Futuristik)**
-- **Kenapa Direkomendasikan?**:
-  1. **Melengkapi Remove BG**: Memperkuat kategori AI canggih di DataScry.
-  2. **Kebutuhan Cetak Foto**: Foto lama, pas foto kecil, atau screenshot buram dapat diperbesar 2× hingga 4× dengan tepi yang tetap tajam.
-- **Estimasi Teknologi**: WebGL / WebAssembly on-device super-resolution / edge sharpening.
+- **Status**: **Selesai Diimplementasikan (100% On-Device Super-Resolution)**
+- **Fitur Utama yang Telah Berjalan**:
+  - Pilihan perbesaran 2× (HD), 4× (Ultra 4K), dan Kustom (1.5× - 6×) dengan estimasi dimensi piksel langsung.
+  - 4 Mode Super-Resolution: *Foto & Potret*, *Anime & Ilustrasi*, *Dokumen & Teks (Scan/Struk)*, dan *Restorasi Foto Jadul*.
+  - Slider penyesuaian: *Ketajaman Tepi (Sharpness)*, *Pembersih Noise / JPEG Artifacts (Denoise)*, dan *Kejernihan & Kontras (Clarity)*.
+  - Slider perbandingan interaktif *Sebelum vs Sesudah* dengan tombol zoom perbesaran detail.
+  - Pilihan format ekspor: PNG (Lossless), JPG, dan WebP.
+  - Batch upload banyak foto, unduh individual, dan unduh arsip massal `.zip`.
+  - Inspeksi resolusi penuh dengan MediaLightboxModal hingga 400% zoom.
+  - 100% lokal di browser tanpa server (Zero Data Upload).
 
 ---
 

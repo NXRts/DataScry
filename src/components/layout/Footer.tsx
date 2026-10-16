@@ -110,6 +110,12 @@ export default function Footer() {
                         </h4>
                         <ul className="space-y-2 text-xs md:text-sm text-foreground/70">
                             <li>
+                                <Link href="/tools/upscale-image" className="hover:text-purple-400 transition-colors inline-flex items-center gap-1.5 py-0.5 truncate">
+                                    <span>Tingkatkan Resolusi Foto</span>
+                                    <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-purple-500/15 text-purple-400 font-bold border border-purple-500/25">AI HD</span>
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/tools/watermark-image" className="hover:text-rose-400 transition-colors inline-flex items-center gap-1.5 py-0.5 truncate">
                                     <span>Cap Air Gambar / Foto</span>
                                     <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-rose-500/15 text-rose-400 font-bold border border-rose-500/25">Baru</span>
