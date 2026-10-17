@@ -137,6 +137,12 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/tools/resize-image" className="hover:text-cyan-400 transition-colors inline-flex items-center gap-1.5 py-0.5 truncate">
+                                    <span>Ubah Ukuran Gambar</span>
+                                    <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-cyan-500/15 text-cyan-400 font-bold border border-cyan-500/25">Baru</span>
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/tools/crop-image" className="hover:text-orange-400 transition-colors block py-0.5 truncate">
                                     Potong & Pangkas Gambar
                                 </Link>

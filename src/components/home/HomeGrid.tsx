@@ -27,7 +27,8 @@ import {
     ArrowLeftRight,
     Search,
     X,
-    Sparkles
+    Sparkles,
+    Scaling
 } from "lucide-react";
 import { ALL_TOOLS, TOOL_CATEGORIES, ToolCategory, ToolItem } from "@/lib/toolsData";
 
@@ -59,6 +60,7 @@ export default function HomeGrid() {
             case "FileSearch": return <FileSearch size={size} className="text-cyan-400" />;
             case "FileType": return <FileType size={size} className="text-indigo-400" />;
             case "Sparkles": return <Sparkles size={size} className="text-purple-400" />;
+            case "Scaling": return <Scaling size={size} className="text-cyan-400" />;
             default: return <FileText size={size} className="text-blue-500" />;
         }
     };

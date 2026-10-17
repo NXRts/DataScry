@@ -12,9 +12,9 @@ export interface ToolItem {
 }
 
 export const TOOL_CATEGORIES = [
-    { id: "all" as ToolCategory, label: "Semua Alat", count: 25 },
+    { id: "all" as ToolCategory, label: "Semua Alat", count: 26 },
     { id: "pdf" as ToolCategory, label: "PDF & Dokumen", count: 13 },
-    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 8 },
+    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 9 },
     { id: "utility" as ToolCategory, label: "Arsip & Utilitas", count: 4 }
 ];
 
@@ -65,6 +65,16 @@ export const ALL_TOOLS: ToolItem[] = [
         category: "image",
         color: "amber",
         iconName: "ArrowLeftRight",
+        badge: "Baru"
+    },
+    {
+        id: "resize-image",
+        title: "Ubah Ukuran Gambar (Resize)",
+        description: "Ubah resolusi foto massal via persentase atau dimensi piksel presisi untuk syarat CASN & web.",
+        href: "/tools/resize-image",
+        category: "image",
+        color: "cyan",
+        iconName: "Scaling",
         badge: "Baru"
     },
     {
