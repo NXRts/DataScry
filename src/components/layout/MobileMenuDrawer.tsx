@@ -33,7 +33,8 @@ import {
     Home,
     Sparkles,
     Heart,
-    Coffee
+    Coffee,
+    Scaling
 } from "lucide-react";
 import { ALL_TOOLS, TOOL_CATEGORIES, ToolCategory } from "@/lib/toolsData";
 
@@ -111,6 +112,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
             case "FileSearch": return <FileSearch className={className} />;
             case "FileType": return <FileType className={className} />;
             case "Sparkles": return <Sparkles className={className} />;
+            case "Scaling": return <Scaling className={className} />;
             default: return <FileText className={className} />;
         }
     };
