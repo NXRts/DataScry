@@ -34,7 +34,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Ekstrak setiap halaman dari PDF menjadi gambar berkualitas tinggi.",
         href: "/tools/pdf-to-jpg",
         category: "pdf",
-        color: "orange",
+        color: "amber",
         iconName: "FileImage"
     },
     {
@@ -83,7 +83,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Potong pas foto resmi 2x3, 3x4, 4x6 cm atau ubah ukuran gambar dengan presisi pixel.",
         href: "/tools/crop-image",
         category: "image",
-        color: "teal",
+        color: "emerald",
         iconName: "Crop"
     },
     {
@@ -121,7 +121,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Ekstrak satu atau beberapa halaman spesifik dari dokumen PDF besar.",
         href: "/tools/split-pdf",
         category: "pdf",
-        color: "pink",
+        color: "rose",
         iconName: "Scissors"
     },
     {
@@ -130,7 +130,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Urutkan ulang (drag & drop), hapus halaman, atau putar halaman dalam kisi visual.",
         href: "/tools/organize-pdf",
         category: "pdf",
-        color: "indigo",
+        color: "purple",
         iconName: "FileStack"
     },
     {
@@ -139,7 +139,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Perbaiki orientasi halaman PDF yang miring atau terbalik dengan pratinjau visual instan.",
         href: "/tools/rotate-pdf",
         category: "pdf",
-        color: "sky",
+        color: "rose",
         iconName: "RotateCw"
     },
     {
@@ -148,7 +148,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Beri cap pengaman teks diagonal (CASN, Bank, Rahasia) untuk melindungi berkas penting.",
         href: "/tools/watermark-pdf",
         category: "pdf",
-        color: "fuchsia",
+        color: "rose",
         iconName: "Stamp"
     },
     {
@@ -157,7 +157,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Bubuhi tanda tangan, paraf transparan, atau ketik nama langsung di atas dokumen PDF Anda.",
         href: "/tools/sign-pdf",
         category: "pdf",
-        color: "pink",
+        color: "rose",
         iconName: "PenTool"
     },
     {
@@ -184,7 +184,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Sensor NIK, gaji, nomor rekening, atau tanda tangan secara permanen dan bebas intip.",
         href: "/tools/redact-pdf",
         category: "pdf",
-        color: "red",
+        color: "rose",
         iconName: "ShieldAlert"
     },
     {
@@ -202,7 +202,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Padatkan dan bungkus banyak file apa saja menjadi arsip .ZIP terkompresi.",
         href: "/tools/archive-zip",
         category: "utility",
-        color: "violet",
+        color: "purple",
         iconName: "FolderArchive"
     },
     {
@@ -221,7 +221,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Hapus metadata dan lokasi tersembunyi pada foto sebelum diunggah ke internet.",
         href: "/tools/scrub-exif",
         category: "image",
-        color: "lime",
+        color: "emerald",
         iconName: "ShieldCheck"
     },
     {
@@ -230,7 +230,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Intip informasi EXIF rahasia (kamera, GPS, tanggal asli) di balik foto atau dokumen PDF Anda.",
         href: "/tools/metadata-viewer",
         category: "image",
-        color: "cyan",
+        color: "blue",
         iconName: "FileSearch"
     },
     {
@@ -248,7 +248,7 @@ export const ALL_TOOLS: ToolItem[] = [
         description: "Ubah dokumen PDF menjadi file Word (.docx) yang dapat diedit dengan mudah.",
         href: "/tools/pdf-to-word",
         category: "pdf",
-        color: "teal",
+        color: "blue",
         iconName: "FileText"
     },
     {
