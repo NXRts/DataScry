@@ -153,7 +153,11 @@ export default function ClientHome({ defaultAction }: ClientHomeProps) {
 
     return (
         <div className="space-y-12">
-            <Dropzone onFilesAccepted={handleFiles} {...dropzoneProps} />
+            <Dropzone
+                onFilesAccepted={handleFiles}
+                color={defaultAction === "scrub" ? "emerald" : "blue"}
+                {...dropzoneProps}
+            />
 
             {files.length > 0 && (
                 <div className="space-y-6">
