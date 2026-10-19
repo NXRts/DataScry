@@ -12,9 +12,9 @@ export interface ToolItem {
 }
 
 export const TOOL_CATEGORIES = [
-    { id: "all" as ToolCategory, label: "Semua Alat", count: 26 },
+    { id: "all" as ToolCategory, label: "Semua Alat", count: 27 },
     { id: "pdf" as ToolCategory, label: "PDF & Dokumen", count: 13 },
-    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 9 },
+    { id: "image" as ToolCategory, label: "Foto & Gambar", count: 10 },
     { id: "utility" as ToolCategory, label: "Arsip & Utilitas", count: 4 }
 ];
 
@@ -75,6 +75,16 @@ export const ALL_TOOLS: ToolItem[] = [
         category: "image",
         color: "cyan",
         iconName: "Scaling",
+        badge: "Baru"
+    },
+    {
+        id: "rotate-image",
+        title: "Putar Gambar Massal (Rotate)",
+        description: "Putar orientasi foto 90°, 180°, atau efek cermin mirror (flip) secara massal dan bebas batas server.",
+        href: "/tools/rotate-image",
+        category: "image",
+        color: "sky",
+        iconName: "RotateCw",
         badge: "Baru"
     },
     {
