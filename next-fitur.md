@@ -6,63 +6,51 @@ Dokumen ini merangkum inventaris seluruh fitur yang telah terimplementasi serta 
 
 ## 📊 Matriks Status Fitur DataScry
 
-### 1. Fitur yang Sudah Aktif & Siap Digunakan (✅ 26 Alat Aktif)
+### 1. Fitur yang Sudah Aktif & Siap Digunakan (✅ 27 Alat Aktif)
 
 Semua alat di bawah ini telah terpasang, teruji via build Next.js, dan aktif di navigasi/katalog utama [HomeGrid.tsx](file:///home/nxrts/ProgramKoding/DataScry/src/components/home/HomeGrid.tsx):
 
 | No | Modul Fitur | Kategori | Rute Halaman | Status & Keterangan Standar Fitur |
 | :-: | :--- | :--- | :--- | :--- |
-| 1 | **Tingkatkan Resolusi Foto (AI Image Upscaler)** | Gambar & AI | `/tools/upscale-image` | ✅ **Rilis Baru** (Super-Resolution On-Device 2× s.d. 4× Ultra HD, 4 Mode: Foto/Anime/Dokumen/Vintage, Slider Ketajaman & Denoise, Before/After Slider, Batch ZIP & Lightbox HD) |
-| 2 | **Cap Air Gambar / Watermark Foto (Watermark IMAGE)** | Keamanan & Hak Cipta | `/tools/watermark-image` | ✅ **Rilis Baru** (Canvas 2D HD, Teks Pengaman KTP/SIM Anti-Pinjol, Stempel Logo PNG Transparan, Pola Berulang Tiled Grid, Batch Multi-Foto & ZIP) |
-| 3 | **Ubah Ukuran Gambar Massal (Resize IMAGE)** | Manipulasi Gambar | `/tools/resize-image` | ✅ **Rilis Baru** (3 Mode: Persen, Piksel Presisi & Batas Maksimal Sisi CASN/BUMN, Kunci Rasio Aspek Otomatis, Stepped Downsampling HD, Preset Resolusi Populer, Batch ZIP) |
-| 4 | **Hapus Latar Belakang Foto (Remove BG)** | Gambar & AI | `/tools/remove-background` | ✅ Aktif (ISNet FP16 On-Device AI, HD Lossless, Presets Pas Foto, Slider Before/After) |
-| 5 | **Konverter Format Gambar Universal** | Manipulasi Gambar | `/tools/convert-image` | ✅ **Rilis Baru** (WebP ⇄ JPG ⇄ PNG ⇄ AVIF, Latar Anti-Hitam Transparansi, Batch Multi-File & ZIP, Lightbox HD) |
-| 6 | **Potong & Pas Foto (Crop & Resize)** | Manipulasi Gambar | `/tools/crop-image` | ✅ **Rilis Baru** (Preset Pas Foto 2×3, 3×4, 4×6 cm, Atur Piksel Presisi, Rotasi/Flip, Rule of Thirds) |
-| 7 | **Sensor & Blur Foto (Blur Face & Privacy)** | Privasi Gambar | `/tools/blur-face` | ✅ **Rilis Baru** (Gaussian Blur, Mosaik TV, Sensor Hitam, Kuas Sentuh & Kotak Drag, Layer Stacking Non-Destruktif, Ekspor HD) |
-| 8 | **JPG ke PDF** | Konversi | `/tools/jpg-to-pdf` | ✅ Aktif (*Gold Standard*: Lightbox Zoom 400%, Grid Thumbnail, Orientasi/Margin Kustom) |
-| 9 | **PDF ke JPG** | Konversi | `/tools/pdf-to-jpg` | ✅ Aktif (*Gold Standard*: Seleksi Halaman, Ekspor ZIP & Direct Download, Lightbox HD) |
-| 10 | **Kompresi Dokumen & Foto (Compress)** | Optimasi | `/tools/compress` | ✅ Aktif (Smart Compression multi-level, kalkulator hemat byte, pratinjau sebelum/sesudah) |
-| 11 | **Gabung PDF (Merge PDF)** | Manajemen PDF | `/tools/merge-pdf` | ✅ Aktif (Drag-to-reorder, thumbnail visual multi-halaman) |
-| 12 | **Pisah PDF (Split PDF)** | Manajemen PDF | `/tools/split-pdf` | ✅ Aktif (Mode rentang, halaman genap/ganjil, ekstraksi selektif) |
-| 13 | **Atur & Kelola Halaman PDF (Organize PDF)** | Manajemen PDF | `/tools/organize-pdf` | ✅ **Rilis Baru** (Drag & drop visual reorder, hapus, putar 90°, duplikasi halaman, tambah PDF) |
-| 14 | **Putar PDF (Rotate PDF)** | Manajemen PDF | `/tools/rotate-pdf` | ✅ Aktif (Rotasi 90°/180°/270° per halaman atau serentak) |
-| 15 | **Tanda Tangan PDF (Sign PDF)** | Tanda Tangan | `/tools/sign-pdf` | ✅ Aktif (Canvas sentuh interaktif, impor stempel PNG transparan, multi-halaman) |
-| 16 | **Cap Air PDF (Watermark PDF)** | Keamanan | `/tools/watermark-pdf` | ✅ Aktif (Teks & gambar, kustomisasi opasitas, rotasi sudut, tata letak grid/pusat) |
-| 17 | **Kunci PDF (Protect PDF)** | Keamanan | `/tools/protect-pdf` | ✅ Aktif (Enkripsi kata sandi dokumen berbasis WebAssembly) |
-| 18 | **Buka Kunci PDF (PDF Unlock)** | Keamanan | `/tools/unlock-pdf` | ✅ Aktif (Hapus proteksi password permanen, dekripsi AES-256 & RC4 client-side) |
-| 19 | **Sensor Data Sensitif PDF (PDF Redactor)** | Keamanan & Privasi | `/tools/redact-pdf` | ✅ **Rilis Baru** (*True Redaction*: Burn-in pixel bitmap, musnahkan aliran teks sensitif, 3 gaya sensor) |
-| 20 | **Word ke PDF (Word to PDF)** | Konversi | `/tools/word-to-pdf` | ✅ Aktif (Rendering docx lokal langsung menjadi PDF) |
-| 21 | **PDF ke Word (PDF to Word)** | Konversi | `/tools/pdf-to-word` | ✅ Aktif (Ekstraksi teks & struktur menjadi berkas `.docx`) |
-| 22 | **Gabung Word (Merge Word)** | Dokumen | `/tools/merge-word` | ✅ Aktif (Penggabungan multi-file `.docx` secara client-side) |
-| 23 | **Arsip ZIP (Archive ZIP)** | Utilitas Berkas | `/tools/archive-zip` | ✅ Aktif (Kompresi multi-berkas menjadi arsip `.zip` lokal) |
-| 24 | **Ekstrak & Intip ZIP (Unzip & Inspect)** | Utilitas Berkas | `/tools/unzip` | ✅ **Rilis Baru** (Tree/List & Grid View, Live Preview Gambar/PDF/Teks/Kode, Ekstraksi Selektif & Massal, HUD Penghematan) |
-| 25 | **Inspeksi Metadata (Metadata Viewer)** | Privasi | `/tools/metadata-viewer` | ✅ Aktif (Analisis atribut internal dokumen & berkas) |
-| 26 | **Pembersih EXIF (Scrub EXIF)** | Privasi | `/tools/scrub-exif` | ✅ Aktif (Hapus metadata GPS & data sensitif kamera dari foto) |
+| 1 | **Putar Gambar Massal (Rotate IMAGE & Flip)** | Manipulasi Gambar | `/tools/rotate-image` | ✅ **Rilis Baru** (Canvas 2D Matrix HD, Rotasi 90° CW/CCW & 180°, Cermin Mirror Horizontal & Vertikal, Batch Multi-Foto & ZIP, Lightbox HD) |
+| 2 | **Tingkatkan Resolusi Foto (AI Image Upscaler)** | Gambar & AI | `/tools/upscale-image` | ✅ **Rilis Baru** (Super-Resolution On-Device 2× s.d. 4× Ultra HD, 4 Mode: Foto/Anime/Dokumen/Vintage, Slider Ketajaman & Denoise, Before/After Slider, Batch ZIP & Lightbox HD) |
+| 3 | **Cap Air Gambar / Watermark Foto (Watermark IMAGE)** | Keamanan & Hak Cipta | `/tools/watermark-image` | ✅ **Rilis Baru** (Canvas 2D HD, Teks Pengaman KTP/SIM Anti-Pinjol, Stempel Logo PNG Transparan, Pola Berulang Tiled Grid, Batch Multi-Foto & ZIP) |
+| 4 | **Ubah Ukuran Gambar Massal (Resize IMAGE)** | Manipulasi Gambar | `/tools/resize-image` | ✅ **Rilis Baru** (3 Mode: Persen, Piksel Presisi & Batas Maksimal Sisi CASN/BUMN, Kunci Rasio Aspek Otomatis, Stepped Downsampling HD, Preset Resolusi Populer, Batch ZIP) |
+| 5 | **Hapus Latar Belakang Foto (Remove BG)** | Gambar & AI | `/tools/remove-background` | ✅ Aktif (ISNet FP16 On-Device AI, HD Lossless, Presets Pas Foto, Slider Before/After) |
+| 6 | **Konverter Format Gambar Universal** | Manipulasi Gambar | `/tools/convert-image` | ✅ **Rilis Baru** (WebP ⇄ JPG ⇄ PNG ⇄ AVIF, Latar Anti-Hitam Transparansi, Batch Multi-File & ZIP, Lightbox HD) |
+| 7 | **Potong & Pas Foto (Crop & Resize)** | Manipulasi Gambar | `/tools/crop-image` | ✅ **Rilis Baru** (Preset Pas Foto 2×3, 3×4, 4×6 cm, Atur Piksel Presisi, Rotasi/Flip, Rule of Thirds) |
+| 8 | **Sensor & Blur Foto (Blur Face & Privacy)** | Privasi Gambar | `/tools/blur-face` | ✅ **Rilis Baru** (Gaussian Blur, Mosaik TV, Sensor Hitam, Kuas Sentuh & Kotak Drag, Layer Stacking Non-Destruktif, Ekspor HD) |
+| 9 | **JPG ke PDF** | Konversi | `/tools/jpg-to-pdf` | ✅ Aktif (*Gold Standard*: Lightbox Zoom 400%, Grid Thumbnail, Orientasi/Margin Kustom) |
+| 10 | **PDF ke JPG** | Konversi | `/tools/pdf-to-jpg` | ✅ Aktif (*Gold Standard*: Seleksi Halaman, Ekspor ZIP & Direct Download, Lightbox HD) |
+| 11 | **Kompresi Dokumen & Foto (Compress)** | Optimasi | `/tools/compress` | ✅ Aktif (Smart Compression multi-level, kalkulator hemat byte, pratinjau sebelum/sesudah) |
+| 12 | **Gabung PDF (Merge PDF)** | Manajemen PDF | `/tools/merge-pdf` | ✅ Aktif (Drag-to-reorder, thumbnail visual multi-halaman) |
+| 13 | **Pisah PDF (Split PDF)** | Manajemen PDF | `/tools/split-pdf` | ✅ Aktif (Mode rentang, halaman genap/ganjil, ekstraksi selektif) |
+| 14 | **Atur & Kelola Halaman PDF (Organize PDF)** | Manajemen PDF | `/tools/organize-pdf` | ✅ **Rilis Baru** (Drag & drop visual reorder, hapus, putar 90°, duplikasi halaman, tambah PDF) |
+| 15 | **Putar PDF (Rotate PDF)** | Manajemen PDF | `/tools/rotate-pdf` | ✅ Aktif (Rotasi 90°/180°/270° per halaman atau serentak) |
+| 16 | **Tanda Tangan PDF (Sign PDF)** | Tanda Tangan | `/tools/sign-pdf` | ✅ Aktif (Canvas sentuh interaktif, impor stempel PNG transparan, multi-halaman) |
+| 17 | **Cap Air PDF (Watermark PDF)** | Keamanan | `/tools/watermark-pdf` | ✅ Aktif (Teks & gambar, kustomisasi opasitas, rotasi sudut, tata letak grid/pusat) |
+| 18 | **Kunci PDF (Protect PDF)** | Keamanan | `/tools/protect-pdf` | ✅ Aktif (Enkripsi kata sandi dokumen berbasis WebAssembly) |
+| 19 | **Buka Kunci PDF (PDF Unlock)** | Keamanan | `/tools/unlock-pdf` | ✅ Aktif (Hapus proteksi password permanen, dekripsi AES-256 & RC4 client-side) |
+| 20 | **Sensor Data Sensitif PDF (PDF Redactor)** | Keamanan & Privasi | `/tools/redact-pdf` | ✅ **Rilis Baru** (*True Redaction*: Burn-in pixel bitmap, musnahkan aliran teks sensitif, 3 gaya sensor) |
+| 21 | **Word ke PDF (Word to PDF)** | Konversi | `/tools/word-to-pdf` | ✅ Aktif (Rendering docx lokal langsung menjadi PDF) |
+| 22 | **PDF ke Word (PDF to Word)** | Konversi | `/tools/pdf-to-word` | ✅ Aktif (Ekstraksi teks & struktur menjadi berkas `.docx`) |
+| 23 | **Gabung Word (Merge Word)** | Dokumen | `/tools/merge-word` | ✅ Aktif (Penggabungan multi-file `.docx` secara client-side) |
+| 24 | **Arsip ZIP (Archive ZIP)** | Utilitas Berkas | `/tools/archive-zip` | ✅ Aktif (Kompresi multi-berkas menjadi arsip `.zip` lokal) |
+| 25 | **Ekstrak & Intip ZIP (Unzip & Inspect)** | Utilitas Berkas | `/tools/unzip` | ✅ **Rilis Baru** (Tree/List & Grid View, Live Preview Gambar/PDF/Teks/Kode, Ekstraksi Selektif & Massal, HUD Penghematan) |
+| 26 | **Inspeksi Metadata (Metadata Viewer)** | Privasi | `/tools/metadata-viewer` | ✅ Aktif (Analisis atribut internal dokumen & berkas) |
+| 27 | **Pembersih EXIF (Scrub EXIF)** | Privasi | `/tools/scrub-exif` | ✅ Aktif (Hapus metadata GPS & data sensitif kamera dari foto) |
 
 ---
 
 ## 🎯 Rekomendasi Teratas untuk Pengembangan Selanjutnya
 
-Setelah sukses mengimplementasikan **Ubah Ukuran Gambar Massal (`/tools/resize-image`)**, **Tingkatkan Resolusi Foto (`/tools/upscale-image`)**, dan **Cap Air Gambar (`/tools/watermark-image`)**, berikut adalah urutan fitur prioritas berikutnya:
+Setelah sukses mengimplementasikan **Putar Gambar Massal (`/tools/rotate-image`)**, **Ubah Ukuran Gambar Massal (`/tools/resize-image`)**, **Tingkatkan Resolusi Foto (`/tools/upscale-image`)**, dan **Cap Air Gambar (`/tools/watermark-image`)**, berikut adalah urutan fitur prioritas berikutnya:
 
 ---
 
-### 🥇 1. Putar Gambar Massal (Rotate IMAGE)
-- **Kategori**: Manipulasi Gambar (`/tools/rotate-image`)
-- **Tingkat Rekomendasi**: **Sangat Tinggi (Praktis & Esensial)**
-- **Kenapa Direkomendasikan?**:
-  - Pengguna ponsel sangat sering memotret dokumen, struk belanja, atau tugas sekolah dalam orientasi miring 90° atau terbalik.
-- **Fitur Utama**:
-  - Rotasi per foto atau serentak ke semua foto (90° Searah Jarum Jam, 90° Berlawanan, 180°).
-  - Pembalik gambar (Flip Horizontal / Mirror & Flip Vertikal).
-  - Batch upload banyak gambar dan unduh sekaligus via arsip `.zip`.
-- **Estimasi Teknologi**: HTML5 Canvas 2D Transformation Matrix (Ringan & Cepat).
-
----
-
-### 🥈 2. Penomoran Halaman Otomatis (Page Numbering PDF)
+### 🥇 1. Penomoran Halaman Otomatis (Page Numbering PDF)
 - **Kategori**: Format PDF (`/tools/number-pdf`)
-- **Tingkat Rekomendasi**: **Tinggi (Kebutuhan Akademik & Kantor)**
+- **Tingkat Rekomendasi**: **Sangat Tinggi (Kebutuhan Akademik & Kantor)**
 - **Kenapa Direkomendasikan?**:
   - Sangat dibutuhkan untuk skripsi, tesis, laporan dinas, atau ebook digital yang telah digabungkan namun belum memiliki nomor halaman resmi.
 - **Fitur Utama**:
@@ -73,9 +61,9 @@ Setelah sukses mengimplementasikan **Ubah Ukuran Gambar Massal (`/tools/resize-i
 
 ---
 
-### 🥉 3. Potong / Trim Margin PDF (Crop PDF)
+### 🥈 2. Potong / Trim Margin PDF (Crop PDF)
 - **Kategori**: Format PDF (`/tools/crop-pdf`)
-- **Tingkat Rekomendasi**: **Menengah (Pembersihan Dokumen)**
+- **Tingkat Rekomendasi**: **Tinggi (Pembersihan Dokumen)**
 - **Fitur Utama**:
   - Potong margin putih berlebih pada scan buku atau dokumen jurnal.
   - Seleksi kotak potong interaktif visual per halaman atau terapkan ke semua halaman sekaligus.
@@ -83,12 +71,21 @@ Setelah sukses mengimplementasikan **Ubah Ukuran Gambar Massal (`/tools/resize-i
 
 ---
 
-### 🎖️ 4. Edit PDF (Anotasi, Teks, & Bentuk)
+### 🥉 3. Edit PDF (Anotasi, Teks, & Bentuk)
 - **Kategori**: Interaktif PDF (`/tools/edit-pdf`)
 - **Tingkat Rekomendasi**: **Tinggi (Peralatan Kantor Lengkap)**
 - **Fitur Utama**:
   - Bubuhi kotak teks, sorotan warna (highlighter), garis bawah, panah, dan stempel dokumen.
 - **Estimasi Teknologi**: Canvas PDF Annotation Layer over `pdfjs-dist` + `pdf-lib`.
+
+---
+
+### 🎖️ 4. PDF ke Markdown (PDF to Markdown)
+- **Kategori**: AI & Teks (`/tools/pdf-to-markdown`)
+- **Tingkat Rekomendasi**: **Menengah (Era LLM & AI Notes)**
+- **Fitur Utama**:
+  - Ekstraksi teks berstruktur rapi lengkap dengan judul (`#`, `##`), tabel markdown, daftar butir, dan kutipan.
+- **Estimasi Teknologi**: `pdfjs-dist` Layout Parser + Regex Heuristics.
 
 ---
 
@@ -101,11 +98,11 @@ Berikut adalah daftar urutan lengkap seluruh fitur yang direncanakan untuk DataS
 | **1** | **Cap Air Gambar (Watermark IMAGE)** | Gambar & Keamanan | Selesai | `/tools/watermark-image` | Canvas 2D Text & Stamp Renderer | ✅ **Sudah Aktif** |
 | **2** | **Tingkatkan Resolusi Foto (AI Image Upscaler)** | Gambar & AI | Selesai | `/tools/upscale-image` | On-device Super-Resolution | ✅ **Sudah Aktif** |
 | **3** | **Ubah Ukuran Gambar Massal (Resize IMAGE)** | Gambar | Selesai | `/tools/resize-image` | Canvas API (Persen & Dimensi Piksel) | ✅ **Sudah Aktif** |
-| **4** | **Putar Gambar Massal (Rotate IMAGE)** | Gambar | 🥇 Prioritas 1 | `/tools/rotate-image` | Batch Canvas Rotator | ⏳ Siap Dikerjakan |
-| **5** | **Penomoran Halaman Otomatis (Page Numbering)** | Format PDF | 🥈 Prioritas 2 | `/tools/number-pdf` | `pdf-lib` Bates Stamping | ⏳ Siap Dikerjakan |
-| **6** | **Potong / Trim Margin PDF (Crop PDF)** | Format PDF | 🥉 Prioritas 3 | `/tools/crop-pdf` | Bounding Box Crop & MediaBox | ⏳ Siap Dikerjakan |
-| **7** | **Edit PDF (Anotasi, Teks, & Bentuk)** | Interaktif PDF | Prioritas 4 | `/tools/edit-pdf` | Canvas PDF Annotation Layer | ⏳ Backlog |
-| **8** | **PDF ke Markdown (PDF to Markdown)** | AI & Teks | Prioritas 5 | `/tools/pdf-to-markdown` | `pdfjs-dist` Layout Parser | ⏳ Backlog |
+| **4** | **Putar Gambar Massal (Rotate IMAGE)** | Gambar | Selesai | `/tools/rotate-image` | Canvas 2D Transformation Matrix | ✅ **Sudah Aktif** |
+| **5** | **Penomoran Halaman Otomatis (Page Numbering)** | Format PDF | 🥇 Prioritas 1 | `/tools/number-pdf` | `pdf-lib` Bates Stamping | ⏳ Siap Dikerjakan |
+| **6** | **Potong / Trim Margin PDF (Crop PDF)** | Format PDF | 🥈 Prioritas 2 | `/tools/crop-pdf` | Bounding Box Crop & MediaBox | ⏳ Siap Dikerjakan |
+| **7** | **Edit PDF (Anotasi, Teks, & Bentuk)** | Interaktif PDF | 🥉 Prioritas 3 | `/tools/edit-pdf` | Canvas PDF Annotation Layer | ⏳ Siap Dikerjakan |
+| **8** | **PDF ke Markdown (PDF to Markdown)** | AI & Teks | Prioritas 4 | `/tools/pdf-to-markdown` | `pdfjs-dist` Layout Parser | ⏳ Backlog |
 | **9** | **Editor Foto Ringan (Photo Editor)** | Gambar | Prioritas 6 | `/tools/photo-editor` | Filter Canvas (Brightness, Tint) | ⏳ Backlog |
 | **10** | **Pembuat Meme Kustom (Meme Generator)** | Kreatif | Prioritas 7 | `/tools/meme-generator` | Canvas Text Impact + Templates | ⏳ Backlog |
 | **11** | **OCR Ekstrak Teks Dokumen (Offline OCR)** | AI & Teks | Prioritas 8 | `/tools/ocr-pdf` | `tesseract.js` WebAssembly Worker | ⏳ Backlog |

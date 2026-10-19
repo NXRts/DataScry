@@ -143,6 +143,12 @@ export default function Footer() {
                                 </Link>
                             </li>
                             <li>
+                                <Link href="/tools/rotate-image" className="hover:text-sky-400 transition-colors inline-flex items-center gap-1.5 py-0.5 truncate">
+                                    <span>Putar Gambar Massal</span>
+                                    <span className="text-[9px] px-1.5 py-0.2 rounded-md bg-sky-500/15 text-sky-400 font-bold border border-sky-500/25">Baru</span>
+                                </Link>
+                            </li>
+                            <li>
                                 <Link href="/tools/crop-image" className="hover:text-orange-400 transition-colors block py-0.5 truncate">
                                     Potong & Pangkas Gambar
                                 </Link>
