@@ -90,6 +90,11 @@ export default function Footer() {
                                     Pisahkan & Ekstrak PDF
                                 </Link>
                             </li>
+                            <li>
+                                <Link href="/tools/number-pdf" className="hover:text-indigo-400 transition-colors block py-0.5 truncate">
+                                    Nomor Halaman PDF
+                                </Link>
+                            </li>
                             <li className="pt-1.5">
                                 <Link
                                     href="/#tools"

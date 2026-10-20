@@ -12,8 +12,8 @@ export interface ToolItem {
 }
 
 export const TOOL_CATEGORIES = [
-    { id: "all" as ToolCategory, label: "Semua Alat", count: 27 },
-    { id: "pdf" as ToolCategory, label: "PDF & Dokumen", count: 13 },
+    { id: "all" as ToolCategory, label: "Semua Alat", count: 28 },
+    { id: "pdf" as ToolCategory, label: "PDF & Dokumen", count: 14 },
     { id: "image" as ToolCategory, label: "Foto & Gambar", count: 10 },
     { id: "utility" as ToolCategory, label: "Arsip & Utilitas", count: 4 }
 ];
@@ -160,6 +160,16 @@ export const ALL_TOOLS: ToolItem[] = [
         category: "pdf",
         color: "rose",
         iconName: "Stamp"
+    },
+    {
+        id: "number-pdf",
+        title: "Nomor Halaman PDF",
+        description: "Beri nomor halaman otomatis untuk skripsi atau laporan dengan opsi angka, Romawi, dan lewati cover.",
+        href: "/tools/number-pdf",
+        category: "pdf",
+        color: "indigo",
+        iconName: "Hash",
+        badge: "Baru"
     },
     {
         id: "sign-pdf",
