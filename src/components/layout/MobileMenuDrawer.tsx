@@ -34,7 +34,8 @@ import {
     Sparkles,
     Heart,
     Coffee,
-    Scaling
+    Scaling,
+    Hash
 } from "lucide-react";
 import { ALL_TOOLS, TOOL_CATEGORIES, ToolCategory } from "@/lib/toolsData";
 
@@ -113,6 +114,7 @@ export default function MobileMenuDrawer({ isOpen, onClose }: MobileMenuDrawerPr
             case "FileType": return <FileType className={className} />;
             case "Sparkles": return <Sparkles className={className} />;
             case "Scaling": return <Scaling className={className} />;
+            case "Hash": return <Hash className={className} />;
             default: return <FileText className={className} />;
         }
     };
